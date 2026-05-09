@@ -1,0 +1,78 @@
+.section {
+  padding: 80px 0;
+  background: var(--bg-section);
+  border-top: 1px solid var(--border-light);
+}
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+.card {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: 48px 36px;
+  border: 1.5px solid var(--border-mid);
+  box-shadow: 0 4px 24px rgba(245,158,11,0.10);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.sunDecor {
+  position: absolute;
+  top: -20px; right: -20px;
+  font-size: 100px;
+  color: var(--sun-yellow);
+  opacity: 0.15;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+.eyebrow {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--sun-amber);
+  margin-bottom: 12px;
+}
+.title {
+  font-size: clamp(22px, 5vw, 28px);
+  font-weight: 900;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  letter-spacing: -0.01em;
+}
+.desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: 32px;
+}
+.emailBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 28px;
+  background: var(--text-primary);
+  color: white;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: var(--radius-lg);
+  transition: background 0.2s, transform 0.15s;
+  margin-bottom: 20px;
+  word-break: break-all;
+}
+.emailBtn:hover {
+  background: #3C3836;
+  transform: translateY(-2px);
+}
+.emailIcon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.note {
+  font-size: 12px;
+  color: var(--text-light);
+  line-height: 1.6;
+}

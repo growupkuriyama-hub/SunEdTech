@@ -1,0 +1,93 @@
+.header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.header.scrolled {
+  border-bottom-color: var(--border-light);
+  box-shadow: 0 2px 16px rgba(245, 158, 11, 0.08);
+}
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 20px;
+  height: 60px;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+.sunIcon {
+  font-size: 28px;
+  color: var(--sun-amber);
+  line-height: 1;
+  filter: drop-shadow(0 1px 3px rgba(245, 158, 11, 0.4));
+}
+.logoText {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  line-height: 1.15;
+}
+.logoJa {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+}
+.logoEn {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--sun-deep);
+  letter-spacing: -0.01em;
+}
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.navLink {
+  display: none;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  transition: color 0.2s, background 0.2s;
+}
+.navLink:hover {
+  color: var(--text-primary);
+  background: var(--bg-section);
+}
+.navCta {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  background: var(--sun-amber);
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 999px;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+}
+.navCta:hover {
+  background: var(--sun-deep);
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);
+  transform: translateY(-1px);
+}
+
+@media (min-width: 640px) {
+  .navLink { display: inline-flex; }
+}

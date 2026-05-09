@@ -1,0 +1,92 @@
+.section {
+  padding: 80px 0;
+  background: var(--bg-white);
+}
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+.inner {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+@media (min-width: 768px) {
+  .inner {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 64px;
+  }
+  .left { flex: 0 0 340px; }
+  .right { flex: 1; }
+}
+.eyebrow {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--sun-amber);
+  margin-bottom: 14px;
+}
+.title {
+  font-size: clamp(24px, 5vw, 32px);
+  font-weight: 900;
+  color: var(--text-primary);
+  line-height: 1.35;
+  margin-bottom: 18px;
+  letter-spacing: -0.01em;
+}
+.desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: 24px;
+}
+.trustBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  background: var(--bg-section);
+  border: 1px solid var(--border-mid);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--sun-deep);
+}
+.right {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.useCase {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 18px 20px;
+  background: var(--bg-warm);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+}
+.useCaseIcon {
+  font-size: 24px;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.useCaseTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+.useCaseDesc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
