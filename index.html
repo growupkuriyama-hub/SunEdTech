@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ローマ字れんしゅう</title>
+  <meta name="description" content="小学生向けローマ字練習アプリ。ひらがなのローマ字をゲーム形式で覚えよう！" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --sky: #4FC3F7;
+      --sun: #FFD54F;
+      --grass: #81C784;
+      --coral: #FF8A65;
+      --purple: #CE93D8;
+      --bg: #FFF8E1;
+      --card-bg: #fff;
+      --text: #4A3728;
+      --muted: #8D6E63;
+    }
+
+    body {
+      font-family: 'Nunito', 'Noto Sans JP', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 0;
+    }
+
+    .sr-only {
+      position: absolute; width: 1px; height: 1px;
+      overflow: hidden; clip: rect(0,0,0,0);
+    }
+
+    .app { max-width: 680px; margin: 0 auto; padding: 1rem; }
+
+    .header { text-align: center; padding: 1rem 0 0.5rem; }
+    .header h1 {
+      font-size: 28px; font-weight: 900; color: #E65100;
+      letter-spacing: 1px; text-shadow: 2px 2px 0 #FFD54F;
+    }
+    .header p { font-size: 14px; color: var(--muted); margin-top: 4px; }
+
+    .score-bar {
+      display: flex; justify-content: center; gap: 16px;
+      margin: 0.75rem 0; flex-wrap: wrap; align-items: center;
+    }
+    .score-pill {
+      background: var(--card-bg); border-radius: 999px;
+      padding: 6px 18px; font-size: 14px; font-weight: 700;
+      border: 2px solid #E0D0C0; display: flex; align-items: center; gap: 6px;
+    }
+    .score-pill span { font-size: 18px; }
+
+    .tabs { display: flex; gap: 8px; margin: 0.75rem 0; justify-content: center; flex-wrap: wrap; }
+    .tab {
+      border: 2px solid #E0D0C0; background: var(--card-bg);
+      border-radius: 999px; padding: 6px 16px; font-size: 14px;
+      font-weight: 700; cursor: pointer; font-family: inherit;
+      color: var(--muted); transition: all 0.15s;
+    }
+    .tab.active { background: #FF8A65; color: #fff; border-color: #FF8A65; }
+    .tab:hover:not(.active) { background: #FFF3E0; }
+
+    .mode-btns { display: flex; gap: 8px; justify-content: center; margin-bottom: 1rem; }
+    .mode-btn {
+      border: 2px solid #E0D0C0; background: var(--card-bg);
+      border-radius: 12px; padding: 8px 20px; font-size: 13px;
+      font-weight: 700; cursor: pointer; font-family: inherit;
+      color: var(--muted); transition: all 0.15s;
+    }
+    .mode-btn.active { background: #CE93D8; color: #fff; border-color: #CE93D8; }
+    .mode-btn:hover:not(.active) { background: #F3E5F5; }
+
+    .progress-bar-wrap {
+      background: #E0D0C0; border-radius: 999px;
+      height: 8px; margin-bottom: 0.75rem; overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%; background: linear-gradient(90deg, #FF8A65, #FFD54F);
+      border-radius: 999px; transition: width 0.3s;
+    }
+
+    .quiz-card {
+      background: var(--card-bg); border-radius: 20px;
+      border: 2.5px solid #E0D0C0; padding: 1.5rem 1.25rem;
+      text-align: center; margin-bottom: 1rem;
+    }
+    .question-label {
+      font-size: 13px; color: var(--muted); margin-bottom: 8px;
+      font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+    }
+    .question-char {
+      font-size: 80px; font-weight: 900; line-height: 1;
+      color: #E65100; margin-bottom: 8px; min-height: 90px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .question-hint { font-size: 13px; color: #BDBDBD; margin-bottom: 1rem; min-height: 18px; }
+
+    .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 0.5rem; }
+    .choice-btn {
+      border: 2.5px solid #E0D0C0; background: #FFF8F0;
+      border-radius: 14px; padding: 14px 8px; font-size: 20px;
+      font-weight: 700; cursor: pointer; font-family: 'Nunito', monospace;
+      color: var(--text); transition: all 0.15s; letter-spacing: 1px;
+    }
+    .choice-btn:hover:not(:disabled) { background: #FFE0CC; border-color: #FF8A65; transform: scale(1.03); }
+    .choice-btn.correct { background: #C8E6C9; border-color: #66BB6A; color: #2E7D32; animation: pop 0.25s; }
+    .choice-btn.wrong { background: #FFCDD2; border-color: #EF9A9A; color: #C62828; animation: shake 0.25s; }
+    .choice-btn:disabled { cursor: default; }
+
+    .type-row {
+      display: flex; gap: 8px; margin-top: 0.5rem;
+      align-items: center; justify-content: center;
+    }
+    .type-input {
+      border: 2.5px solid #E0D0C0; border-radius: 12px;
+      padding: 10px 16px; font-size: 22px; font-weight: 700;
+      font-family: 'Nunito', monospace; color: var(--text);
+      width: 160px; text-align: center; background: #FFF8F0;
+      outline: none; transition: border-color 0.15s;
+    }
+    .type-input:focus { border-color: #FF8A65; }
+    .type-input.correct { border-color: #66BB6A; background: #C8E6C9; }
+    .type-input.wrong { border-color: #EF9A9A; background: #FFCDD2; animation: shake 0.25s; }
+
+    .submit-btn {
+      border: 2.5px solid #FF8A65; background: #FF8A65;
+      border-radius: 12px; padding: 10px 20px; font-size: 18px;
+      font-weight: 700; cursor: pointer; font-family: inherit; color: #fff; transition: all 0.15s;
+    }
+    .submit-btn:hover { background: #F4511E; border-color: #F4511E; }
+
+    .feedback { min-height: 28px; font-size: 16px; font-weight: 700; margin-top: 0.75rem; }
+    .feedback.ok { color: #2E7D32; }
+    .feedback.ng { color: #C62828; }
+
+    .next-btn {
+      margin-top: 0.75rem; border: 2.5px solid #4FC3F7; background: #4FC3F7;
+      border-radius: 12px; padding: 10px 28px; font-size: 17px; font-weight: 700;
+      cursor: pointer; font-family: inherit; color: #fff; transition: all 0.15s; display: none;
+    }
+    .next-btn.visible { display: inline-block; }
+    .next-btn:hover { background: #039BE5; border-color: #039BE5; }
+
+    .table-section {
+      display: none; background: var(--card-bg); border-radius: 20px;
+      border: 2.5px solid #E0D0C0; padding: 1.25rem;
+      margin-bottom: 1rem; overflow-x: auto;
+    }
+    .table-section.visible { display: block; }
+
+    .romaji-table { border-collapse: collapse; width: 100%; font-size: 14px; }
+    .romaji-table th {
+      background: #FFF3E0; color: #E65100; padding: 8px 6px;
+      font-weight: 900; font-size: 13px; border: 1.5px solid #E0D0C0; text-align: center;
+    }
+    .romaji-table td { border: 1.5px solid #E0D0C0; padding: 8px 4px; text-align: center; vertical-align: middle; }
+    .kana { font-size: 18px; font-weight: 700; color: #4A3728; display: block; }
+    .roma { font-size: 12px; color: var(--muted); font-weight: 600; letter-spacing: 0.5px; }
+
+    .result-card {
+      background: var(--card-bg); border-radius: 20px; border: 2.5px solid #E0D0C0;
+      padding: 2rem 1.25rem; text-align: center; display: none;
+    }
+    .result-card.visible { display: block; }
+    .result-card h2 { font-size: 26px; font-weight: 900; color: #E65100; margin-bottom: 0.5rem; }
+    .big-score { font-size: 52px; font-weight: 900; color: #FF8A65; }
+    .result-card p { color: var(--muted); font-size: 15px; margin-top: 0.5rem; }
+    .stars { font-size: 28px; letter-spacing: 4px; margin: 0.5rem 0; min-height: 36px; }
+
+    .restart-btn {
+      margin-top: 1rem; border: 2.5px solid #81C784; background: #81C784;
+      border-radius: 12px; padding: 10px 28px; font-size: 17px; font-weight: 700;
+      cursor: pointer; font-family: inherit; color: #fff; transition: all 0.15s;
+    }
+    .restart-btn:hover { background: #43A047; border-color: #43A047; }
+
+    .show-table-btn {
+      border: 2px solid #CE93D8; background: transparent; border-radius: 999px;
+      padding: 5px 14px; font-size: 13px; font-weight: 700; cursor: pointer;
+      font-family: inherit; color: #AB47BC; transition: all 0.15s;
+    }
+    .show-table-btn:hover { background: #F3E5F5; }
+
+    .table-tab-btn {
+      border: 2px solid #E0D0C0; background: var(--card-bg); border-radius: 999px;
+      padding: 6px 16px; font-size: 14px; font-weight: 700; cursor: pointer;
+      font-family: inherit; color: var(--muted); transition: all 0.15s;
+    }
+    .table-tab-btn.active { background: #FFE0CC; border-color: #FF8A65; color: #E65100; }
+
+    @keyframes pop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1 class="sr-only">ローマ字れんしゅうアプリ</h1>
+
+    <div class="header" aria-hidden="true">
+      <p style="font-size:28px;font-weight:900;color:#E65100;letter-spacing:1px;text-shadow:2px 2px 0 #FFD54F;">🌸 ローマ字れんしゅう</p>
+      <p>ひらがな・カタカナのローマ字をおぼえよう！</p>
+    </div>
+
+    <div class="score-bar">
+      <div class="score-pill"><span aria-hidden="true">⭐</span><span id="score-disp">0</span>てん</div>
+      <div class="score-pill"><span aria-hidden="true">🎯</span><span id="q-disp">0</span> / <span id="total-disp">10</span>もん</div>
+      <button class="show-table-btn" onclick="toggleTable()" aria-expanded="false" id="table-toggle-btn">📋 一覧表</button>
+    </div>
+
+    <div id="table-section" class="table-section" aria-label="ローマ字一覧表">
+      <div id="table-tabs" style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;"></div>
+      <div id="table-content"></div>
+    </div>
+
+    <div class="tabs" id="group-tabs" role="tablist" aria-label="れんしゅうグループ"></div>
+
+    <div class="mode-btns" role="group" aria-label="もんだいのかたち">
+      <button class="mode-btn active" id="mode-choice" onclick="setMode('choice')">えらぶ</button>
+      <button class="mode-btn" id="mode-type" onclick="setMode('type')">うつ</button>
+    </div>
+
+    <div class="progress-bar-wrap" role="progressbar" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" aria-label="しんちょく">
+      <div class="progress-bar-fill" id="prog" style="width:0%"></div>
+    </div>
+
+    <div class="quiz-card" id="quiz-card">
+      <div class="question-label">この　もじの　ローマ字は？</div>
+      <div class="question-char" id="q-char" aria-live="polite">あ</div>
+      <div class="question-hint" id="q-hint" aria-live="polite"></div>
+
+      <div class="choices" id="choices-area" role="group" aria-label="こたえのせんたく"></div>
+
+      <div class="type-row" id="type-area" style="display:none">
+        <label for="type-input" class="sr-only">ローマ字をにゅうりょくしてください</label>
+        <input class="type-input" id="type-input" maxlength="5" placeholder="ローマ字"
+               autocomplete="off" autocorrect="off" spellcheck="false" />
+        <button class="submit-btn" onclick="checkType()" aria-label="こたえをかくにん">✓</button>
+      </div>
+
+      <div class="feedback" id="feedback" aria-live="assertive" role="status"></div>
+      <button class="next-btn" id="next-btn" onclick="nextQuestion()">つぎへ →</button>
+    </div>
+
+    <div class="result-card" id="result-card" aria-live="polite">
+      <h2>🎉 おつかれさま！</h2>
+      <div class="big-score" id="result-score"></div>
+      <div class="stars" id="result-stars" aria-label="せいかのほし"></div>
+      <p id="result-msg"></p>
+      <button class="restart-btn" onclick="restart()">もういちど！</button>
+    </div>
+  </div>
+
+  <script>
+    const DATA = {
+      'あ行': [['あ','a'],['い','i'],['う','u'],['え','e'],['お','o']],
+      'か行': [['か','ka'],['き','ki'],['く','ku'],['け','ke'],['こ','ko']],
+      'さ行': [['さ','sa'],['し','si'],['す','su'],['せ','se'],['そ','so']],
+      'た行': [['た','ta'],['ち','ti'],['つ','tu'],['て','te'],['と','to']],
+      'な行': [['な','na'],['に','ni'],['ぬ','nu'],['ね','ne'],['の','no']],
+      'は行': [['は','ha'],['ひ','hi'],['ふ','fu'],['へ','he'],['ほ','ho']],
+      'ま行': [['ま','ma'],['み','mi'],['む','mu'],['め','me'],['も','mo']],
+      'や行': [['や','ya'],['ゆ','yu'],['よ','yo']],
+      'ら行': [['ら','ra'],['り','ri'],['る','ru'],['れ','re'],['ろ','ro']],
+      'わ行': [['わ','wa'],['を','wo'],['ん','nn']],
+      'が行': [['が','ga'],['ぎ','gi'],['ぐ','gu'],['げ','ge'],['ご','go']],
+      'ざ行': [['ざ','za'],['じ','zi'],['ず','zu'],['ぜ','ze'],['ぞ','zo']],
+      'だ行': [['だ','da'],['ぢ','di'],['づ','du'],['で','de'],['ど','do']],
+      'ば行': [['ば','ba'],['び','bi'],['ぶ','bu'],['べ','be'],['ぼ','bo']],
+      'ぱ行': [['ぱ','pa'],['ぴ','pi'],['ぷ','pu'],['ぺ','pe'],['ぽ','po']],
+    };
+
+    const GROUP_LABELS = {
+      'きほん': ['あ行','か行','さ行','た行','な行','は行','ま行','や行','ら行','わ行'],
+      'だくてん': ['が行','ざ行','だ行','ば行','ぱ行'],
+      'ぜんぶ': Object.keys(DATA),
+    };
+
+    let currentGroup = 'きほん';
+    let currentMode = 'choice';
+    let score = 0;
+    let answered = 0;
+    const totalQ = 10;
+    let currentItem = null;
+    let answeredFlag = false;
+
+    function getPool() {
+      return GROUP_LABELS[currentGroup].flatMap(k => DATA[k] || []);
+    }
+
+    function shuffle(arr) { return arr.slice().sort(() => Math.random() - 0.5); }
+
+    function pickQuestion() {
+      const pool = getPool();
+      return pool[Math.floor(Math.random() * pool.length)];
+    }
+
+    function makeChoices(correct, pool) {
+      const others = shuffle(pool.filter(x => x[1] !== correct[1]));
+      return shuffle([correct, ...others.slice(0, 3)]);
+    }
+
+    function renderGroupTabs() {
+      const cont = document.getElementById('group-tabs');
+      cont.innerHTML = '';
+      Object.keys(GROUP_LABELS).forEach(g => {
+        const b = document.createElement('button');
+        b.className = 'tab' + (g === currentGroup ? ' active' : '');
+        b.textContent = g;
+        b.setAttribute('role', 'tab');
+        b.setAttribute('aria-selected', g === currentGroup ? 'true' : 'false');
+        b.onclick = () => { currentGroup = g; restart(); renderGroupTabs(); };
+        cont.appendChild(b);
+      });
+    }
+
+    function renderTable() {
+      const tabCont = document.getElementById('table-tabs');
+      const tblCont = document.getElementById('table-content');
+      tabCont.innerHTML = '';
+      const groups = ['きほん', 'だくてん'];
+      let activeGroup = 'きほん';
+
+      function showGroup(g) {
+        activeGroup = g;
+        tabCont.querySelectorAll('.table-tab-btn').forEach(b => {
+          b.classList.toggle('active', b.dataset.g === g);
+        });
+        const keys = GROUP_LABELS[g];
+        let html = '<table class="romaji-table"><tr><th>行</th>';
+        ['ア','イ','ウ','エ','オ'].forEach(h => { html += `<th>${h}</th>`; });
+        html += '</tr>';
+        keys.forEach(k => {
+          if (!DATA[k]) return;
+          html += `<tr><th>${k}</th>`;
+          for (let i = 0; i < 5; i++) {
+            const item = DATA[k][i];
+            html += item
+              ? `<td><span class="kana">${item[0]}</span><span class="roma">${item[1]}</span></td>`
+              : '<td></td>';
+          }
+          html += '</tr>';
+        });
+        html += '</table>';
+        tblCont.innerHTML = html;
+      }
+
+      groups.forEach(g => {
+        const b = document.createElement('button');
+        b.className = 'table-tab-btn' + (g === activeGroup ? ' active' : '');
+        b.dataset.g = g;
+        b.textContent = g;
+        b.onclick = () => showGroup(g);
+        tabCont.appendChild(b);
+      });
+      showGroup('きほん');
+    }
+
+    function toggleTable() {
+      const s = document.getElementById('table-section');
+      const btn = document.getElementById('table-toggle-btn');
+      const isOpen = s.classList.toggle('visible');
+      btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      if (isOpen) renderTable();
+    }
+
+    function setMode(m) {
+      currentMode = m;
+      document.getElementById('mode-choice').classList.toggle('active', m === 'choice');
+      document.getElementById('mode-type').classList.toggle('active', m === 'type');
+      restart();
+    }
+
+    function updateScore() {
+      document.getElementById('score-disp').textContent = score;
+      document.getElementById('q-disp').textContent = answered;
+      document.getElementById('total-disp').textContent = totalQ;
+      const pct = Math.round(answered / totalQ * 100);
+      document.getElementById('prog').style.width = pct + '%';
+      document.querySelector('.progress-bar-wrap').setAttribute('aria-valuenow', answered);
+    }
+
+    function nextQuestion() {
+      if (answered >= totalQ) { showResult(); return; }
+      answeredFlag = false;
+      document.getElementById('feedback').textContent = '';
+      document.getElementById('feedback').className = 'feedback';
+      document.getElementById('next-btn').classList.remove('visible');
+
+      currentItem = pickQuestion();
+      document.getElementById('q-char').textContent = currentItem[0];
+      document.getElementById('q-hint').textContent = '';
+
+      if (currentMode === 'choice') {
+        document.getElementById('choices-area').style.display = 'grid';
+        document.getElementById('type-area').style.display = 'none';
+        const choices = makeChoices(currentItem, getPool());
+        const area = document.getElementById('choices-area');
+        area.innerHTML = '';
+        choices.forEach(c => {
+          const b = document.createElement('button');
+          b.className = 'choice-btn';
+          b.textContent = c[1];
+          b.onclick = () => checkChoice(b, c[1], currentItem[1]);
+          area.appendChild(b);
+        });
+      } else {
+        document.getElementById('choices-area').style.display = 'none';
+        document.getElementById('type-area').style.display = 'flex';
+        const inp = document.getElementById('type-input');
+        inp.value = '';
+        inp.className = 'type-input';
+        inp.disabled = false;
+        inp.focus();
+      }
+    }
+
+    function checkChoice(btn, chosen, correct) {
+      if (answeredFlag) return;
+      answeredFlag = true;
+      answered++;
+      document.querySelectorAll('.choice-btn').forEach(b => { b.disabled = true; });
+      if (chosen === correct) {
+        btn.classList.add('correct');
+        score++;
+        document.getElementById('feedback').textContent = '⭕ せいかい！すごい！';
+        document.getElementById('feedback').className = 'feedback ok';
+      } else {
+        btn.classList.add('wrong');
+        document.querySelectorAll('.choice-btn').forEach(b => {
+          if (b.textContent === correct) b.classList.add('correct');
+        });
+        document.getElementById('feedback').textContent = `❌ ざんねん！「${correct}」だよ`;
+        document.getElementById('feedback').className = 'feedback ng';
+        document.getElementById('q-hint').textContent = `→ ${correct}`;
+      }
+      updateScore();
+      document.getElementById('next-btn').classList.add('visible');
+    }
+
+    function checkType() {
+      if (answeredFlag) return;
+      const inp = document.getElementById('type-input');
+      const val = inp.value.trim().toLowerCase();
+      if (!val) return;
+      answeredFlag = true;
+      answered++;
+      inp.disabled = true;
+      const correct = currentItem[1];
+      if (val === correct) {
+        inp.classList.add('correct');
+        score++;
+        document.getElementById('feedback').textContent = '⭕ せいかい！よくできました！';
+        document.getElementById('feedback').className = 'feedback ok';
+      } else {
+        inp.classList.add('wrong');
+        document.getElementById('feedback').textContent = `❌ ざんねん！「${correct}」だよ`;
+        document.getElementById('feedback').className = 'feedback ng';
+        document.getElementById('q-hint').textContent = `→ ${correct}`;
+      }
+      updateScore();
+      document.getElementById('next-btn').classList.add('visible');
+    }
+
+    function showResult() {
+      document.getElementById('quiz-card').style.display = 'none';
+      const r = document.getElementById('result-card');
+      r.classList.add('visible');
+      const pct = Math.round(score / totalQ * 100);
+      document.getElementById('result-score').textContent = `${score} / ${totalQ}`;
+      let stars = '', msg = '';
+      if (pct >= 90) { stars = '⭐⭐⭐'; msg = 'すばらしい！かんぺき！'; }
+      else if (pct >= 70) { stars = '⭐⭐'; msg = 'よくできました！もうすこし！'; }
+      else { stars = '⭐'; msg = 'もういちど　ちょうせんしよう！'; }
+      document.getElementById('result-stars').textContent = stars;
+      document.getElementById('result-msg').textContent = msg;
+    }
+
+    function restart() {
+      score = 0;
+      answered = 0;
+      answeredFlag = false;
+      updateScore();
+      document.getElementById('quiz-card').style.display = '';
+      document.getElementById('result-card').classList.remove('visible');
+      document.getElementById('feedback').textContent = '';
+      document.getElementById('next-btn').classList.remove('visible');
+      document.getElementById('prog').style.width = '0%';
+      nextQuestion();
+    }
+
+    document.getElementById('type-input').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') checkType();
+    });
+
+    renderGroupTabs();
+    nextQuestion();
+    updateScore();
+  </script>
+</body>
+</html>
