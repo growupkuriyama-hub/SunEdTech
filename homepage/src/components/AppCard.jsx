@@ -1,8 +1,13 @@
 import styles from './AppCard.module.css';
 
 export default function AppCard({ app }) {
+  const cardStyle = {
+    '--card-accent': app.color || '#F97316',
+    '--card-bg': app.bgColor || '#FFF7ED',
+  };
+
   return (
-    <article className={styles.card}>
+    <article className={styles.card} style={cardStyle}>
       <div className={styles.cardHeader}>
         <div className={styles.iconWrap}>
           <span className={styles.icon}>{app.icon}</span>

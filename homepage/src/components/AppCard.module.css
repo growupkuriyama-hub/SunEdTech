@@ -5,68 +5,111 @@
   padding: 28px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
   box-shadow: var(--shadow-card);
   transition: box-shadow 0.25s, transform 0.25s, border-color 0.25s;
 }
+
 .card:hover {
   box-shadow: var(--shadow-card-hover);
   transform: translateY(-4px);
   border-color: var(--border-mid);
 }
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .iconWrap {
-  width: 60px; height: 60px;
+  width: 60px;
+  height: 60px;
   border-radius: var(--radius-md);
-  background: var(--card-bg);
+  background: var(--card-bg, #fff7ed);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
+
 .icon {
   font-size: 28px;
   line-height: 1;
 }
-.body {
-  flex: 1;
+
+.meta {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.tags {
-  display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   gap: 6px;
 }
-.tag {
+
+.freeBadge,
+.paidBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 24px;
   padding: 3px 10px;
   border-radius: 999px;
   font-size: 11px;
-  font-weight: 600;
-  background: var(--card-bg);
-  color: var(--card-accent);
-  border: 1px solid var(--card-accent);
-  opacity: 0.9;
+  font-weight: 800;
+  line-height: 1;
 }
-.name {
+
+.freeBadge {
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+}
+
+.paidBadge {
+  background: #fff7ed;
+  color: #c2410c;
+  border: 1px solid #fed7aa;
+}
+
+.title {
   font-family: var(--font-display);
   font-size: 20px;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--text-primary);
   letter-spacing: -0.01em;
   line-height: 1.25;
 }
-.nameJa {
+
+.titleJa {
   font-size: 12px;
   color: var(--text-light);
-  font-weight: 500;
-  margin-top: -6px;
+  font-weight: 600;
+  margin-top: -8px;
 }
+
 .description {
   font-size: 14px;
   color: var(--text-secondary);
   line-height: 1.75;
 }
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: auto;
+}
+
+.tag {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--card-bg, #fff7ed);
+  color: var(--card-accent, #f97316);
+  border: 1px solid var(--card-accent, #f97316);
+  opacity: 0.9;
+}
+
 .target {
   display: flex;
   align-items: center;
@@ -75,28 +118,44 @@
   color: var(--text-light);
   font-weight: 500;
 }
-.targetIcon { font-size: 13px; }
+
+.targetIcon {
+  font-size: 13px;
+}
+
 .btn {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
+  width: 100%;
+  margin-top: 4px;
   padding: 14px 20px;
-  background: var(--card-accent);
+  background: var(--card-accent, #f97316);
   color: white;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 800;
   border-radius: var(--radius-md);
   transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
-  box-shadow: 0 3px 10px color-mix(in srgb, var(--card-accent) 35%, transparent);
+  box-shadow: 0 3px 10px color-mix(in srgb, var(--card-accent, #f97316) 35%, transparent);
 }
+
 .btn:hover {
-  opacity: 0.88;
+  opacity: 0.9;
   transform: translateY(-1px);
-  box-shadow: 0 5px 16px color-mix(in srgb, var(--card-accent) 45%, transparent);
+  box-shadow: 0 5px 16px color-mix(in srgb, var(--card-accent, #f97316) 45%, transparent);
 }
+
+.btn:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--card-accent, #f97316) 32%, white);
+  outline-offset: 3px;
+}
+
 .btnArrow {
   font-size: 14px;
   transition: transform 0.2s;
 }
-.btn:hover .btnArrow { transform: translate(2px, -2px); }
+
+.btn:hover .btnArrow {
+  transform: translate(2px, -2px);
+}
