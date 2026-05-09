@@ -25,7 +25,7 @@ export default function AppCard({ app }) {
 
 
       {app.nameJa && (
-        <h3 className={styles.titleJa}>{app.nameJa}</h3>
+<h3 className={styles.title}>{app.nameJa}</h3>
       )}
 
       {app.description && (
