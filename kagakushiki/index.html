@@ -169,15 +169,17 @@
       margin-top: 10px;
     }
     .hint-toggle {
-      font-size: 12px;
-      color: var(--text3);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--blue);
       cursor: pointer;
-      text-decoration: underline;
-      text-underline-offset: 2px;
-      background: none;
-      border: none;
-      padding: 0;
+      background: var(--surface2);
+      border: 1px solid var(--blue);
+      border-radius: var(--radius);
+      padding: 5px 14px;
+      transition: background 0.1s;
     }
+    .hint-toggle:hover { background: var(--border); }
     .hint-box {
       margin-top: 6px;
       font-size: 13px;
@@ -211,8 +213,13 @@
     .btn-next:hover { background: var(--border); }
 
     .hint-note {
-      font-size: 12px;
-      color: var(--text3);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text2);
+      background: var(--surface2);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 8px 12px;
       margin-top: 10px;
     }
 
@@ -407,7 +414,7 @@
         <div class="q-num">問 ${cur + 1}　<span style="color:var(--text3)">${q.category}</span></div>
         <div class="q-text">「${q.name}」の化学式は？</div>
         <div class="input-row">
-          <input class="formula-input" id="ans" placeholder="例: H₂O" autocomplete="off" spellcheck="false" />
+          <input class="formula-input" id="ans" placeholder="例: H2O, CuCl2" autocomplete="off" spellcheck="false" />
           <button class="btn" id="btn-check">確認</button>
         </div>
         <div class="hint-row">
@@ -417,7 +424,7 @@
         <div class="feedback" id="fb"></div>
         <button class="btn-next" id="btn-next">${cur + 1 < questions.length ? '次の問題 →' : '結果を見る'}</button>
       </div>
-      <p class="hint-note">数字は普通の数字でも正解になります（例: H2O, CuCl2）</p>
+      <p class="hint-note">✏️ 入力例: H2O, CuCl2, Fe2O3, NaHCO3 など（小さい数字はそのまま普通の数字でOK）</p>
     `;
 
     document.getElementById('sel-count').onchange = e => { qCount = +e.target.value; };
