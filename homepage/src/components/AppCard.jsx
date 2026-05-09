@@ -20,13 +20,13 @@ export default function AppCard({ app }) {
           <span>{app.target}</span>
         </div>
       </div>
-      <a
+      
         href={app.url}
         target="_blank"
         rel="noopener noreferrer"
         className={styles.btn}
       >
-        無料で試す
+        {app.paid ? '有料版を購入' : '無料で試す'}
         <span className={styles.btnArrow}>↗</span>
       </a>
     </article>
