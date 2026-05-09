@@ -29,8 +29,8 @@ export default function ParentsSection() {
             </div>
           </div>
           <div className={styles.right}>
-            {USE_CASES.map((u, i) => (
-              <div className={styles.useCase} key={i}>
+            {USE_CASES.map((u) => (
+              <div className={styles.useCase} key={u.title}>
                 <span className={styles.useCaseIcon}>{u.icon}</span>
                 <div>
                   <div className={styles.useCaseTitle}>{u.title}</div>
