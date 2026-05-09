@@ -49,7 +49,7 @@ export const APP_LIST = [
     description: "速さ・分数・割合・体積など5ジャンルからランダムに出題し続けます。解説つき。",
     target: "小5 ／ 文章題の総合練習",
     tags: ["算数", "文章題"],
-    url: "https://sun-ed-tech-s5bunsho.vercel.app/",
+    url: "https://s5bunshodai.pages.dev/",
     color: "#185FA5",
     bgColor: "#EFF6FF",
     icon: "🧮",
