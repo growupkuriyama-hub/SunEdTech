@@ -1,0 +1,12 @@
+{
+  "name": "math-science-quiz",
+  "version": "1.0.0",
+  "description": "Math & Science English Vocabulary Quiz",
+  "scripts": {
+    "start": "npx serve .",
+    "build": "echo 'Static site — no build step required'"
+  },
+  "devDependencies": {
+    "serve": "^14.2.3"
+  }
+}
