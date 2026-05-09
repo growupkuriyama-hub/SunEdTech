@@ -42,4 +42,17 @@ export const APP_LIST = [
     bgColor: "#F5F3FF",
     icon: "➗",
   },
+  {
+    id: "math-practice",
+    paid: false,
+    name: "Math Word Problem Practice",
+    nameJa: "算数文章題 練習",
+    description: "速さ・分数・割合・体積など5ジャンルからランダムに出題し続けます。解説つき。",
+    target: "小5 ／ 文章題の総合練習",
+    tags: ["算数", "文章題"],
+    url: "https://s5bunshodai.pages.dev/",
+    color: "#185FA5",
+    bgColor: "#EFF6FF",
+    icon: "🧮",
+  }
 ];
