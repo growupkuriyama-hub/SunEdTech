@@ -10,6 +10,9 @@ export default function Footer() {
           <span className={styles.sunIcon} aria-hidden="true">☀</span>
           <div>
             <div className={styles.brandJa}>サン教育開発システム</div>
+<div className={styles.address}>
+  〒177-0044　東京都練馬区石神井町４－８－３
+</div>
             <div className={styles.brandEn}>Sun Educational Development Systems</div>
           </div>
         </div>
