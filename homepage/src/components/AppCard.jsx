@@ -1,9 +1,37 @@
 import styles from './AppCard.module.css';
 
 export default function AppCard({ app }) {
+  const accentColor = app.color || '#F97316';
+  const bgColor = app.bgColor || '#FFF7ED';
+
   const cardStyle = {
-    '--card-accent': app.color || '#F97316',
-    '--card-bg': app.bgColor || '#FFF7ED',
+    '--card-accent': accentColor,
+    '--card-bg': bgColor,
+  };
+
+  // ボタンは実画面で確実に見えるよう、重要な見た目を inline style でも指定します。
+  // CSS Modules や CSS 変数の反映が遅れても、背景色・文字色・サイズは崩れません。
+  const buttonStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '6px',
+    width: '100%',
+    marginTop: '8px',
+    padding: '14px 20px',
+    backgroundColor: accentColor,
+    color: '#FFFFFF',
+    fontSize: '15px',
+    fontWeight: 800,
+    lineHeight: 1.2,
+    borderRadius: '14px',
+    border: '2px solid transparent',
+    boxShadow: '0 4px 14px rgba(0, 0, 0, 0.16)',
+    textDecoration: 'none',
+    opacity: 1,
+    visibility: 'visible',
+    position: 'relative',
+    zIndex: 2,
   };
 
   return (
@@ -41,11 +69,12 @@ export default function AppCard({ app }) {
 
       <a
         className={styles.btn}
+        style={buttonStyle}
         href={app.url}
         target="_blank"
         rel="noopener noreferrer"
       >
-        {app.paid ? '有料版を購入' : '無料で試す'}
+        <span>{app.paid ? '有料版を購入' : '無料で試す'}</span>
         <span className={styles.btnArrow}>↗</span>
       </a>
     </article>
