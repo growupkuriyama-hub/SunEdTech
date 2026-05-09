@@ -3,14 +3,16 @@ import { APP_LIST } from '../data';
 import AppCard from './AppCard';
 import styles from './AppsSection.module.css';
 
-const ALL_TAGS = ['すべて', ...new Set(APP_LIST.flatMap(app => app.tags))];
+const ALL_TAGS = ['すべて', '無料版', ...new Set(APP_LIST.flatMap(app => app.tags))];
 
 export default function AppsSection() {
   const [activeTag, setActiveTag] = useState('すべて');
 
-  const filtered = activeTag === 'すべて'
-    ? APP_LIST
-    : APP_LIST.filter(app => app.tags.includes(activeTag));
+const filtered = activeTag === 'すべて'
+  ? APP_LIST
+  : activeTag === '無料版'
+  ? APP_LIST.filter(app => !app.paid)
+  : APP_LIST.filter(app => app.tags.includes(activeTag));
 
   return (
     <section className={styles.section} id="apps">
