@@ -20,7 +20,7 @@ let shuffledQueue = [];
 // ─── render skeleton ────────────────────────────────────────────────────────
 document.getElementById('app').innerHTML = `
   <div class="header">
-    <h1><i class="ti ti-math" aria-hidden="true"></i>算数文章題 練習</h1>
+    <h1><i class="ti ti-math" aria-hidden="true"></i>小5学校範囲文章題徹底練習ドリル</h1>
     <span class="badge">小学5年生</span>
   </div>
 
@@ -57,6 +57,19 @@ document.getElementById('app').innerHTML = `
       <i class="ti ti-refresh" aria-hidden="true"></i>次の問題
     </button>
   </div>
+
+  <div class="scratchpad" aria-label="計算スペース">
+    <div class="scratchpad-header">
+      <div>
+        <div class="scratchpad-title"><i class="ti ti-pencil" aria-hidden="true"></i>計算スペース</div>
+        <div class="scratchpad-note">スマホ・タブレット・タッチペン・マウスで自由に書けます。</div>
+      </div>
+      <button class="btn btn-small" id="clearScratchBtn" type="button">
+        <i class="ti ti-eraser" aria-hidden="true"></i>消す
+      </button>
+    </div>
+    <canvas id="scratchCanvas" class="scratch-canvas"></canvas>
+  </div>
 `;
 
 // ─── events ─────────────────────────────────────────────────────────────────
@@ -72,6 +85,8 @@ document.getElementById('catBar').addEventListener('click', e => {
 
 document.getElementById('checkBtn').addEventListener('click', checkAnswer);
 document.getElementById('nextBtn').addEventListener('click', loadProblem);
+document.getElementById('clearScratchBtn').addEventListener('click', clearScratchpad);
+initScratchpad();
 
 // ─── local problem selection ────────────────────────────────────────────────
 function getProblemsForSelectedCategory() {
@@ -111,6 +126,7 @@ function structuredCloneSafe(value) {
 
 function loadProblem() {
   answered = false;
+  clearScratchpad();
   document.getElementById('feedback').style.display = 'none';
   document.getElementById('checkBtn').style.display = 'none';
   document.getElementById('problemContent').style.display = 'none';
@@ -166,6 +182,88 @@ function escapeHtml(str) {
     "'": '&#39;',
     '"': '&quot;',
   }[ch]));
+}
+
+
+// ─── scratchpad ─────────────────────────────────────────────────────────────
+function initScratchpad() {
+  const canvas = document.getElementById('scratchCanvas');
+  const ctx = canvas.getContext('2d');
+  let drawing = false;
+  let lastPoint = null;
+
+  function fitCanvas() {
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    const oldImage = canvas.width && canvas.height ? ctx.getImageData(0, 0, canvas.width, canvas.height) : null;
+
+    canvas.width = Math.max(1, Math.round(rect.width * dpr));
+    canvas.height = Math.max(1, Math.round(rect.height * dpr));
+
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.scale(dpr, dpr);
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim() || '#1a1a18';
+
+    if (oldImage) {
+      const temp = document.createElement('canvas');
+      temp.width = oldImage.width;
+      temp.height = oldImage.height;
+      temp.getContext('2d').putImageData(oldImage, 0, 0);
+      ctx.drawImage(temp, 0, 0, rect.width, rect.height);
+    }
+  }
+
+  function getPoint(event) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top,
+    };
+  }
+
+  function startDrawing(event) {
+    event.preventDefault();
+    drawing = true;
+    lastPoint = getPoint(event);
+    canvas.setPointerCapture?.(event.pointerId);
+  }
+
+  function draw(event) {
+    if (!drawing || !lastPoint) return;
+    event.preventDefault();
+    const point = getPoint(event);
+    ctx.beginPath();
+    ctx.moveTo(lastPoint.x, lastPoint.y);
+    ctx.lineTo(point.x, point.y);
+    ctx.stroke();
+    lastPoint = point;
+  }
+
+  function stopDrawing(event) {
+    if (!drawing) return;
+    drawing = false;
+    lastPoint = null;
+    if (event?.pointerId !== undefined) canvas.releasePointerCapture?.(event.pointerId);
+  }
+
+  window.addEventListener('resize', fitCanvas);
+  canvas.addEventListener('pointerdown', startDrawing);
+  canvas.addEventListener('pointermove', draw);
+  canvas.addEventListener('pointerup', stopDrawing);
+  canvas.addEventListener('pointercancel', stopDrawing);
+  canvas.addEventListener('pointerleave', stopDrawing);
+
+  requestAnimationFrame(fitCanvas);
+}
+
+function clearScratchpad() {
+  const canvas = document.getElementById('scratchCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 // ─── check answer ────────────────────────────────────────────────────────────

@@ -266,3 +266,69 @@ body {
   .stat-val { font-size: 20px; }
   .problem-card { padding: 1.25rem; }
 }
+
+
+.scratchpad {
+  background: var(--bg-primary);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.scratchpad-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.scratchpad-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.scratchpad-title i { color: var(--blue); font-size: 18px; }
+
+.scratchpad-note {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+.btn-small {
+  padding: 7px 12px;
+  font-size: 12px;
+  flex: 0 0 auto;
+}
+
+.scratch-canvas {
+  width: 100%;
+  height: 220px;
+  display: block;
+  background:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px),
+    var(--bg-primary);
+  background-size: 24px 24px;
+  border: 0.5px solid var(--border-md);
+  border-radius: var(--radius-md);
+  cursor: crosshair;
+  touch-action: none;
+}
+
+@media (max-width: 480px) {
+  body { padding: 1rem 0.75rem; }
+  .header { align-items: flex-start; gap: 10px; }
+  .header h1 { font-size: 18px; line-height: 1.35; }
+  .btn-row { display: grid; grid-template-columns: 1fr 1fr; }
+  .btn { justify-content: center; padding-left: 12px; padding-right: 12px; }
+  .scratchpad { padding: 0.85rem; }
+  .scratch-canvas { height: 260px; }
+}
