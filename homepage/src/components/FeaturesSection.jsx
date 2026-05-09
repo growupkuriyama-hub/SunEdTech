@@ -33,8 +33,8 @@ export default function FeaturesSection() {
           <h2 className={styles.title}>4つの特徴</h2>
         </div>
         <div className={styles.grid}>
-          {FEATURES.map((f, i) => (
-            <div className={styles.card} key={i}>
+          {FEATURES.map((f) => (
+            <div className={styles.card} key={f.title}>
               <div className={styles.iconWrap}>
                 <span className={styles.icon}>{f.icon}</span>
               </div>

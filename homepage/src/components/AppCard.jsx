@@ -10,31 +10,6 @@ export default function AppCard({ app }) {
     '--card-bg': bgColor,
   };
 
-  // ボタンは実画面で確実に見えるよう、重要な見た目を inline style でも指定します。
-  // CSS Modules や CSS 変数の反映が遅れても、背景色・文字色・サイズは崩れません。
-  const buttonStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '6px',
-    width: '100%',
-    marginTop: '8px',
-    padding: '14px 20px',
-    backgroundColor: accentColor,
-    color: '#FFFFFF',
-    fontSize: '15px',
-    fontWeight: 800,
-    lineHeight: 1.2,
-    borderRadius: '14px',
-    border: '2px solid transparent',
-    boxShadow: '0 4px 14px rgba(0, 0, 0, 0.16)',
-    textDecoration: 'none',
-    opacity: 1,
-    visibility: 'visible',
-    position: 'relative',
-    zIndex: 2,
-  };
-
   return (
     <article className={styles.card} style={cardStyle}>
       <div className={styles.cardHeader}>
@@ -70,7 +45,6 @@ export default function AppCard({ app }) {
 
       <a
         className={styles.btn}
-        style={buttonStyle}
         href={app.url}
         target="_blank"
         rel="noopener noreferrer"

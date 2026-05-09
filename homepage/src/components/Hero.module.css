@@ -129,7 +129,6 @@
 .stats {
   display: flex;
   align-items: center;
-  gap: 0;
   flex-wrap: wrap;
   gap: 8px;
 }
