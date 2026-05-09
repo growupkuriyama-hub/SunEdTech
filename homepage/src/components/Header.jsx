@@ -17,6 +17,7 @@ export default function Header() {
           <span className={styles.sunIcon} aria-hidden="true">☀</span>
           <div className={styles.logoText}>
             <span className={styles.logoJa}>サン教育開発システム</span>
+<span className={styles.logoAddress}>練馬区石神井町４－８－３</span>
             <span className={styles.logoEn}>SunEdTech</span>
           </div>
         </a>

@@ -9,7 +9,7 @@ export const APP_LIST = [
     description: "短い英文を読んで、科学の内容を理解する英語×理科クイズ教材。読む力と科学的思考を同時に伸ばします。",
     target: "小6〜中3 ／ 英検準2級〜2級前後",
     tags: ["英語", "理科", "リーディング"],
-    url: "https://example.com/science-reading-lab",
+    url: "https://sun-ed-tech-eiken1.vercel.app/",
     color: "#3B82F6",        // カードアクセント色
     bgColor: "#EFF6FF",
     icon: "🔬",

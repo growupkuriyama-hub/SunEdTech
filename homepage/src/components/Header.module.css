@@ -91,3 +91,9 @@
 @media (min-width: 640px) {
   .navLink { display: inline-flex; }
 }
+.logoAddress {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-light);
+  letter-spacing: 0.01em;
+}
