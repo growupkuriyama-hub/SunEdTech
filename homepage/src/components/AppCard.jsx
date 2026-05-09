@@ -20,7 +20,8 @@ export default function AppCard({ app }) {
           <span>{app.target}</span>
         </div>
       </div>
-      
+
+      <a
         href={app.url}
         target="_blank"
         rel="noopener noreferrer"
