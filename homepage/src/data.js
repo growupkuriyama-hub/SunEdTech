@@ -26,7 +26,7 @@ export const APP_LIST = [
     bgColor: "#FFF7ED",
     icon: "⌨️",
   },
-    id: "yakubun-renshuu",
+    {id: "yakubun-renshuu",
     name: "Fraction Simplification Practice",
     nameJa: "分数の約分れんしゅう",
     description: "かんたん・ふつう・むずかしいの3段階で約分を練習できるアプリ。ヒント機能つきで、つまずいても安心です。",
