@@ -26,11 +26,11 @@ export function sampleN(array, n) {
  * クイズ問題を1問生成する
  * @param {Object} wordEntry - { word, meaning, level, partOfSpeech }
  * @param {Array} wordPool - 誤答選択肢を選ぶためのプール
- * @param {'en-to-ja'|'ja-to-en'} type - 問題タイプ
+ * @param {'en2ja'|'ja2en'} type - 問題タイプ
  * @returns {Object} question
  */
 export function generateQuestion(wordEntry, wordPool, type) {
-  const isEnToJa = type === 'en-to-ja';
+  const isEnToJa = type === 'en2ja';
 
   // 正解
   const correct = isEnToJa ? wordEntry.meaning : wordEntry.word;
@@ -53,10 +53,12 @@ export function generateQuestion(wordEntry, wordPool, type) {
     word: wordEntry.word,
     meaning: wordEntry.meaning,
     type,
+    partOfSpeech: wordEntry.partOfSpeech || 'other',
     question: isEnToJa ? wordEntry.word : wordEntry.meaning,
     questionLabel: isEnToJa ? '英語' : '日本語',
     answerLabel: isEnToJa ? '日本語の意味' : '英単語',
     correct,
+    correctAnswer: correct,
     choices,
   };
 }
@@ -76,7 +78,7 @@ export function generateQuiz(wordPool, count) {
   const selected = sampleN(wordPool, Math.min(count, wordPool.length));
 
   return selected.map((wordEntry) => {
-    const type = Math.random() < 0.5 ? 'en-to-ja' : 'ja-to-en';
+    const type = Math.random() < 0.5 ? 'en2ja' : 'ja2en';
     return generateQuestion(wordEntry, wordPool, type);
   });
 }
@@ -98,8 +100,8 @@ export function generateWeakQuiz(weakWords, fullPool, count) {
   pool = pool.slice(0, count);
 
   return pool.map((wordEntry) => {
-    const type = Math.random() < 0.5 ? 'en-to-ja' : 'ja-to-en';
-    const combinedPool = fullPool.length >= 4 ? fullPool : wordPool;
+    const type = Math.random() < 0.5 ? 'en2ja' : 'ja2en';
+    const combinedPool = fullPool && fullPool.length >= 4 ? fullPool : weakWords;
     return generateQuestion(wordEntry, combinedPool, type);
   });
 }

@@ -24,7 +24,7 @@ function TopScreen({ onStart, onStartReview }) {
   const totalCorrect = stats.totalCorrect || 0;
   const rate = totalAnswers > 0 ? Math.round((totalCorrect / totalAnswers) * 100) : null;
 
-  const allWords = Object.values(wordsByLevel).flat();
+  const allWords = wordsByLevel.all;
   const weakWords = getWeakWords(allWords);
 
   function handleReset() {
@@ -354,7 +354,7 @@ export default function App() {
   }
 
   function startReview(count) {
-    const allWords = Object.values(wordsByLevel).flat();
+    const allWords = wordsByLevel.all;
     const weakWords = getWeakWords(allWords);
     if (weakWords.length < 4) {
       alert("苦手単語が4語以上になると復習モードが使えます。");
@@ -393,7 +393,7 @@ export default function App() {
       alert("間違えた単語が4語未満のため復習モードに入れません。");
       return;
     }
-    const allWords = Object.values(wordsByLevel).flat();
+    const allWords = wordsByLevel.all;
     const pool = wordsByLevel["all"] || allWords;
     const qs = generateWeakQuiz(wrongWords, pool, wrongWords.length);
     if (qs.length === 0) {
