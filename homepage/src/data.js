@@ -4,7 +4,7 @@
 export const APP_LIST = [
   {
     id: "science-reading-lab",
-  paid: false,   // ← 追加
+    paid: false,
     name: "Science Reading in English",
     nameJa: "英検2級トレーニング 科学DE英語",
     description: "短い英文を読んで、科学の内容を理解する英語×理科クイズ教材。読む力と科学的思考を同時に伸ばします。",
@@ -17,7 +17,7 @@ export const APP_LIST = [
   },
   {
     id: "romaji-renshuu",
-  paid: false,   // ← 追加
+    paid: false,
     name: "Romaji Practice",
     nameJa: "ローマ字れんしゅう",
     description: "キーボードでローマ字を入力する練習アプリ。小学生〜中学生のローマ字・タイピング入門に最適です。",
@@ -28,8 +28,9 @@ export const APP_LIST = [
     bgColor: "#FFF7ED",
     icon: "⌨️",
   },
-    {id: "yakubun-renshuu",
-  paid: false,   // ← 追加
+  {
+    id: "yakubun-renshuu",
+    paid: false,
     name: "Fraction Simplification Practice",
     nameJa: "分数の約分れんしゅう",
     description: "かんたん・ふつう・むずかしいの3段階で約分を練習できるアプリ。ヒント機能つきで、つまずいても安心です。",
@@ -39,5 +40,18 @@ export const APP_LIST = [
     color: "#8B5CF6",
     bgColor: "#F5F3FF",
     icon: "➗",
+  },
+  {
+    id: "math-practice",
+    paid: false,
+    name: "Math Word Problem Practice",
+    nameJa: "算数文章題 練習",
+    description: "速さ・分数・割合・体積など5ジャンルからランダムに出題し続けます。解説つき。",
+    target: "小5 ／ 文章題の総合練習",
+    tags: ["算数", "文章題"],
+    url: "https://math-practice.vercel.app/",
+    color: "#185FA5",
+    bgColor: "#EFF6FF",
+    icon: "🧮",
   },
 ];
