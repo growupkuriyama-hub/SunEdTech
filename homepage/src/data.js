@@ -55,5 +55,18 @@ export const APP_LIST = [
     color: "#0EA5E9",
     bgColor: "#E0F2FE",
     icon: "🧮",
-  }
+  },
+  {
+    id: "kagakushiki-renshuu",
+    paid: false,
+    name: "Chemical Formula Practice",
+    nameJa: "化学式練習",
+    description: "42種類の化学式をランダム出題。単体・化合物・酸化物などカテゴリ絞り込みや間違えた問題だけやり直す機能つき。",
+    target: "中1～中3 ／ 化学式の暗記・定着",
+    tags: ["理科", "化学", "化学式"],
+    url: "https://sun-ed-tech-kagakushiki.pages.dev/",
+    color: "#10B981",
+    bgColor: "#ECFDF5",
+    icon: "⚗️",
+  },
 ];
