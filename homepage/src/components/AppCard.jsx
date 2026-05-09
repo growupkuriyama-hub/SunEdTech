@@ -13,8 +13,7 @@ export default function AppCard({ app }) {
             <span key={tag} className={styles.tag}>{tag}</span>
           ))}
         </div>
-        <h3 className={styles.name}>{app.name}</h3>
-        <p className={styles.nameJa}>{app.nameJa}</p>
+        <h3 className={styles.name}>{app.nameJa}</p>
         <p className={styles.description}>{app.description}</p>
         <div className={styles.target}>
           <span className={styles.targetIcon}>🎯</span>
