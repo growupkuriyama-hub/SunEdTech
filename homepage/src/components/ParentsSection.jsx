@@ -19,7 +19,7 @@ export default function ParentsSection() {
               安心して使える<br />Web教材です
             </h2>
             <p className={styles.desc}>
-              SunEdTechの教材は、塾の指導経験をもとに実際の学習現場のニーズに応えて開発されています。
+              サン教育開発システムの教材は、高円寺数理塾および学習塾グロウアップでの学習現場のニーズに応えて開発されています。
               広告表示なし、個人情報の収集なし、ブラウザだけで完結する安全な学習ツールです。
             </p>
             <div className={styles.trustBadges}>
