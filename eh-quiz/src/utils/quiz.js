@@ -1,107 +1,74 @@
-/**
- * クイズロジック
- * 外部API通信なし・fetch不使用・完全静的
- */
-
-/**
- * 配列をシャッフルする（Fisher-Yatesアルゴリズム）
- */
-export function shuffle(array) {
-  const arr = [...array];
-  for (let i = arr.length - 1; i > 0; i--) {
+export function shuffle(items) {
+  const array = [...items];
+  for (let i = array.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+    const temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
   }
-  return arr;
+  return array;
 }
 
-/**
- * 配列からランダムにn個取得
- */
-export function sampleN(array, n) {
-  return shuffle(array).slice(0, n);
+export function pickMany(items, count) {
+  return shuffle(items).slice(0, Math.min(count, items.length));
 }
 
-/**
- * クイズ問題を1問生成する
- * @param {Object} wordEntry - { word, meaning, level, partOfSpeech }
- * @param {Array} wordPool - 誤答選択肢を選ぶためのプール
- * @param {'en2ja'|'ja2en'} type - 問題タイプ
- * @returns {Object} question
- */
-export function generateQuestion(wordEntry, wordPool, type) {
-  const isEnToJa = type === 'en2ja';
+function uniqueChoices(choices) {
+  const seen = new Set();
+  const result = [];
+  choices.forEach((choice) => {
+    if (choice && !seen.has(choice)) {
+      seen.add(choice);
+      result.push(choice);
+    }
+  });
+  return result;
+}
 
-  // 正解
-  const correct = isEnToJa ? wordEntry.meaning : wordEntry.word;
-
-  // 誤答候補：同じ単語・同じ意味を除く
-  const wrongCandidates = wordPool.filter(
-    (w) => w.word !== wordEntry.word && w.meaning !== wordEntry.meaning
-  );
-
-  // 誤答3つ
-  const wrongs = sampleN(wrongCandidates, 3).map((w) =>
-    isEnToJa ? w.meaning : w.word
-  );
-
-  // 4択をシャッフル
-  const choices = shuffle([correct, ...wrongs]);
+export function makeQuestion(entry, pool) {
+  const type = Math.random() < 0.5 ? 'wordToMeaning' : 'meaningToWord';
+  const askMeaning = type === 'wordToMeaning';
+  const correctAnswer = askMeaning ? entry.meaning : entry.word;
+  const wrongSource = shuffle(pool).filter((item) => {
+    if (!item) return false;
+    if (item.word === entry.word) return false;
+    if (askMeaning && item.meaning === entry.meaning) return false;
+    if (!askMeaning && item.word === entry.word) return false;
+    return true;
+  });
+  const wrongChoices = uniqueChoices(
+    wrongSource.map((item) => (askMeaning ? item.meaning : item.word))
+  ).slice(0, 3);
+  const choices = shuffle(uniqueChoices([correctAnswer, ...wrongChoices]));
 
   return {
-    id: `${wordEntry.word}-${type}-${Date.now()}-${Math.random()}`,
-    word: wordEntry.word,
-    meaning: wordEntry.meaning,
+    word: entry.word,
+    meaning: entry.meaning,
+    level: entry.level,
+    partOfSpeech: entry.partOfSpeech || 'other',
     type,
-    partOfSpeech: wordEntry.partOfSpeech || 'other',
-    question: isEnToJa ? wordEntry.word : wordEntry.meaning,
-    questionLabel: isEnToJa ? '英語' : '日本語',
-    answerLabel: isEnToJa ? '日本語の意味' : '英単語',
-    correct,
-    correctAnswer: correct,
+    prompt: askMeaning ? entry.word : entry.meaning,
+    promptLabel: askMeaning ? '英単語の意味を選びましょう' : '意味に合う英単語を選びましょう',
+    correctAnswer,
     choices,
   };
 }
 
-/**
- * クイズセッションを生成する
- * @param {Array} wordPool - 出題対象単語
- * @param {number} count - 問題数
- * @returns {Array} questions
- */
-export function generateQuiz(wordPool, count) {
-  if (wordPool.length < 4) {
-    return [];
-  }
-
-  // 出題する単語をシャッフルして最大count個選ぶ
-  const selected = sampleN(wordPool, Math.min(count, wordPool.length));
-
-  return selected.map((wordEntry) => {
-    const type = Math.random() < 0.5 ? 'en2ja' : 'ja2en';
-    return generateQuestion(wordEntry, wordPool, type);
-  });
+export function makeQuiz(pool, count) {
+  if (!Array.isArray(pool) || pool.length < 4) return [];
+  return pickMany(pool, count)
+    .map((entry) => makeQuestion(entry, pool))
+    .filter((question) => question.choices.length === 4);
 }
 
-/**
- * 苦手単語クイズを生成する
- * @param {Array} weakWords - 苦手単語リスト（単語エントリ）
- * @param {Array} fullPool - 誤答候補プール
- * @param {number} count
- */
-export function generateWeakQuiz(weakWords, fullPool, count) {
-  if (weakWords.length < 1) return [];
-
-  // 苦手単語が少ない場合は繰り返す
-  let pool = [...weakWords];
-  while (pool.length < count) {
-    pool = [...pool, ...weakWords];
+export function makeReviewQuiz(reviewWords, fullPool, count) {
+  if (!Array.isArray(reviewWords) || reviewWords.length < 4) return [];
+  const source = [];
+  while (source.length < count) {
+    source.push(...shuffle(reviewWords));
   }
-  pool = pool.slice(0, count);
-
-  return pool.map((wordEntry) => {
-    const type = Math.random() < 0.5 ? 'en2ja' : 'ja2en';
-    const combinedPool = fullPool && fullPool.length >= 4 ? fullPool : weakWords;
-    return generateQuestion(wordEntry, combinedPool, type);
-  });
+  const pool = Array.isArray(fullPool) && fullPool.length >= 4 ? fullPool : reviewWords;
+  return source.slice(0, count)
+    .map((entry) => makeQuestion(entry, pool))
+    .filter((question) => question.choices.length === 4);
 }

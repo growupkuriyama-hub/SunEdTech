@@ -1,437 +1,329 @@
-import { useState, useEffect } from "react";
-import { wordsByLevel } from "./data/index.js";
-import { generateQuiz, generateWeakQuiz } from "./utils/quiz.js";
-import { loadStats, recordAnswer, getWeakWords, resetStats } from "./utils/storage.js";
+import { useMemo, useState } from 'react';
+import { wordsByLevel } from './data/index.js';
+import { makeQuiz, makeReviewQuiz } from './utils/quiz.js';
+import { getWeakWords, loadStats, recordAnswer, resetStats } from './utils/storage.js';
 
-// ========== 定数 ==========
 const LEVELS = [
-  { key: "elementary", label: "小学校" },
-  { key: "grade1",     label: "中1" },
-  { key: "grade2",     label: "中2" },
-  { key: "grade3",     label: "中3" },
-  { key: "all",        label: "全範囲" },
+  { key: 'elementary', label: '小学校' },
+  { key: 'grade1', label: '中1' },
+  { key: 'grade2', label: '中2' },
+  { key: 'grade3', label: '中3' },
+  { key: 'all', label: '全範囲' },
 ];
 
-const QUESTION_COUNTS = [10, 20, 50];
+const COUNTS = [10, 20, 50];
 
-// ========== トップ画面 ==========
-function TopScreen({ onStart, onStartReview }) {
-  const [level, setLevel] = useState("elementary");
+const POS_LABELS = {
+  noun: '名詞',
+  verb: '動詞',
+  adjective: '形容詞',
+  adverb: '副詞',
+  preposition: '前置詞',
+  conjunction: '接続詞',
+  pronoun: '代名詞',
+  phrase: '表現',
+  other: 'その他',
+};
+
+function getLevelCountText() {
+  return LEVELS.map((level) => {
+    const words = wordsByLevel[level.key] || [];
+    return `${level.label}: ${words.length}語`;
+  }).join(' / ');
+}
+
+function TopScreen({ onStart, onStartReview, refreshKey }) {
+  const [level, setLevel] = useState('elementary');
   const [count, setCount] = useState(10);
-  const stats = loadStats();
-
-  const totalAnswers = stats.totalAnswers || 0;
-  const totalCorrect = stats.totalCorrect || 0;
-  const rate = totalAnswers > 0 ? Math.round((totalCorrect / totalAnswers) * 100) : null;
-
-  const allWords = wordsByLevel.all;
-  const weakWords = getWeakWords(allWords);
+  const stats = useMemo(() => loadStats(), [refreshKey]);
+  const weakWords = useMemo(() => getWeakWords(wordsByLevel.all), [refreshKey]);
+  const rate = stats.totalAnswers > 0 ? Math.round((stats.totalCorrect / stats.totalAnswers) * 100) : 0;
 
   function handleReset() {
-    if (window.confirm("学習データをすべてリセットしますか？この操作は元に戻せません。")) {
-      resetStats();
-      window.location.reload();
-    }
+    const ok = window.confirm('学習データをリセットしますか？');
+    if (!ok) return;
+    resetStats();
+    window.location.reload();
   }
 
   return (
-    <div className="top-screen">
-      <div className="card">
-        <div className="top-title">
-          <span className="top-emoji">📚</span>
-          <h2>英単語クイズ</h2>
-          <p className="top-subtitle">中学卒業レベル</p>
-        </div>
-
-        {/* 累計スコア */}
-        {totalAnswers > 0 && (
-          <div className="stats-summary">
-            <span>📊 累計</span>
-            <strong>{totalAnswers}問</strong>
-            <span>正解</span>
-            <strong>{totalCorrect}問</strong>
-            <span className="rate-badge">{rate}%</span>
-          </div>
-        )}
-
-        {/* レベル選択 */}
-        <div className="section-label">📖 レベルを選ぶ</div>
-        <div className="level-buttons">
-          {LEVELS.map((l) => (
-            <button
-              key={l.key}
-              className={`btn ${level === l.key ? "btn-primary" : "btn-outline"}`}
-              onClick={() => setLevel(l.key)}
-            >
-              {l.label}
-            </button>
-          ))}
-        </div>
-
-        {/* 問題数選択 */}
-        <div className="section-label">🔢 問題数を選ぶ</div>
-        <div className="count-buttons">
-          {QUESTION_COUNTS.map((n) => (
-            <button
-              key={n}
-              className={`btn ${count === n ? "btn-accent" : "btn-outline"}`}
-              onClick={() => setCount(n)}
-            >
-              {n}問
-            </button>
-          ))}
-        </div>
-
-        {/* スタートボタン */}
-        <button
-          className="btn btn-primary btn-lg btn-block"
-          onClick={() => onStart(level, count)}
-        >
-          ▶ クイズをはじめる
-        </button>
-
-        {/* 苦手単語復習 */}
-        <button
-          className="btn btn-secondary btn-block"
-          onClick={() => onStartReview(count)}
-          disabled={weakWords.length < 4}
-          title={weakWords.length < 4 ? "苦手単語が4語以上になると使えます" : ""}
-        >
-          🔁 苦手単語を復習する
-          {weakWords.length > 0 && (
-            <span className="weak-count-badge">{weakWords.length}語</span>
-          )}
-        </button>
-        {weakWords.length < 4 && (
-          <p className="weak-hint">
-            ※ 苦手単語が4語以上になると復習モードが使えます（現在{weakWords.length}語）
-          </p>
-        )}
-
-        {/* リセット */}
-        {totalAnswers > 0 && (
-          <button className="btn btn-danger btn-sm" onClick={handleReset}>
-            🗑 学習データをリセット
-          </button>
-        )}
+    <section className="panel top-panel">
+      <div className="hero">
+        <div className="hero-mark">📚</div>
+        <h1>中学卒業レベル 英単語クイズ</h1>
+        <p>小学校内容も含めた英単語を、4択クイズで確認できます。</p>
       </div>
-    </div>
+
+      <div className="mini-info">{getLevelCountText()}</div>
+
+      {stats.totalAnswers > 0 && (
+        <div className="stats-box">
+          <span>累計 {stats.totalAnswers}問</span>
+          <span>正解 {stats.totalCorrect}問</span>
+          <strong>正答率 {rate}%</strong>
+        </div>
+      )}
+
+      <div className="control-block">
+        <h2>レベル</h2>
+        <div className="button-grid level-grid">
+          {LEVELS.map((item) => (
+            <button
+              key={item.key}
+              type="button"
+              className={level === item.key ? 'button selected' : 'button'}
+              onClick={() => setLevel(item.key)}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="control-block">
+        <h2>問題数</h2>
+        <div className="button-grid count-grid">
+          {COUNTS.map((item) => (
+            <button
+              key={item}
+              type="button"
+              className={count === item ? 'button selected accent' : 'button'}
+              onClick={() => setCount(item)}
+            >
+              {item}問
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <button type="button" className="main-button" onClick={() => onStart(level, count)}>
+        ▶ クイズをはじめる
+      </button>
+
+      <button
+        type="button"
+        className="sub-button"
+        onClick={() => onStartReview(count)}
+        disabled={weakWords.length < 4}
+      >
+        🔁 苦手単語だけ復習する（{weakWords.length}語）
+      </button>
+
+      {weakWords.length < 4 && (
+        <p className="hint-text">苦手単語が4語以上になると、復習モードが使えます。</p>
+      )}
+
+      {stats.totalAnswers > 0 && (
+        <button type="button" className="danger-button" onClick={handleReset}>
+          学習データをリセット
+        </button>
+      )}
+    </section>
   );
 }
 
-// ========== クイズ画面 ==========
 function QuizScreen({ questions, onFinish }) {
-  const [currentIdx, setCurrentIdx] = useState(0);
-  const [answers, setAnswers] = useState([]); // {word, correct, selected, isCorrect}
-  const [selectedAnswer, setSelectedAnswer] = useState(null);
-  const [showFeedback, setShowFeedback] = useState(false);
+  const [index, setIndex] = useState(0);
+  const [selected, setSelected] = useState('');
+  const [records, setRecords] = useState([]);
 
-  const question = questions[currentIdx];
-  const total = questions.length;
-  const correctCount = answers.filter((a) => a.isCorrect).length;
+  const question = questions[index];
+  const answered = selected !== '';
+  const isCorrect = answered && selected === question.correctAnswer;
+  const correctSoFar = records.filter((record) => record.isCorrect).length;
+  const progress = Math.round((index / questions.length) * 100);
 
-  function handleSelect(choice) {
-    if (showFeedback) return;
-    const isCorrect = choice === question.correctAnswer;
-    setSelectedAnswer(choice);
-    setShowFeedback(true);
-    recordAnswer(question.word, isCorrect);
-    setAnswers((prev) => [
-      ...prev,
+  function choose(choice) {
+    if (answered) return;
+    const ok = choice === question.correctAnswer;
+    setSelected(choice);
+    recordAnswer(question, ok);
+    setRecords((old) => [
+      ...old,
       {
         word: question.word,
         meaning: question.meaning,
-        correct: question.correctAnswer,
         selected: choice,
-        isCorrect,
-        type: question.type,
+        correctAnswer: question.correctAnswer,
+        isCorrect: ok,
       },
     ]);
   }
 
-  function handleNext() {
-    if (currentIdx + 1 >= total) {
-      onFinish(answers);
-    } else {
-      setCurrentIdx((i) => i + 1);
-      setSelectedAnswer(null);
-      setShowFeedback(false);
+  function next() {
+    if (index + 1 >= questions.length) {
+      const finalRecords = records.length === questions.length ? records : records;
+      onFinish(finalRecords);
+      return;
     }
+    setIndex((old) => old + 1);
+    setSelected('');
   }
 
-  function getChoiceClass(choice) {
-    if (!showFeedback) return "btn btn-outline choice-btn";
-    if (choice === question.correctAnswer) return "btn choice-btn choice-correct";
-    if (choice === selectedAnswer) return "btn choice-btn choice-wrong";
-    return "btn btn-outline choice-btn choice-disabled";
+  function choiceClass(choice) {
+    if (!answered) return 'choice-button';
+    if (choice === question.correctAnswer) return 'choice-button correct';
+    if (choice === selected) return 'choice-button wrong';
+    return 'choice-button muted';
   }
-
-  const progress = ((currentIdx) / total) * 100;
 
   return (
-    <div className="quiz-screen">
-      {/* ヘッダー情報 */}
-      <div className="quiz-header">
-        <span className="question-num">
-          {currentIdx + 1} / {total}
-        </span>
-        <span className="score-display">
-          ✅ {correctCount}問正解
-        </span>
+    <section className="quiz-layout">
+      <div className="quiz-topline">
+        <span>{index + 1} / {questions.length}</span>
+        <span>正解 {correctSoFar}問</span>
+      </div>
+      <div className="progress-bar" aria-hidden="true">
+        <div style={{ width: `${progress}%` }} />
       </div>
 
-      {/* プログレスバー */}
-      <div className="progress-bar">
-        <div className="progress-fill" style={{ width: `${progress}%` }} />
+      <div className="panel question-panel">
+        <p className="prompt-label">{question.promptLabel}</p>
+        <div className="prompt-text">{question.prompt}</div>
+        <p className="pos-text">{POS_LABELS[question.partOfSpeech] || ''}</p>
       </div>
 
-      {/* 問題カード */}
-      <div className="card question-card">
-        <div className="question-type-label">
-          {question.type === "en2ja" ? "🇬🇧 英語→日本語" : "🇯🇵 日本語→英語"}
-        </div>
-        <div className="question-text">
-          {question.type === "en2ja" ? question.word : question.meaning}
-        </div>
-        {question.partOfSpeech && (
-          <div className="part-of-speech">
-            {partOfSpeechLabel(question.partOfSpeech)}
-          </div>
-        )}
-      </div>
-
-      {/* 選択肢 */}
-      <div className="choices">
-        {question.choices.map((choice, i) => (
-          <button
-            key={i}
-            className={getChoiceClass(choice)}
-            onClick={() => handleSelect(choice)}
-          >
+      <div className="choices-grid">
+        {question.choices.map((choice) => (
+          <button key={choice} type="button" className={choiceClass(choice)} onClick={() => choose(choice)}>
             {choice}
           </button>
         ))}
       </div>
 
-      {/* フィードバック */}
-      {showFeedback && (
-        <div className={`feedback-box ${answers[answers.length - 1]?.isCorrect ? "feedback-correct" : "feedback-wrong"}`}>
-          {answers[answers.length - 1]?.isCorrect ? (
-            <span>🎉 正解！</span>
-          ) : (
-            <span>
-              ❌ 不正解　正解：<strong>{question.correctAnswer}</strong>
-            </span>
-          )}
+      {answered && (
+        <div className={isCorrect ? 'feedback good' : 'feedback bad'}>
+          {isCorrect ? '🎉 正解！' : `❌ 不正解　正解：${question.correctAnswer}`}
         </div>
       )}
 
-      {/* 次へボタン */}
-      {showFeedback && (
-        <button className="btn btn-primary btn-lg btn-block next-btn" onClick={handleNext}>
-          {currentIdx + 1 >= total ? "📊 結果を見る" : "次の問題 →"}
+      {answered && (
+        <button type="button" className="main-button" onClick={next}>
+          {index + 1 >= questions.length ? '結果を見る' : '次の問題へ'}
         </button>
       )}
-    </div>
+    </section>
   );
 }
 
-// ========== 結果画面 ==========
-function ResultScreen({ answers, onRetry, onReviewWrong, onTop }) {
-  const total = answers.length;
-  const correctCount = answers.filter((a) => a.isCorrect).length;
-  const rate = Math.round((correctCount / total) * 100);
-  const wrongAnswers = answers.filter((a) => !a.isCorrect);
-
-  function getEmoji() {
-    if (rate === 100) return "🏆";
-    if (rate >= 80) return "🌟";
-    if (rate >= 60) return "😊";
-    if (rate >= 40) return "😅";
-    return "💪";
-  }
-
-  function getMessage() {
-    if (rate === 100) return "パーフェクト！全問正解です！";
-    if (rate >= 80) return "すごい！よくできました！";
-    if (rate >= 60) return "なかなかいい調子です！";
-    if (rate >= 40) return "もう少し！頑張りましょう！";
-    return "復習してまた挑戦しましょう！";
-  }
+function ResultScreen({ records, onRetry, onTop, onReviewWrong }) {
+  const total = records.length;
+  const correct = records.filter((record) => record.isCorrect).length;
+  const wrong = records.filter((record) => !record.isCorrect);
+  const rate = total > 0 ? Math.round((correct / total) * 100) : 0;
 
   return (
-    <div className="result-screen">
-      <div className="card result-card">
-        <div className="result-emoji">{getEmoji()}</div>
-        <h2 className="result-title">結果発表</h2>
-        <p className="result-message">{getMessage()}</p>
+    <section className="panel result-panel">
+      <div className="result-mark">{rate >= 80 ? '🌟' : rate >= 50 ? '😊' : '💪'}</div>
+      <h1>結果</h1>
+      <div className="score-big">{correct} / {total}</div>
+      <p className="score-rate">正答率 {rate}%</p>
 
-        <div className="result-score-box">
-          <div className="result-score-main">
-            <span className="result-correct">{correctCount}</span>
-            <span className="result-slash"> / </span>
-            <span className="result-total">{total}</span>
-          </div>
-          <div className="result-rate">{rate}%</div>
-        </div>
-
-        {/* 間違えた単語リスト */}
-        {wrongAnswers.length > 0 && (
-          <div className="wrong-list">
-            <h3 className="wrong-list-title">❌ 間違えた単語 ({wrongAnswers.length}語)</h3>
-            <div className="wrong-items">
-              {wrongAnswers.map((a, i) => (
-                <div key={i} className="wrong-item">
-                  <span className="wrong-word">{a.word}</span>
-                  <span className="wrong-meaning">{a.meaning}</span>
-                  <span className="wrong-detail">
-                    あなたの答え：{a.selected}
-                  </span>
-                </div>
-              ))}
+      {wrong.length > 0 && (
+        <div className="wrong-list">
+          <h2>間違えた単語</h2>
+          {wrong.map((item) => (
+            <div className="wrong-row" key={`${item.word}-${item.selected}`}>
+              <strong>{item.word}</strong>
+              <span>{item.meaning}</span>
+              <small>あなたの答え：{item.selected}</small>
             </div>
-          </div>
-        )}
-
-        {/* ボタン群 */}
-        <div className="result-buttons">
-          {wrongAnswers.length >= 4 && (
-            <button className="btn btn-secondary btn-block" onClick={onReviewWrong}>
-              🔁 間違えた単語で復習する
-            </button>
-          )}
-          <button className="btn btn-primary btn-block" onClick={onRetry}>
-            ▶ もう一度同じ設定で
-          </button>
-          <button className="btn btn-outline btn-block" onClick={onTop}>
-            🏠 トップへ戻る
-          </button>
+          ))}
         </div>
-      </div>
-    </div>
+      )}
+
+      {wrong.length >= 4 && (
+        <button type="button" className="sub-button" onClick={() => onReviewWrong(wrong)}>
+          間違えた単語だけ復習する
+        </button>
+      )}
+      <button type="button" className="main-button" onClick={onRetry}>もう一度</button>
+      <button type="button" className="plain-button" onClick={onTop}>トップへ戻る</button>
+    </section>
   );
 }
 
-// ========== ユーティリティ ==========
-function partOfSpeechLabel(pos) {
-  const map = {
-    noun: "名詞",
-    verb: "動詞",
-    adjective: "形容詞",
-    adverb: "副詞",
-    preposition: "前置詞",
-    conjunction: "接続詞",
-    pronoun: "代名詞",
-    phrase: "フレーズ",
-    other: "",
-  };
-  return map[pos] ? `[${map[pos]}]` : "";
-}
-
-// ========== メインApp ==========
 export default function App() {
-  // screen: "top" | "quiz" | "result"
-  const [screen, setScreen] = useState("top");
-  const [currentLevel, setCurrentLevel] = useState("elementary");
-  const [currentCount, setCurrentCount] = useState(10);
+  const [screen, setScreen] = useState('top');
   const [questions, setQuestions] = useState([]);
-  const [answers, setAnswers] = useState([]);
-  const [isReviewMode, setIsReviewMode] = useState(false);
+  const [records, setRecords] = useState([]);
+  const [lastLevel, setLastLevel] = useState('elementary');
+  const [lastCount, setLastCount] = useState(10);
+  const [reviewMode, setReviewMode] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
-  function startQuiz(level, count) {
-    const pool = wordsByLevel[level] || wordsByLevel["all"];
-    const qs = generateQuiz(pool, count);
-    if (qs.length === 0) {
-      alert("この範囲の単語が足りません。別のレベルを選んでください。");
+  function start(level, count) {
+    const pool = wordsByLevel[level] || wordsByLevel.all;
+    const quiz = makeQuiz(pool, count);
+    if (quiz.length === 0) {
+      window.alert('この範囲の単語データが不足しています。');
       return;
     }
-    setCurrentLevel(level);
-    setCurrentCount(count);
-    setQuestions(qs);
-    setAnswers([]);
-    setIsReviewMode(false);
-    setScreen("quiz");
+    setLastLevel(level);
+    setLastCount(count);
+    setReviewMode(false);
+    setQuestions(quiz);
+    setRecords([]);
+    setScreen('quiz');
   }
 
   function startReview(count) {
-    const allWords = wordsByLevel.all;
-    const weakWords = getWeakWords(allWords);
-    if (weakWords.length < 4) {
-      alert("苦手単語が4語以上になると復習モードが使えます。");
+    const weakWords = getWeakWords(wordsByLevel.all);
+    const quiz = makeReviewQuiz(weakWords, wordsByLevel.all, count);
+    if (quiz.length === 0) {
+      window.alert('苦手単語が4語以上になると復習できます。');
       return;
     }
-    const pool = wordsByLevel["all"] || allWords;
-    const qs = generateWeakQuiz(weakWords, pool, count);
-    if (qs.length === 0) {
-      alert("復習クイズの生成に失敗しました。");
-      return;
-    }
-    setQuestions(qs);
-    setAnswers([]);
-    setIsReviewMode(true);
-    setScreen("quiz");
+    setLastCount(count);
+    setReviewMode(true);
+    setQuestions(quiz);
+    setRecords([]);
+    setScreen('quiz');
   }
 
-  function handleFinish(ans) {
-    setAnswers(ans);
-    setScreen("result");
+  function finish(finalRecords) {
+    setRecords(finalRecords);
+    setRefreshKey((old) => old + 1);
+    setScreen('result');
   }
 
-  function handleRetry() {
-    if (isReviewMode) {
-      startReview(currentCount);
+  function retry() {
+    if (reviewMode) {
+      startReview(lastCount);
     } else {
-      startQuiz(currentLevel, currentCount);
+      start(lastLevel, lastCount);
     }
   }
 
-  function handleReviewWrong(wrongAnswers) {
-    const wrongWords = wrongAnswers
-      .filter((a) => !a.isCorrect)
-      .map((a) => ({ word: a.word, meaning: a.meaning }));
-    if (wrongWords.length < 4) {
-      alert("間違えた単語が4語未満のため復習モードに入れません。");
-      return;
-    }
-    const allWords = wordsByLevel.all;
-    const pool = wordsByLevel["all"] || allWords;
-    const qs = generateWeakQuiz(wrongWords, pool, wrongWords.length);
-    if (qs.length === 0) {
-      alert("復習クイズの生成に失敗しました。");
-      return;
-    }
-    setQuestions(qs);
-    setAnswers([]);
-    setIsReviewMode(true);
-    setScreen("quiz");
+  function reviewWrong(wrongRecords) {
+    const words = wrongRecords.map((item) => ({
+      word: item.word,
+      meaning: item.meaning,
+      level: 'review',
+      partOfSpeech: 'other',
+    }));
+    const quiz = makeReviewQuiz(words, wordsByLevel.all, words.length);
+    if (quiz.length === 0) return;
+    setReviewMode(true);
+    setQuestions(quiz);
+    setRecords([]);
+    setScreen('quiz');
   }
 
   return (
-    <div className="app-wrapper">
+    <div className="app-shell">
       <header className="app-header">
-        <span className="header-emoji">📖</span>
-        <span className="header-title">英単語クイズ</span>
-        {isReviewMode && <span className="review-badge">復習モード</span>}
+        <div className="header-inner">
+          <span className="logo">📖</span>
+          <span>英単語クイズ</span>
+          {reviewMode && <span className="mode-badge">復習</span>}
+        </div>
       </header>
 
       <main className="app-main">
-        {screen === "top" && (
-          <TopScreen onStart={startQuiz} onStartReview={startReview} />
-        )}
-        {screen === "quiz" && (
-          <QuizScreen
-            questions={questions}
-            onFinish={handleFinish}
-          />
-        )}
-        {screen === "result" && (
-          <ResultScreen
-            answers={answers}
-            onRetry={handleRetry}
-            onReviewWrong={() => handleReviewWrong(answers)}
-            onTop={() => setScreen("top")}
-          />
-        )}
+        {screen === 'top' && <TopScreen onStart={start} onStartReview={startReview} refreshKey={refreshKey} />}
+        {screen === 'quiz' && questions.length > 0 && <QuizScreen questions={questions} onFinish={finish} />}
+        {screen === 'result' && <ResultScreen records={records} onRetry={retry} onTop={() => setScreen('top')} onReviewWrong={reviewWrong} />}
       </main>
 
       <footer className="app-footer">
