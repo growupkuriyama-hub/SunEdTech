@@ -6,7 +6,7 @@ export const APP_LIST = [
     id: "science-reading-lab",
   paid: false,   // ← 追加
     name: "Science Reading in English",
-    nameJa: "英検2級トレーニング 科学で英語",
+    nameJa: "英検2級トレーニング 科学DE英語",
     description: "短い英文を読んで、科学の内容を理解する英語×理科クイズ教材。読む力と科学的思考を同時に伸ばします。",
     target: "中3～高2 ／ 英検準2級～2級前後",
     tags: ["英語", "理科", "リーディング"],
