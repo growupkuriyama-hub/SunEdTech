@@ -2,6 +2,7 @@
 // アプリ一覧データ — URLやタグはここを編集するだけでOK
 // ============================================================
 // updated
+// updated
 export const APP_LIST = [
   {
     id: "science-reading-lab",
