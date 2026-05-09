@@ -23,10 +23,9 @@ export default function AppCard({ app }) {
         </div>
       </div>
 
-      <h3 className={styles.title}>{app.name}</h3>
 
       {app.nameJa && (
-        <p className={styles.titleJa}>{app.nameJa}</p>
+        <h3 className={styles.titleJa}>{app.nameJa}</h3>
       )}
 
       {app.description && (
