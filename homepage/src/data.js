@@ -29,5 +29,17 @@ export const APP_LIST = [
     bgColor: "#FFF7ED",
     icon: "⌨️",
   },
-
+  {
+    id: "yakubun-renshuu",
+    paid: false,
+    name: "Fraction Simplification Practice",
+    nameJa: "分数の約分れんしゅう",
+    description: "かんたん・ふつう・むずかしいの3段階で約分を練習できるアプリ。ヒント機能つきで、つまずいても安心です。",
+    target: "小4～中1 ／ 分数・約分の導入～定着",
+    tags: ["算数", "分数", "約分"],
+    url: "https://sun-ed-tech-yakubun.vercel.app/",
+    color: "#8B5CF6",
+    bgColor: "#F5F3FF",
+    icon: "➗",
+  },
 ];
