@@ -1,3 +1,4 @@
+import React from 'react';
 import styles from './AppCard.module.css';
 
 export default function AppCard({ app }) {
