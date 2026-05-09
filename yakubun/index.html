@@ -3,60 +3,51 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>分数の約分練習</title>
+  <title>分数の約分れんしゅう</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>分数の約分練習</h1>
+  <div class="wrap">
+    <h1 class="title">分数の約分れんしゅう</h1>
 
     <div class="level-row">
-      <button class="level-btn active" data-level="1">かんたん</button>
-      <button class="level-btn" data-level="2">ふつう</button>
-      <button class="level-btn" data-level="3">むずかしい</button>
-      <button class="reset-btn" id="reset-btn">リセット</button>
+      <button class="lvl-btn active" data-level="1">かんたん</button>
+      <button class="lvl-btn" data-level="2">ふつう</button>
+      <button class="lvl-btn" data-level="3">むずかしい</button>
     </div>
 
     <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-num" id="correct-count">0</div>
-        <div class="stat-label">正解</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-num" id="wrong-count">0</div>
-        <div class="stat-label">不正解</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-num" id="streak-count">0</div>
-        <div class="stat-label">連続正解</div>
-      </div>
+      <div class="stat"><div class="stat-n" id="correct-count">0</div><div class="stat-l">せいかい</div></div>
+      <div class="stat"><div class="stat-n" id="wrong-count">0</div><div class="stat-l">ふせいかい</div></div>
+      <div class="stat"><div class="stat-n" id="streak-count">0</div><div class="stat-l">れんぞく</div></div>
     </div>
 
-    <div class="question-card">
-      <p class="instruction">次の分数を約分してください</p>
-
-      <div class="fraction-row">
-        <div class="fraction">
-          <span class="frac-num" id="numerator">12</span>
-          <div class="frac-bar"></div>
-          <span class="frac-den" id="denominator">18</span>
+    <div class="qcard">
+      <div class="instruct">つぎの分数を約分してね</div>
+      <div class="frow">
+        <div class="frac">
+          <span class="fnum" id="numerator">12</span>
+          <div class="fbar"></div>
+          <span class="fden" id="denominator">18</span>
         </div>
-        <span class="equals">=</span>
-        <div class="fraction">
-          <input class="answer-input" id="ans-num" type="number" min="1" placeholder="?" autocomplete="off" />
-          <div class="frac-bar"></div>
-          <input class="answer-input" id="ans-den" type="number" min="1" placeholder="?" autocomplete="off" />
+        <span class="eq">=</span>
+        <div class="frac">
+          <input class="ainput" id="ans-num" type="number" min="1" placeholder="?" autocomplete="off" />
+          <div class="fbar answer-bar"></div>
+          <input class="ainput" id="ans-den" type="number" min="1" placeholder="?" autocomplete="off" />
         </div>
       </div>
-
       <div class="feedback" id="feedback"></div>
-      <div class="hint-text" id="hint"></div>
+      <div class="hinttext" id="hint"></div>
     </div>
 
-    <div class="button-row">
-      <button class="primary-btn" id="check-btn">答え合わせ</button>
-      <button class="secondary-btn" id="hint-btn">ヒント</button>
-      <button class="secondary-btn" id="next-btn">スキップ</button>
+    <div class="btnrow">
+      <button class="btn-check" id="check-btn">こたえあわせ</button>
+      <div class="btn-row2">
+        <button class="btn-sub" id="hint-btn">ヒントをみる</button>
+        <button class="btn-sub" id="next-btn">つぎのもんだい</button>
+      </div>
+      <button class="btn-reset" id="reset-btn">全部リセットする</button>
     </div>
   </div>
 

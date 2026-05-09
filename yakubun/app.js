@@ -56,43 +56,35 @@ function checkAnswer() {
   const ad = parseInt(document.getElementById('ans-den').value, 10);
 
   if (!an || !ad || an <= 0 || ad <= 0) {
-    document.getElementById('hint').textContent = '分子と分母を両方入力してください';
+    document.getElementById('hint').textContent = '分子と分母の両方をいれてね';
     return;
   }
 
   const g = gcd(curNum, curDen);
   const rn = curNum / g;
   const rd = curDen / g;
-  const userGcd = gcd(an, ad);
-  const isCorrect = an === rn && ad === rd;
-  const fullyReduced = userGcd === 1;
+  const isCorrect = an === rn && ad === rd && gcd(an, ad) === 1;
 
   answered = true;
   document.getElementById('check-btn').disabled = true;
 
   const fb = document.getElementById('feedback');
-  if (isCorrect && fullyReduced) {
+  if (isCorrect) {
     correct++;
     streak++;
-    fb.textContent = '✓ 正解！';
-    fb.className = 'feedback correct';
+    fb.textContent = 'せいかい！';
+    fb.className = 'feedback ok';
     document.getElementById('hint').textContent = '';
-    setTimeout(renderQuestion, 1200);
+    setTimeout(renderQuestion, 1300);
   } else {
     wrong++;
     streak = 0;
-    fb.textContent = '✗ 不正解';
-    fb.className = 'feedback wrong';
-    document.getElementById('hint').textContent = `正解は ${rn} / ${rd} です`;
+    fb.textContent = 'ざんねん…';
+    fb.className = 'feedback ng';
+    document.getElementById('hint').textContent = `こたえは ${rn} / ${rd} だよ`;
   }
 
   updateStats();
-}
-
-function showHint() {
-  const g = gcd(curNum, curDen);
-  document.getElementById('hint').textContent =
-    `ヒント：公約数は ${g} です（${curNum} と ${curDen} を ${g} で割ってみよう）`;
 }
 
 function updateStats() {
@@ -101,15 +93,21 @@ function updateStats() {
   document.getElementById('streak-count').textContent = streak;
 }
 
+function showHint() {
+  const g = gcd(curNum, curDen);
+  document.getElementById('hint').textContent =
+    `ヒント：${curNum} と ${curDen} のこうやくすうは ${g} だよ`;
+}
+
 function setLevel(l) {
   level = l;
-  document.querySelectorAll('.level-btn').forEach(btn => {
+  document.querySelectorAll('.lvl-btn').forEach(btn => {
     btn.classList.toggle('active', parseInt(btn.dataset.level, 10) === l);
   });
   renderQuestion();
 }
 
-function resetStats() {
+function resetAll() {
   correct = 0;
   wrong = 0;
   streak = 0;
@@ -117,15 +115,14 @@ function resetStats() {
   renderQuestion();
 }
 
-// --- event bindings ---
-document.querySelectorAll('.level-btn').forEach(btn => {
+document.querySelectorAll('.lvl-btn').forEach(btn => {
   btn.addEventListener('click', () => setLevel(parseInt(btn.dataset.level, 10)));
 });
 
 document.getElementById('check-btn').addEventListener('click', checkAnswer);
 document.getElementById('hint-btn').addEventListener('click', showHint);
 document.getElementById('next-btn').addEventListener('click', renderQuestion);
-document.getElementById('reset-btn').addEventListener('click', resetStats);
+document.getElementById('reset-btn').addEventListener('click', resetAll);
 
 ['ans-num', 'ans-den'].forEach(id => {
   document.getElementById(id).addEventListener('keydown', e => {
@@ -138,5 +135,4 @@ document.getElementById('reset-btn').addEventListener('click', resetStats);
   });
 });
 
-// --- init ---
 renderQuestion();
