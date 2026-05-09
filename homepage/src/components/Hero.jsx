@@ -1,7 +1,11 @@
 import React from 'react';
+import { APP_LIST } from '../data';
 import styles from './Hero.module.css';
 
 export default function Hero() {
+  const freeCount = APP_LIST.filter(app => !app.paid).length;
+  const paidCount = APP_LIST.filter(app => app.paid).length;
+
   return (
     <section className={styles.hero} id="top">
       <div className={styles.bgOrb1} aria-hidden="true" />
@@ -32,9 +36,18 @@ export default function Hero() {
         </div>
         <div className={styles.stats}>
           <div className={styles.stat}>
-            <span className={styles.statNum}>2</span>
-            <span className={styles.statLabel}>教材アプリ</span>
+            <span className={styles.statNum}>{freeCount}</span>
+            <span className={styles.statLabel}>無料教材アプリ</span>
           </div>
+          {paidCount > 0 && (
+            <>
+              <div className={styles.statDivider} />
+              <div className={styles.stat}>
+                <span className={styles.statNum}>{paidCount}</span>
+                <span className={styles.statLabel}>有料教材アプリ</span>
+              </div>
+            </>
+          )}
           <div className={styles.statDivider} />
           <div className={styles.stat}>
             <span className={styles.statNum}>0円</span>

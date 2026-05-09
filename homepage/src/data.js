@@ -4,6 +4,7 @@
 export const APP_LIST = [
   {
     id: "science-reading-lab",
+  paid: false,   // ← 追加
     name: "Science Reading in English",
     nameJa: "英検2級トレーニング 科学で英語",
     description: "短い英文を読んで、科学の内容を理解する英語×理科クイズ教材。読む力と科学的思考を同時に伸ばします。",
@@ -16,6 +17,7 @@ export const APP_LIST = [
   },
   {
     id: "romaji-renshuu",
+  paid: false,   // ← 追加
     name: "Romaji Practice",
     nameJa: "ローマ字れんしゅう",
     description: "キーボードでローマ字を入力する練習アプリ。小学生〜中学生のローマ字・タイピング入門に最適です。",
@@ -27,6 +29,7 @@ export const APP_LIST = [
     icon: "⌨️",
   },
     {id: "yakubun-renshuu",
+  paid: false,   // ← 追加
     name: "Fraction Simplification Practice",
     nameJa: "分数の約分れんしゅう",
     description: "かんたん・ふつう・むずかしいの3段階で約分を練習できるアプリ。ヒント機能つきで、つまずいても安心です。",
