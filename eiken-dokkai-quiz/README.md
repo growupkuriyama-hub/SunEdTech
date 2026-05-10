@@ -1,33 +1,22 @@
-# 英検レベル別 科学・論理英語クイズ
+# レベル別 英検トレーニング 英語DE科学
 
-完全静的な単一HTMLアプリです。
+Cloudflare Pages向けの完全静的な英検トレーニングアプリです。
 
-## 改修内容
+## 内容
 
-- ページ上部に「サイトに戻る」ボタンを追加
-  - 遷移先: https://sunedtech-hp.pages.dev/
-- 英検準2級・英検準1級・英検1級の切り替えボタンを追加
-- 各級に Level 1 / Level 2 / Level 3 を追加
-- 全問題データは `index.html` 内部に保存
-- 外部API、AI API、外部CDN、広告通信、課金APIは不使用
+- 上部に「サイトに戻る」ボタン
+  - https://sunedtech-hp.pages.dev/
+- 級ボタン
+  - 準２級
+  - ２級
+  - 準１級
+- 各級に Level 1 / Level 2 / Level 3
+- 全データは `index.html` 内に埋め込み
+- 外部API、AI通信、広告通信、課金APIなし
 
-## Cloudflare Pages
+## Cloudflare Pages設定例
 
-静的サイトとしてそのままデプロイできます。
-
-推奨設定:
-
-| 項目 | 値 |
-|---|---|
-| Framework preset | None / Other |
-| Build command | 空欄、または `npm run build` |
-| Output directory | `.` |
-| Root directory | このフォルダ |
-
-## ローカル確認
-
-```bash
-npm run start
-```
-
-または `index.html` をブラウザで直接開いて確認できます。
+- Framework preset: None
+- Build command: 空欄 または `npm run build`
+- Build output directory: `.`
+- Root directory: `/`

@@ -1,10 +1,9 @@
 {
-  "name": "sunedtech-eiken-static-quiz",
-  "version": "2.0.0",
+  "name": "eiken-eigo-de-kagaku-static",
+  "version": "1.1.0",
   "private": true,
-  "description": "Static EIKEN level quiz. No API, no external runtime dependencies.",
   "scripts": {
-    "build": "echo Static site: no build step required",
-    "start": "python3 -m http.server 3000"
-  }
+    "build": "node -e \"console.log('static site: no build step')\""
+  },
+  "devDependencies": {}
 }
