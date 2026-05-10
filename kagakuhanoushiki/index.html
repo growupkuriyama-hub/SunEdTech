@@ -3,261 +3,212 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>化学ラボ — 中学理科 化学反応式マスター</title>
+<title>ゆるふわ化学ラボ — 化学反応式マスター</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
 <style>
-/* ===== RESET & BASE ===== */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0d0f14;
-  --bg2:#141720;
-  --bg3:#1c202c;
-  --surface:#222636;
-  --surface2:#2a2f42;
-  --border:#2e3448;
-  --border2:#3d4460;
-  --text:#e8eaf2;
-  --text2:#8b91ac;
-  --text3:#555d7a;
-  --teal:#1fd4a0;
-  --teal2:#0f9e77;
-  --teal3:#0a6e54;
-  --amber:#f5a623;
-  --red:#e84646;
-  --blue:#4a9eff;
-  --purple:#9b7ff5;
-  --r:10px;
-  --r2:16px;
-  --r3:24px;
+  --bg:#fff5f7;
+  --bg-gradient:linear-gradient(135deg,#fff5f7 0%,#f0f4ff 100%);
+  --surface:rgba(255,255,255,0.8);
+  --text:#5a4a42;
+  --text-light:#a6968e;
+  --pink:#ff85a1;
+  --mint:#a1e3d8;
+  --purple:#c2aff0;
+  --white:#ffffff;
+  --r-lg:24px;
+  --r-md:16px;
+  --shadow:0 8px 20px rgba(255,133,161,0.12);
 }
-html,body{height:100%;font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;font-size:15px;overflow-x:hidden}
+html,body{height:100%;font-family:'M PLUS Rounded 1c',sans-serif;background:var(--bg);background-image:var(--bg-gradient);background-attachment:fixed;color:var(--text);line-height:1.6;font-size:15px;overflow-x:hidden}
+sub{font-size:.72em;vertical-align:baseline;position:relative;bottom:-.15em;font-weight:700}
+button{font-family:inherit;cursor:pointer;border:none;outline:none}
 
-sub{font-size:.65em;vertical-align:baseline;position:relative;bottom:-.2em}
-button{font-family:inherit;cursor:pointer}
+#app{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:2rem 1rem 4rem}
+.container{width:100%;max-width:500px}
 
-/* ===== LAYOUT ===== */
-#app{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:1.5rem 1rem 3rem}
-.container{width:100%;max-width:600px}
-
-/* ===== SCREENS ===== */
-.screen{display:none;animation:fadeIn .25s ease}
+.screen{display:none;animation:fadeUp .35s ease-out}
 .screen.active{display:block}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-
-/* ===== HEADER ===== */
-.site-header{text-align:center;margin-bottom:2.5rem;padding-top:1rem}
-.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:2rem;color:var(--teal);letter-spacing:-.5px}
-.logo span{color:var(--text2);font-weight:400;font-size:1rem;display:block;margin-top:2px;font-family:'Noto Sans JP',sans-serif;letter-spacing:.5px}
-
-/* ===== BACK BUTTON ===== */
-.back-btn{display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--border2);border-radius:var(--r);padding:7px 14px;font-size:13px;color:var(--text2);margin-bottom:1.5rem;transition:all .15s}
-.back-btn:hover{color:var(--text);border-color:var(--text3);background:var(--surface)}
-.back-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-
-/* ===== TITLE SCREEN ===== */
-.title-hero{text-align:center;margin-bottom:2rem}
-.title-hero h1{font-family:'Syne',sans-serif;font-weight:800;font-size:2.4rem;color:var(--text);margin-bottom:.5rem}
-.title-hero p{color:var(--text2);font-size:14px}
-.mode-grid{display:flex;flex-direction:column;gap:8px;margin-bottom:1.5rem;align-items:center}
-.mode-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:.75rem 1.25rem;text-align:left;transition:all .2s;color:var(--text);position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:.75rem}
-.mode-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--teal) 0%,transparent 60%);opacity:0;transition:opacity .2s}
-.mode-card:hover{border-color:var(--teal3);transform:translateY(-1px)}
-.mode-card:hover::before{opacity:.06}
-.mode-icon{font-size:1.4rem;flex-shrink:0}
-.mode-info{display:flex;flex-direction:column;gap:1px}
-.mode-name{font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;color:var(--text)}
-.mode-desc{font-size:.72rem;color:var(--text2);line-height:1.4}
-
-/* ===== HUD ===== */
-.hud{display:flex;align-items:center;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap}
-.hud-pill{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:12px;color:var(--text2);white-space:nowrap}
-.hud-pill b{color:var(--text);font-weight:500}
-.lives{letter-spacing:1px;font-size:14px}
-.combo-badge{background:rgba(31,212,160,.15);border:1px solid var(--teal3);border-radius:20px;padding:5px 12px;font-size:12px;color:var(--teal);font-weight:500;display:none}
-.combo-badge.show{display:block}
-.xp-pill{margin-left:auto;background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.3);color:var(--amber)}
-
-/* progress bar */
-.prog-wrap{height:4px;background:var(--surface2);border-radius:2px;margin-bottom:1.25rem}
-.prog-fill{height:4px;background:var(--teal);border-radius:2px;transition:width .4s cubic-bezier(.4,0,.2,1)}
-
-/* timer arc */
-.timer-svg{width:42px;height:42px;flex-shrink:0;margin-left:auto}
-.timer-arc-bg{fill:none;stroke:var(--border);stroke-width:3}
-.timer-arc{fill:none;stroke:var(--teal);stroke-width:3;stroke-dasharray:107;stroke-dashoffset:0;stroke-linecap:round;transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke .3s}
-.timer-txt{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;fill:var(--text)}
-
-/* ===== QUESTION ===== */
-.q-cat{font-size:11px;color:var(--teal);text-transform:uppercase;letter-spacing:.8px;margin-bottom:.6rem;font-weight:500}
-.q-text{font-size:15px;color:var(--text);margin-bottom:.85rem;line-height:1.6}
-.eq-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:1.1rem 1.5rem;text-align:center;font-family:'Noto Sans JP',sans-serif;font-size:1.4rem;color:var(--text);margin-bottom:1rem;min-height:60px;display:flex;align-items:center;justify-content:center;letter-spacing:.5px}
-.choices{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem}
-.choice{padding:11px 8px;border:1px solid var(--border);border-radius:var(--r);background:var(--surface);font-size:13px;color:var(--text);text-align:center;transition:all .15s;line-height:1.4}
-.choice:hover{background:var(--surface2);border-color:var(--border2)}
-.choice.correct{background:rgba(31,212,160,.12);border-color:var(--teal2);color:var(--teal)}
-.choice.wrong{background:rgba(232,70,70,.12);border-color:#c03;color:#f88}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}60%{transform:translateX(5px)}}
+
+/* HEADER */
+.site-header{text-align:center;margin-bottom:2.5rem}
+.logo{font-family:'Quicksand',sans-serif;font-weight:800;font-size:2.2rem;color:var(--pink);letter-spacing:-1px;text-shadow:2px 2px 0 #fff}
+.logo span{color:var(--text-light);font-weight:700;font-size:.9rem;display:block;margin-top:4px;letter-spacing:1px}
+
+/* BACK */
+.back-btn{display:inline-flex;align-items:center;gap:6px;background:var(--white);border-radius:30px;padding:8px 18px;font-size:13px;color:var(--text-light);margin-bottom:1.5rem;box-shadow:var(--shadow);transition:.2s;font-weight:700}
+.back-btn:hover{transform:translateX(-3px);color:var(--pink)}
+
+/* TITLE */
+.title-hero{text-align:center;margin-bottom:2rem}
+.title-hero h1{font-weight:800;font-size:2rem;color:var(--text);margin-bottom:.8rem;line-height:1.3}
+.title-hero p{color:var(--text-light);font-size:14px;background:rgba(255,255,255,.5);display:inline-block;padding:4px 14px;border-radius:20px;font-weight:700}
+.mode-grid{display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:1.5rem}
+.mode-card{background:var(--white);border:2px solid transparent;border-radius:var(--r-lg);padding:1rem 1.4rem;transition:all .3s cubic-bezier(.175,.885,.32,1.275);box-shadow:var(--shadow);display:inline-flex;align-items:center;gap:1rem;cursor:pointer}
+.mode-card:hover{transform:scale(1.04);border-color:var(--pink)}
+.mode-icon{font-size:1.8rem;background:var(--bg);width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:14px;flex-shrink:0}
+.mode-name{font-weight:800;font-size:1rem;color:var(--text)}
+.mode-desc{font-size:.78rem;color:var(--text-light)}
+
+/* HUD */
+.hud{display:flex;align-items:center;gap:8px;margin-bottom:1.25rem;background:var(--surface);padding:8px 12px;border-radius:40px;backdrop-filter:blur(5px)}
+.hud-pill{background:var(--white);border-radius:20px;padding:6px 14px;font-size:12px;color:var(--text-light);font-weight:700}
+.hud-pill b{color:var(--pink)}
+.lives{letter-spacing:2px;font-size:14px}
+.combo-badge{background:rgba(161,227,216,.25);border-radius:20px;padding:6px 14px;font-size:12px;color:#2d8a7a;font-weight:800;display:none}
+.combo-badge.show{display:block}
+
+.prog-wrap{height:10px;background:var(--white);border-radius:10px;margin-bottom:1.5rem;overflow:hidden;box-shadow:inset 0 2px 4px rgba(0,0,0,.05)}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--pink),#ffafbd);border-radius:10px;transition:width .5s ease}
+
+/* QUESTION */
+.q-box-main{background:var(--white);border-radius:var(--r-lg);padding:1.5rem;box-shadow:var(--shadow);margin-bottom:1.25rem}
+.q-cat{font-size:11px;background:var(--mint);color:#fff;display:inline-block;padding:3px 12px;border-radius:10px;margin-bottom:.8rem;font-weight:800}
+.q-text{font-size:16px;font-weight:700;color:var(--text);margin-bottom:1rem}
+.eq-box{background:var(--bg);border-radius:var(--r-md);padding:1.2rem;font-size:1.5rem;color:var(--text);margin-bottom:1rem;display:flex;align-items:center;justify-content:center;font-weight:800;border:2px dashed #ffcad4;letter-spacing:.5px}
+
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem}
+.choice{padding:14px 8px;border-radius:var(--r-md);background:var(--white);font-size:13px;color:var(--text);font-weight:700;box-shadow:0 4px 0 #eee;transition:all .1s;border:2px solid transparent;line-height:1.4}
+.choice:hover{transform:translateY(-2px);box-shadow:0 6px 0 #eee}
+.choice:active{transform:translateY(2px);box-shadow:none}
+.choice.correct{background:#e8fdf5;border-color:var(--mint);color:#2d8a7a;box-shadow:0 4px 0 #c1e9db}
+.choice.wrong{background:#fff0f3;border-color:var(--pink);color:#d64561;box-shadow:0 4px 0 #f9d5dc}
 .choice.shake{animation:shake .3s}
 
-/* feedback */
-.fb{border-radius:var(--r);padding:10px 14px;font-size:13px;margin-bottom:1rem;line-height:1.5;display:none;border:1px solid transparent}
+.fb{border-radius:var(--r-md);padding:12px 14px;font-size:13px;margin-bottom:1rem;font-weight:700;display:none;line-height:1.5}
 .fb.show{display:block}
-.fb.ok{background:rgba(31,212,160,.1);border-color:var(--teal3);color:var(--teal)}
-.fb.ng{background:rgba(232,70,70,.1);border-color:#8b2020;color:#f88}
+.fb.ok{background:var(--mint);color:#fff}
+.fb.ng{background:var(--pink);color:#fff}
 
-/* next btn */
-.next-btn{width:100%;padding:12px;border:1px solid var(--border2);border-radius:var(--r);background:transparent;font-size:14px;color:var(--text2);display:none;transition:all .15s;font-family:'Noto Sans JP',sans-serif}
+.next-btn{width:100%;padding:14px;border-radius:var(--r-md);background:var(--text);font-size:15px;color:#fff;font-weight:800;display:none;box-shadow:0 4px 12px rgba(0,0,0,.1);transition:.15s}
 .next-btn.show{display:block}
-.next-btn:hover{background:var(--surface);color:var(--text)}
+.next-btn:hover{opacity:.9}
 
-/* ===== RESULT ===== */
-.result-wrap{text-align:center;padding:1rem 0}
-.rank-circle{width:90px;height:90px;border-radius:50%;border:2px solid var(--border2);margin:0 auto 1.25rem;display:flex;align-items:center;justify-content:center;font-size:2.5rem;background:var(--surface)}
-.rank-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.5rem;margin-bottom:.35rem}
-.rank-sub{font-size:13px;color:var(--text2);margin-bottom:1.5rem}
-.stats-grid{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:1.75rem}
-.stat-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:.85rem 1.1rem;min-width:90px;text-align:center}
-.stat-val{font-family:'Syne',sans-serif;font-weight:700;font-size:1.3rem;color:var(--text)}
-.stat-lbl{font-size:11px;color:var(--text2);margin-top:2px}
-.btn-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
-.action-btn{padding:10px 22px;border:1px solid var(--border2);border-radius:var(--r);background:transparent;font-size:14px;color:var(--text2);font-family:'Noto Sans JP',sans-serif;transition:all .15s}
-.action-btn:hover{background:var(--surface);color:var(--text)}
-.action-btn.primary{background:var(--teal);border-color:var(--teal);color:#000;font-weight:500}
-.action-btn.primary:hover{background:var(--teal2);border-color:var(--teal2)}
+/* RESULT */
+.result-wrap{text-align:center;background:var(--white);border-radius:30px;padding:2.5rem 1.5rem;box-shadow:var(--shadow)}
+.rank-circle{width:100px;height:100px;border-radius:50%;margin:0 auto 1.5rem;display:flex;align-items:center;justify-content:center;font-size:3.5rem;background:var(--bg);box-shadow:inset 0 4px 10px rgba(0,0,0,.05)}
+.rank-title{font-weight:800;font-size:1.8rem;color:var(--pink);margin-bottom:.4rem}
+.rank-sub{font-size:13px;color:var(--text-light);font-weight:700;margin-bottom:1.5rem}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem}
+.stat-box{background:var(--bg);border-radius:var(--r-md);padding:1rem}
+.stat-val{font-weight:800;font-size:1.4rem;color:var(--text)}
+.stat-lbl{font-size:11px;color:var(--text-light);font-weight:700}
+.btn-row{display:flex;gap:10px}
+.btn-row .next-btn{display:block}
+.btn-row .next-btn.secondary{background:#eee;color:#888;box-shadow:none}
+.btn-row .next-btn.primary{background:var(--pink)}
 
-/* ===== BALANCE ===== */
-.section-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:.75rem;font-weight:500}
-.styled-select{padding:8px 12px;border:1px solid var(--border2);border-radius:var(--r);background:var(--surface);color:var(--text);font-size:13px;font-family:'Noto Sans JP',sans-serif;margin-bottom:1rem;width:100%}
-.styled-select:focus{outline:none;border-color:var(--teal3)}
-.balance-area{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:1.25rem;margin-bottom:1rem}
-.balance-row-ui{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:1rem}
-.coeff-inp{width:46px;height:40px;text-align:center;font-size:18px;font-family:'Noto Sans JP',sans-serif;font-weight:700;border:1px solid var(--border2);border-radius:var(--r);background:var(--bg3);color:var(--text)}
-.coeff-inp:focus{outline:none;border-color:var(--teal)}
-.mol-chip{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:6px 12px;font-size:14px;color:var(--text)}
-.op-sym{font-size:20px;color:var(--text3);padding:0 2px;font-family:'Noto Sans JP',sans-serif}
-.check-btn{padding:9px 20px;border:1px solid var(--teal3);border-radius:var(--r);background:transparent;font-size:13px;color:var(--teal);font-family:'Noto Sans JP',sans-serif;transition:all .15s}
-.check-btn:hover{background:rgba(31,212,160,.1)}
+/* BALANCE */
+.balance-area{background:var(--white);border-radius:var(--r-lg);padding:1.5rem;margin-bottom:1rem;box-shadow:var(--shadow)}
+.balance-row-ui{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:5px;margin-bottom:1rem}
+.coeff-inp{width:50px;height:46px;text-align:center;font-size:20px;font-weight:800;border:2px solid var(--bg);border-radius:12px;background:var(--bg);color:var(--pink);font-family:inherit}
+.coeff-inp:focus{background:#fff;border-color:var(--pink);outline:none}
+.mol-chip{font-weight:800;font-size:1.1rem;margin-right:4px}
+.op-sym{font-size:20px;color:var(--text-light);padding:0 4px;font-weight:700}
+.check-btn{padding:12px 28px;border-radius:30px;background:var(--purple);color:#fff;font-weight:800;box-shadow:0 4px 0 #a491d1;font-family:inherit;font-size:14px;transition:.1s}
+.check-btn:hover{opacity:.9}
+.check-btn:active{transform:translateY(2px);box-shadow:none}
 
-/* ===== EXPLORE ===== */
-.tab-bar{display:flex;gap:6px;margin-bottom:1.25rem}
-.tab{padding:7px 16px;border-radius:20px;border:1px solid var(--border);background:transparent;font-size:13px;color:var(--text2);font-family:'Noto Sans JP',sans-serif;transition:all .15s}
-.tab.on{background:var(--surface2);color:var(--text);border-color:var(--border2)}
-.tab:hover{background:var(--surface)}
+/* LAP TIME */
+.lap-wrap{background:rgba(255,255,255,.5);border-radius:var(--r-lg);padding:1rem;margin-bottom:1rem}
+.lap-label{font-size:11px;color:var(--text-light);font-weight:800;letter-spacing:.5px;margin-bottom:.4rem}
+.lap-top{display:flex;align-items:baseline;gap:.5rem;margin-bottom:.5rem}
+.lap-display{font-family:'Quicksand',sans-serif;font-size:1.5rem;font-weight:700;color:var(--purple)}
+.lap-sub{font-size:11px;color:var(--text-light);font-weight:700}
+.lap-list{display:flex;flex-direction:column;gap:4px;max-height:160px;overflow-y:auto}
+.lap-item{background:#fff;border-radius:10px;padding:5px 12px;font-size:12px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+.lap-item.best .lap-item-time{color:#2d8a7a}
+.lap-item.worst .lap-item-time{color:var(--pink)}
+.lap-item-label{color:var(--text-light)}
+.lap-item-time{color:var(--text)}
 
-/* vis */
-.vis-container{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:1.25rem;margin-bottom:1rem}
-.vis-side-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:.6rem}
-.atom-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:.5rem}
-.atom{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;font-family:'Syne',sans-serif}
-.vis-arrow{font-size:1.4rem;color:var(--text3);margin:.6rem 0;text-align:center}
-.vis-desc{font-size:13px;color:var(--text2);line-height:1.6}
+/* CANVAS */
+.draw-wrap{background:var(--surface);border-radius:var(--r-lg);padding:1rem;backdrop-filter:blur(5px)}
+.draw-label{font-size:12px;font-weight:800;color:var(--text-light);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.draw-clear{font-size:12px;color:var(--pink);background:transparent;cursor:pointer;font-weight:800;font-family:inherit}
+.draw-canvas{display:block;width:100%;height:220px;background:#fff;border-radius:var(--r-md);border:2px solid #f7e8ec;touch-action:none;cursor:crosshair}
 
-/* ref */
-.ref-list{display:flex;flex-direction:column;gap:6px}
-.ref-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:.75rem 1rem;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
-.ref-cat{font-size:11px;background:var(--bg3);color:var(--text3);border-radius:6px;padding:2px 8px;flex-shrink:0;font-weight:500}
-.ref-name{font-size:12px;color:var(--text2);flex-shrink:0;min-width:90px}
-.ref-eq{font-size:13px;color:var(--text)}
-
-/* ===== CANVAS DRAW AREA ===== */
-.draw-wrap{margin-bottom:1rem}
-.draw-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:.4rem;display:flex;align-items:center;justify-content:space-between}
-.draw-clear{font-size:11px;color:var(--text3);background:transparent;border:none;cursor:pointer;padding:2px 6px;border-radius:4px;transition:color .15s}
-.draw-clear:hover{color:var(--text2)}
-.draw-canvas{display:block;width:100%;height:220px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);touch-action:none;cursor:crosshair}
-
-/* ===== RESPONSIVE ===== */
 @media(max-width:440px){
   .choices{grid-template-columns:1fr}
-  .eq-box{font-size:1.1rem}
-  .title-hero h1{font-size:1.8rem}
+  .eq-box{font-size:1.15rem}
+  .title-hero h1{font-size:1.7rem}
 }
-
-/* ===== LAP TIME ===== */
-.lap-wrap{margin-bottom:1rem}
-.lap-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:.4rem}
-.lap-display{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:700;color:var(--teal);letter-spacing:.5px}
-.lap-sub{font-size:11px;color:var(--text3);margin-top:2px}
-.lap-list{display:flex;flex-direction:column;gap:4px;margin-top:.6rem;max-height:160px;overflow-y:auto}
-.lap-item{display:flex;justify-content:space-between;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:12px}
-.lap-item-label{color:var(--text2)}
-.lap-item-time{font-family:'Syne',sans-serif;font-weight:700;color:var(--text)}
-.lap-item.best .lap-item-time{color:var(--teal)}
-.lap-item.worst .lap-item-time{color:var(--red)}
-.lap-stop-btn{font-size:11px;color:var(--text3);background:transparent;border:1px solid var(--border);border-radius:6px;padding:2px 8px;cursor:pointer;transition:all .15s}
-.lap-stop-btn:hover{color:var(--text);border-color:var(--border2)}
 </style>
 </head>
 <body>
 <div id="app">
 <div class="container">
 
-  <!-- TITLE SCREEN -->
+  <!-- TITLE -->
   <div id="s-title" class="screen active">
     <div class="site-header">
-      <div class="logo">⚗️ 化学ラボ<span>中学理科 化学反応式マスター</span></div>
+      <div class="logo">✨ Chemi Lab<span>化学反応式をかわいく攻略！</span></div>
     </div>
     <div class="title-hero">
-      <h1>反応式を<br>マスターしよう</h1>
-      <p>3つのモードで楽しく学べる化学ゲーム</p>
+      <h1>反応式を<br>マスターしよう♡</h1>
+      <p>スキマ時間で賢くレベルアップ</p>
     </div>
     <div class="mode-grid">
       <div class="mode-card" onclick="startQuiz()">
-        <span class="mode-icon">⚡</span>
+        <div class="mode-icon">⚡</div>
         <div class="mode-info">
           <div class="mode-name">クイズバトル</div>
-          <div class="mode-desc">10問に挑戦！コンボでXPボーナス</div>
+          <div class="mode-desc">10問に挑戦！めざせ全問正解</div>
         </div>
       </div>
       <div class="mode-card" onclick="showScreen('s-balance')">
-        <span class="mode-icon">⚖️</span>
+        <div class="mode-icon">⚖️</div>
         <div class="mode-info">
           <div class="mode-name">係数合わせ</div>
-          <div class="mode-desc">係数を入力してバランシング練習</div>
+          <div class="mode-desc">パズル感覚で数字をあてはめよう</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- QUIZ SCREEN -->
+  <!-- QUIZ -->
   <div id="s-quiz" class="screen">
-    <button class="back-btn" onclick="goHome()">
-      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-      ホームに戻る
-    </button>
+    <button class="back-btn" onclick="goHome()">← ホーム</button>
     <div class="hud">
       <div class="hud-pill">HP <span class="lives" id="lives">❤️❤️❤️</span></div>
       <div class="hud-pill">問 <b id="qnum">1</b>/10</div>
       <div class="combo-badge" id="combo-badge">コンボ x<span id="combo-num">2</span></div>
-      <div class="hud-pill xp-pill">XP <b id="xp">0</b></div>
+      <div class="hud-pill" style="margin-left:auto">XP <b id="xp">0</b></div>
     </div>
     <div class="prog-wrap"><div class="prog-fill" id="prog" style="width:10%"></div></div>
-    <!-- ラップタイム -->
-    <div class="lap-wrap" id="quiz-lap-wrap">
+
+    <div class="q-box-main">
+      <div class="q-cat" id="q-cat"></div>
+      <div class="q-text" id="q-text"></div>
+      <div class="eq-box" id="q-eq"></div>
+      <div class="choices" id="choices"></div>
+      <div class="fb" id="fb"></div>
+      <button class="next-btn" id="next-btn" onclick="nextQ()">次の問題へ →</button>
+    </div>
+
+    <div class="lap-wrap">
       <div class="lap-label">⏱ ラップタイム</div>
-      <div style="display:flex;align-items:baseline;gap:.5rem">
+      <div class="lap-top">
         <div class="lap-display" id="quiz-lap-display">0.0s</div>
         <div class="lap-sub" id="quiz-lap-sub"></div>
       </div>
       <div class="lap-list" id="quiz-lap-list"></div>
     </div>
-    <div class="q-cat" id="q-cat"></div>
-    <div class="q-text" id="q-text"></div>
-    <div class="eq-box" id="q-eq"></div>
-    <div class="choices" id="choices"></div>
-    <div class="fb" id="fb"></div>
-    <button class="next-btn" id="next-btn" onclick="nextQ()">次の問題へ →</button>
-    <div class="draw-wrap" id="draw-wrap">
+
+    <div class="draw-wrap">
       <div class="draw-label">
-        <span>✏️ 計算メモ（ここに書いて考えよう）</span>
-        <button class="draw-clear" onclick="clearCanvas()">消す</button>
+        <span>✏️ メモ帳</span>
+        <button class="draw-clear" onclick="clearCanvas()">全部消す</button>
       </div>
       <canvas class="draw-canvas" id="draw-canvas"></canvas>
     </div>
   </div>
 
-  <!-- RESULT SCREEN -->
+  <!-- RESULT -->
   <div id="s-result" class="screen">
     <div class="result-wrap">
       <div class="rank-circle" id="rank-icon"></div>
@@ -266,48 +217,45 @@ button{font-family:inherit;cursor:pointer}
       <div class="stats-grid">
         <div class="stat-box"><div class="stat-val" id="r-correct"></div><div class="stat-lbl">正解数</div></div>
         <div class="stat-box"><div class="stat-val" id="r-xp"></div><div class="stat-lbl">獲得XP</div></div>
-        <div class="stat-box"><div class="stat-val" id="r-combo"></div><div class="stat-lbl">最大コンボ</div></div>
         <div class="stat-box"><div class="stat-val" id="r-time"></div><div class="stat-lbl">合計タイム</div></div>
         <div class="stat-box"><div class="stat-val" id="r-best"></div><div class="stat-lbl">ベストラップ</div></div>
       </div>
       <div class="btn-row">
-        <button class="action-btn" onclick="goHome()">← ホーム</button>
-        <button class="action-btn primary" onclick="retryGame()">もう一度！</button>
+        <button class="next-btn secondary" onclick="goHome()">ホームへ</button>
+        <button class="next-btn primary" id="result-retry-btn">もう一度！</button>
       </div>
     </div>
   </div>
 
-  <!-- BALANCE SCREEN -->
+  <!-- BALANCE -->
   <div id="s-balance" class="screen">
-    <button class="back-btn" onclick="goHome()">
-      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-      ホームに戻る
-    </button>
+    <button class="back-btn" onclick="goHome()">← ホーム</button>
     <div class="hud">
-      <div class="hud-pill">問 <b id="bal-qnum">1</b>/<b id="bal-qtotal">6</b></div>
+      <div class="hud-pill">係数パズル</div>
+      <div class="hud-pill" style="margin-left:auto">問 <b id="bal-qnum">1</b>/<b id="bal-qtotal">6</b></div>
     </div>
     <div class="prog-wrap"><div class="prog-fill" id="bal-prog" style="width:0%"></div></div>
-    <!-- ラップタイム -->
-    <div class="lap-wrap" id="bal-lap-wrap">
+
+    <div class="lap-wrap">
       <div class="lap-label">⏱ ラップタイム</div>
-      <div style="display:flex;align-items:baseline;gap:.5rem">
+      <div class="lap-top">
         <div class="lap-display" id="bal-lap-display">0.0s</div>
         <div class="lap-sub" id="bal-lap-sub"></div>
       </div>
       <div class="lap-list" id="bal-lap-list"></div>
     </div>
-    <div class="q-cat" id="bal-cat"></div>
-    <div class="balance-area" id="bal-area"></div>
-    <div class="fb" id="bal-fb"></div>
-    <button class="next-btn" id="bal-next-btn" onclick="nextBal()">次の問題へ →</button>
+
+    <div class="balance-area">
+      <div class="q-cat" id="bal-cat"></div>
+      <div id="bal-area"></div>
+      <div class="fb" id="bal-fb"></div>
+      <button class="next-btn" id="bal-next-btn" onclick="nextBal()">次の問題へ →</button>
+    </div>
   </div>
 
-
-</div><!-- /container -->
-</div><!-- /app -->
-
+</div>
+</div>
 <script>
-/* ==================== DATA ==================== */
 const Qs = [
   {cat:"燃焼",q:"水素が燃焼するときの化学反応式はどれ？",eq:"H<sub>2</sub> + O<sub>2</sub> → ?",
    cs:["2H<sub>2</sub>+O<sub>2</sub>→2H<sub>2</sub>O","H<sub>2</sub>+O<sub>2</sub>→H<sub>2</sub>O","2H+O→H<sub>2</sub>O","H<sub>2</sub>+2O→H<sub>2</sub>O<sub>2</sub>"],a:0,
@@ -342,357 +290,263 @@ const Qs = [
 ];
 
 const BALS = [
-  {name:"水素の燃焼",    cat:"燃焼", parts:["H₂","O₂","H₂O"],  ans:[2,1,2],ltr:true},
-  {name:"炭素の燃焼",    cat:"燃焼", parts:["C","O₂","CO₂"],   ans:[1,1,1],ltr:true},
+  {name:"水素の燃焼",    cat:"燃焼",parts:["H₂","O₂","H₂O"],  ans:[2,1,2],ltr:true},
+  {name:"炭素の燃焼",    cat:"燃焼",parts:["C","O₂","CO₂"],   ans:[1,1,1],ltr:true},
   {name:"マグネシウムの燃焼",cat:"燃焼",parts:["Mg","O₂","MgO"],ans:[2,1,2],ltr:true},
-  {name:"水の電気分解",  cat:"分解", parts:["H₂O","H₂","O₂"],  ans:[2,2,1],ltr:false},
-  {name:"鉄と硫黄の化合",cat:"化合", parts:["Fe","S","FeS"],    ans:[1,1,1],ltr:true},
-  {name:"銅の酸化",      cat:"化合", parts:["Cu","O₂","CuO"],   ans:[2,1,2],ltr:true}
+  {name:"水の電気分解",  cat:"分解",parts:["H₂O","H₂","O₂"],  ans:[2,2,1],ltr:false},
+  {name:"鉄と硫黄の化合",cat:"化合",parts:["Fe","S","FeS"],    ans:[1,1,1],ltr:true},
+  {name:"銅の酸化",      cat:"化合",parts:["Cu","O₂","CuO"],   ans:[2,1,2],ltr:true}
 ];
 
-/* ==================== STATE ==================== */
-let qIdx=0, lives=3, xp=0, combo=0, maxCombo=0, correct=0, answered=false;
-let gameMode='normal';
+const shuffle = arr => [...arr].sort(()=>Math.random()-.5);
 
-// ラップタイム（クイズ）
-let quizLapStart=0, quizLapTick=null, quizLaps=[];
-// ラップタイム（係数合わせ）
-let balLapStart=0, balLapTick=null, balLaps=[];
-let shuffledBals=[], balIdx=0;
+let qIdx=0,lives=3,xp=0,combo=0,maxCombo=0,correct=0,answered=false,shuffledQs=[];
+let quizLapStart=0,quizLapTick=null,quizLaps=[];
+let shuffledBals=[],balIdx=0,balLapStart=0,balLapTick=null,balLaps=[];
 
-/* ==================== ROUTING ==================== */
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+/* ROUTING */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  window.scrollTo({top:0, behavior:'smooth'});
-  if (id === 's-balance') {
-    balLaps = []; balIdx = 0;
-    shuffledBals = shuffle(BALS);
-    const sub = document.getElementById('bal-lap-sub');
-    if (sub) sub.textContent = '';
-    const list = document.getElementById('bal-lap-list');
-    if (list) list.innerHTML = '';
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='s-balance'){
+    balLaps=[];balIdx=0;
+    shuffledBals=shuffle(BALS);
+    document.getElementById('bal-lap-sub').textContent='';
+    document.getElementById('bal-lap-list').innerHTML='';
     loadBal();
   }
 }
 
-function goHome() {
-  stopQuizLap(); stopBalLap();
-  showScreen('s-title');
-}
+function goHome(){ stopQuizLap();stopBalLap();showScreen('s-title'); }
 
-/* ==================== QUIZ ==================== */
-const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
-let shuffledQs = [];
-
-function startQuiz() {
-  gameMode = 'normal';
-  qIdx = 0; lives = 3; xp = 0; combo = 0; maxCombo = 0; correct = 0; answered = false;
-  quizLaps = [];
-  shuffledQs = shuffle(Qs); // ②問題順ランダム
+/* QUIZ */
+function startQuiz(){
+  qIdx=0;lives=3;xp=0;combo=0;maxCombo=0;correct=0;answered=false;quizLaps=[];
+  shuffledQs=shuffle(Qs);
   updateHUD();
   showScreen('s-quiz');
   loadQ();
-  setTimeout(initCanvas, 50);
+  setTimeout(initCanvas,50);
 }
 
-function retryGame() {
-  // リザルトの「もう一度」ボタンをクイズ用に戻す
-  const btn = document.querySelector('#s-result .action-btn.primary');
-  btn.onclick = retryGame;
-  btn.textContent = 'もう一度！';
-  startQuiz();
-}
+function retryGame(){ startQuiz(); }
 
-function updateHUD() {
-  document.getElementById('lives').textContent = '❤️'.repeat(lives) + '🖤'.repeat(3 - lives);
-  document.getElementById('qnum').textContent = qIdx + 1;
-  document.getElementById('xp').textContent = xp;
-  document.getElementById('prog').style.width = Math.round((qIdx / Qs.length) * 100) + '%';
-  const cb = document.getElementById('combo-badge');
-  if (combo >= 2) { cb.classList.add('show'); document.getElementById('combo-num').textContent = combo; }
+function updateHUD(){
+  document.getElementById('lives').textContent='❤️'.repeat(lives)+'🤍'.repeat(3-lives);
+  document.getElementById('qnum').textContent=qIdx+1;
+  document.getElementById('xp').textContent=xp;
+  document.getElementById('prog').style.width=Math.round((qIdx/Qs.length)*100)+'%';
+  const cb=document.getElementById('combo-badge');
+  if(combo>=2){cb.classList.add('show');document.getElementById('combo-num').textContent=combo;}
   else cb.classList.remove('show');
 }
 
-function loadQ() {
-  answered = false;
-  if (qIdx >= shuffledQs.length) { endGame(); return; }
-  const q = shuffledQs[qIdx];
-  document.getElementById('q-cat').textContent = q.cat;
-  document.getElementById('q-text').textContent = q.q;
-  document.getElementById('q-eq').innerHTML = q.eq;
-  document.getElementById('fb').className = 'fb';
-  document.getElementById('next-btn').className = 'next-btn';
-  const ch = document.getElementById('choices'); ch.innerHTML = '';
-  // ①選択肢をシャッフル（元インデックスをdata-idxで保持）
-  const shuffled = shuffle(q.cs.map((c, i) => ({c, i})));
-  shuffled.forEach(({c, i}) => {
-    const b = document.createElement('button');
-    b.className = 'choice'; b.innerHTML = c;
-    b.dataset.idx = i;
-    b.onclick = () => pick(i, b);
+function loadQ(){
+  answered=false;
+  if(qIdx>=shuffledQs.length){endGame();return;}
+  const q=shuffledQs[qIdx];
+  document.getElementById('q-cat').textContent=q.cat;
+  document.getElementById('q-text').textContent=q.q;
+  document.getElementById('q-eq').innerHTML=q.eq;
+  document.getElementById('fb').className='fb';
+  document.getElementById('next-btn').className='next-btn';
+  const ch=document.getElementById('choices');ch.innerHTML='';
+  shuffle(q.cs.map((c,i)=>({c,i}))).forEach(({c,i})=>{
+    const b=document.createElement('button');
+    b.className='choice';b.innerHTML=c;b.dataset.idx=i;
+    b.onclick=()=>pick(i,b);
     ch.appendChild(b);
   });
   startQuizLap();
 }
 
-function pick(i, btn) {
-  if (answered) return;
-  answered = true;
-  const lapTime = stopQuizLap();
-  const q = shuffledQs[qIdx];
-  const fb = document.getElementById('fb');
-  document.querySelectorAll('.choice').forEach(b => {
-    if (parseInt(b.dataset.idx) === q.a) b.classList.add('correct');
-    else if (b === btn) b.classList.add('wrong');
+function pick(i,btn){
+  if(answered)return;
+  answered=true;
+  const lapTime=stopQuizLap();
+  const q=shuffledQs[qIdx];
+  const fb=document.getElementById('fb');
+  document.querySelectorAll('.choice').forEach(b=>{
+    if(parseInt(b.dataset.idx)===q.a)b.classList.add('correct');
+    else if(b===btn)b.classList.add('wrong');
   });
-  if (i === q.a) {
-    correct++; combo++; if (combo > maxCombo) maxCombo = combo;
-    const bonus = combo >= 3 ? 20 : combo >= 2 ? 10 : 0;
-    xp += 10 + bonus;
-    fb.innerHTML = '✓ 正解！' + (combo >= 2 ? ` コンボ x${combo} ＋${bonus}XP！` : '') + '　' + q.hint;
-    fb.className = 'fb ok show';
+  if(i===q.a){
+    correct++;combo++;if(combo>maxCombo)maxCombo=combo;
+    const bonus=combo>=3?20:combo>=2?10:0;
+    xp+=10+bonus;
+    fb.innerHTML='✨ 正解！'+(combo>=2?` コンボ x${combo} ＋${bonus}XP！`:'')+'<br>'+q.hint;
+    fb.className='fb ok show';
   } else {
-    combo = 0; lives = Math.max(0, lives - 1);
+    combo=0;lives=Math.max(0,lives-1);
     btn.classList.add('shake');
-    fb.textContent = '✗ 不正解。' + q.hint; fb.className = 'fb ng show';
+    fb.innerHTML='💧 おしい！<br>'+q.hint;
+    fb.className='fb ng show';
   }
-  recordQuizLap(qIdx + 1, lapTime, i === q.a);
+  recordQuizLap(qIdx+1,lapTime,i===q.a);
   updateHUD();
-  if (lives === 0) { setTimeout(endGame, 1400); return; }
-  document.getElementById('next-btn').className = 'next-btn show';
+  if(lives===0){setTimeout(endGame,1400);return;}
+  document.getElementById('next-btn').className='next-btn show';
 }
 
-function nextQ() { qIdx++; updateHUD(); loadQ(); }
+function nextQ(){qIdx++;updateHUD();loadQ();}
 
-function endGame() {
+function endGame(){
   stopQuizLap();
-  const pct = Math.round(correct / shuffledQs.length * 100);
-  const ranks = [
-    {min:90, icon:'🏆', title:'化学の達人！', sub:'パーフェクトに近い！すごい！'},
-    {min:70, icon:'⭐', title:'よくできました！', sub:'あと少しでマスター！'},
-    {min:50, icon:'🔬', title:'なかなか！', sub:'復習でさらに上達しよう！'},
-    {min:0,  icon:'📚', title:'まだまだこれから！', sub:'諦めずにもう一度挑戦！'}
+  const pct=Math.round(correct/shuffledQs.length*100);
+  const ranks=[
+    {min:90,icon:'👑',title:'化学の天才！',sub:'ほぼパーフェクト！すごい！'},
+    {min:70,icon:'✨',title:'よくできました！',sub:'あと少しでマスター！'},
+    {min:50,icon:'📝',title:'なかなか！',sub:'復習でさらに上達しよう！'},
+    {min:0, icon:'🌱',title:'のびしろたっぷり！',sub:'諦めずもう一度！'}
   ];
-  const r = ranks.find(x => pct >= x.min);
-  document.getElementById('rank-icon').textContent = r.icon;
-  document.getElementById('rank-title').textContent = r.title;
-  document.getElementById('rank-sub').textContent = r.sub;
-  document.getElementById('r-correct').textContent = correct + '/' + shuffledQs.length;
-  document.getElementById('r-xp').textContent = xp;
-  document.getElementById('r-combo').textContent = 'x' + maxCombo;
-  // タイム集計
-  const total = quizLaps.reduce((s, l) => s + l.time, 0);
-  const best = quizLaps.length ? Math.min(...quizLaps.map(l => l.time)) : 0;
-  document.getElementById('r-time').textContent = fmtTime(total);
-  document.getElementById('r-best').textContent = fmtTime(best);
+  const r=ranks.find(x=>pct>=x.min);
+  document.getElementById('rank-icon').textContent=r.icon;
+  document.getElementById('rank-title').textContent=r.title;
+  document.getElementById('rank-sub').textContent=r.sub;
+  document.getElementById('r-correct').textContent=correct+'/'+shuffledQs.length;
+  document.getElementById('r-xp').textContent=xp;
+  const total=quizLaps.reduce((s,l)=>s+l.time,0);
+  const best=quizLaps.length?Math.min(...quizLaps.map(l=>l.time)):0;
+  document.getElementById('r-time').textContent=fmtTime(total);
+  document.getElementById('r-best').textContent=fmtTime(best);
+  document.getElementById('result-retry-btn').onclick=retryGame;
   showScreen('s-result');
 }
 
-/* ==================== BALANCE ==================== */
-function loadBal() {
-  if (balIdx >= shuffledBals.length) { endBal(); return; }
-  const bd = shuffledBals[balIdx];
-  // HUD更新
-  document.getElementById('bal-qnum').textContent = balIdx + 1;
-  document.getElementById('bal-qtotal').textContent = shuffledBals.length;
-  document.getElementById('bal-prog').style.width = Math.round(balIdx / shuffledBals.length * 100) + '%';
-  document.getElementById('bal-cat').textContent = bd.cat;
-  document.getElementById('bal-fb').className = 'fb';
-  document.getElementById('bal-next-btn').className = 'next-btn';
-  const inp = i => `<input class="coeff-inp" id="bi${i}" type="number" min="1" max="9" placeholder="?">`;
-  const chip = i => `${inp(i)}<span class="mol-chip">${bd.parts[i]}</span>`;
-  let html = `<div style="font-size:13px;color:var(--text2);margin-bottom:.75rem">${bd.name}</div>`;
-  html += '<div class="balance-row-ui">';
-  if (bd.ltr) {
-    html += chip(0) + '<span class="op-sym">+</span>' + chip(1) + '<span class="op-sym">→</span>' + chip(2);
-  } else {
-    html += chip(0) + '<span class="op-sym">→</span>' + chip(1) + '<span class="op-sym">+</span>' + chip(2);
-  }
-  html += '</div>';
-  html += `<button class="check-btn" onclick="checkBal()">答え合わせ</button>`;
-  document.getElementById('bal-area').innerHTML = html;
+/* BALANCE */
+function loadBal(){
+  if(balIdx>=shuffledBals.length){endBal();return;}
+  const bd=shuffledBals[balIdx];
+  document.getElementById('bal-qnum').textContent=balIdx+1;
+  document.getElementById('bal-qtotal').textContent=shuffledBals.length;
+  document.getElementById('bal-prog').style.width=Math.round(balIdx/shuffledBals.length*100)+'%';
+  document.getElementById('bal-cat').textContent=bd.cat;
+  document.getElementById('bal-fb').className='fb';
+  document.getElementById('bal-next-btn').className='next-btn';
+  document.getElementById('bal-next-btn').textContent='次の問題へ →';
+  const inp=i=>`<input class="coeff-inp" id="bi${i}" type="number" min="1" max="9" placeholder="?">`;
+  const chip=i=>`${inp(i)}<span class="mol-chip">${bd.parts[i]}</span>`;
+  let html=`<div style="font-size:13px;color:var(--text-light);font-weight:800;margin-bottom:1rem">${bd.name}</div>`;
+  html+='<div class="balance-row-ui">';
+  if(bd.ltr) html+=chip(0)+'<span class="op-sym">＋</span>'+chip(1)+'<span class="op-sym">→</span>'+chip(2);
+  else        html+=chip(0)+'<span class="op-sym">→</span>'+chip(1)+'<span class="op-sym">＋</span>'+chip(2);
+  html+='</div>';
+  html+=`<button class="check-btn" onclick="checkBal()">答えあわせ</button>`;
+  document.getElementById('bal-area').innerHTML=html;
   startBalLap();
 }
 
-function checkBal() {
-  const bd = shuffledBals[balIdx];
-  const vals = bd.parts.map((_, i) => parseInt(document.getElementById('bi' + i).value) || 0);
-  const fb = document.getElementById('bal-fb');
-  const lapTime = stopBalLap();
-  const isCorrect = vals.every((v, i) => v === bd.ans[i]);
-  if (isCorrect) {
-    fb.textContent = '✓ 正解！完璧にバランスが取れています！'; fb.className = 'fb ok show';
+function checkBal(){
+  const bd=shuffledBals[balIdx];
+  const vals=bd.parts.map((_,i)=>parseInt(document.getElementById('bi'+i).value)||0);
+  const fb=document.getElementById('bal-fb');
+  const lapTime=stopBalLap();
+  const isCorrect=vals.every((v,i)=>v===bd.ans[i]);
+  if(isCorrect){
+    fb.innerHTML='✨ 正解！バッチリだね！';fb.className='fb ok show';
   } else {
-    fb.textContent = '✗ もう少し！ 正解の係数: ' + bd.ans.map((v, i) => bd.parts[i] + '=' + v).join('、') + '　両辺の原子数を数えてみよう。';
-    fb.className = 'fb ng show';
+    fb.innerHTML='💧 おしい！正解の係数: '+bd.ans.map((v,i)=>bd.parts[i]+'='+v).join('、');
+    fb.className='fb ng show';
   }
-  recordBalLap(bd.name, lapTime, isCorrect);
-  if (balIdx < shuffledBals.length - 1) {
-    document.getElementById('bal-next-btn').className = 'next-btn show';
-  } else {
-    document.getElementById('bal-next-btn').className = 'next-btn show';
-    document.getElementById('bal-next-btn').textContent = '結果を見る →';
-  }
+  recordBalLap(bd.name,lapTime,isCorrect);
+  const nb=document.getElementById('bal-next-btn');
+  nb.className='next-btn show';
+  if(balIdx===shuffledBals.length-1) nb.textContent='結果を見る →';
 }
 
-function nextBal() {
+function nextBal(){
   balIdx++;
-  if (balIdx >= shuffledBals.length) { endBal(); return; }
-  document.getElementById('bal-next-btn').textContent = '次の問題へ →';
+  if(balIdx>=shuffledBals.length){endBal();return;}
   loadBal();
 }
 
-function endBal() {
+function endBal(){
   stopBalLap();
-  const total = balLaps.reduce((s, l) => s + l.time, 0);
-  const correctCount = balLaps.filter(l => l.ok).length;
-  const best = balLaps.length ? Math.min(...balLaps.map(l => l.time)) : 0;
-  // リザルト画面を係数合わせ用に表示
-  const pct = Math.round(correctCount / shuffledBals.length * 100);
-  const ranks = [
-    {min:100,icon:'🏆',title:'完璧！',sub:'全問正解！バランシングマスター！'},
-    {min:67, icon:'⭐',title:'よくできました！',sub:'あと少しで完璧！'},
-    {min:34, icon:'🔬',title:'なかなか！',sub:'復習でさらに上達しよう！'},
-    {min:0,  icon:'📚',title:'まだまだこれから！',sub:'諦めずにもう一度挑戦！'}
+  const total=balLaps.reduce((s,l)=>s+l.time,0);
+  const correctCount=balLaps.filter(l=>l.ok).length;
+  const best=balLaps.length?Math.min(...balLaps.map(l=>l.time)):0;
+  const pct=Math.round(correctCount/shuffledBals.length*100);
+  const ranks=[
+    {min:100,icon:'⚖️',title:'完璧！',sub:'全問正解！バランシングマスター！'},
+    {min:67, icon:'✨',title:'よくできました！',sub:'あと少しで完璧！'},
+    {min:34, icon:'📝',title:'なかなか！',sub:'復習でさらに上達しよう！'},
+    {min:0,  icon:'🌱',title:'のびしろたっぷり！',sub:'諦めずもう一度！'}
   ];
-  const r = ranks.find(x => pct >= x.min);
-  document.getElementById('rank-icon').textContent = r.icon;
-  document.getElementById('rank-title').textContent = r.title;
-  document.getElementById('rank-sub').textContent = r.sub;
-  document.getElementById('r-correct').textContent = correctCount + '/' + shuffledBals.length;
-  document.getElementById('r-xp').textContent = '—';
-  document.getElementById('r-combo').textContent = '—';
-  document.getElementById('r-time').textContent = fmtTime(total);
-  document.getElementById('r-best').textContent = fmtTime(best);
-  // リトライボタンを係数合わせ用に
-  document.querySelector('#s-result .action-btn.primary').onclick = () => showScreen('s-balance');
-  document.querySelector('#s-result .action-btn.primary').textContent = 'もう一度！';
+  const r=ranks.find(x=>pct>=x.min);
+  document.getElementById('rank-icon').textContent=r.icon;
+  document.getElementById('rank-title').textContent=r.title;
+  document.getElementById('rank-sub').textContent=r.sub;
+  document.getElementById('r-correct').textContent=correctCount+'/'+shuffledBals.length;
+  document.getElementById('r-xp').textContent='—';
+  document.getElementById('r-time').textContent=fmtTime(total);
+  document.getElementById('r-best').textContent=fmtTime(best);
+  document.getElementById('result-retry-btn').onclick=()=>showScreen('s-balance');
   showScreen('s-result');
 }
 
-/* ==================== LAP TIME ==================== */
-function fmtTime(ms) {
-  if (ms < 60000) return (ms / 1000).toFixed(1) + 's';
-  return Math.floor(ms / 60000) + 'm' + ((ms % 60000) / 1000).toFixed(0).padStart(2,'0') + 's';
+/* LAP TIME */
+function fmtTime(ms){
+  if(ms<60000)return(ms/1000).toFixed(1)+'s';
+  return Math.floor(ms/60000)+'m'+((ms%60000)/1000).toFixed(0).padStart(2,'0')+'s';
 }
-
-// --- クイズ用 ---
-function startQuizLap() {
-  stopQuizLap();
-  quizLapStart = Date.now();
-  quizLapTick = setInterval(() => {
-    const el = document.getElementById('quiz-lap-display');
-    if (el) el.textContent = fmtTime(Date.now() - quizLapStart);
-  }, 100);
+function startQuizLap(){
+  stopQuizLap();quizLapStart=Date.now();
+  quizLapTick=setInterval(()=>{const el=document.getElementById('quiz-lap-display');if(el)el.textContent=fmtTime(Date.now()-quizLapStart);},100);
 }
-
-function stopQuizLap() {
-  if (quizLapTick) { clearInterval(quizLapTick); quizLapTick = null; }
-  return quizLapStart ? Date.now() - quizLapStart : 0;
-}
-
-function recordQuizLap(qNo, ms, ok) {
-  quizLaps.push({q: qNo, time: ms, ok});
-  renderQuizLaps();
-}
-
-function renderQuizLaps() {
-  const list = document.getElementById('quiz-lap-list');
-  if (!list) return;
-  const times = quizLaps.map(l => l.time);
-  const best = Math.min(...times), worst = Math.max(...times);
-  list.innerHTML = [...quizLaps].reverse().map(l => {
-    const cls = times.length > 1 ? (l.time === best ? ' best' : l.time === worst ? ' worst' : '') : '';
-    return `<div class="lap-item${cls}">
-      <span class="lap-item-label">${l.ok ? '✓' : '✗'} 問${l.q}</span>
-      <span class="lap-item-time">${fmtTime(l.time)}</span>
-    </div>`;
+function stopQuizLap(){if(quizLapTick){clearInterval(quizLapTick);quizLapTick=null;}return quizLapStart?Date.now()-quizLapStart:0;}
+function recordQuizLap(qNo,ms,ok){
+  quizLaps.push({q:qNo,time:ms,ok});
+  const list=document.getElementById('quiz-lap-list');if(!list)return;
+  const times=quizLaps.map(l=>l.time);
+  const best=Math.min(...times),worst=Math.max(...times);
+  list.innerHTML=[...quizLaps].reverse().map(l=>{
+    const cls=times.length>1?(l.time===best?' best':l.time===worst?' worst':''):'';
+    return `<div class="lap-item${cls}"><span class="lap-item-label">${l.ok?'✓':'✗'} 問${l.q}</span><span class="lap-item-time">${fmtTime(l.time)}</span></div>`;
   }).join('');
-  const sub = document.getElementById('quiz-lap-sub');
-  if (sub && quizLaps.length > 1) sub.textContent = `最速 ${fmtTime(best)} / 最遅 ${fmtTime(worst)}`;
+  const sub=document.getElementById('quiz-lap-sub');
+  if(sub&&quizLaps.length>1)sub.textContent=`最速 ${fmtTime(best)} / 最遅 ${fmtTime(worst)}`;
 }
-
-// --- 係数合わせ用 ---
-function startBalLap() {
-  stopBalLap();
-  balLapStart = Date.now();
-  balLapTick = setInterval(() => {
-    const el = document.getElementById('bal-lap-display');
-    if (el) el.textContent = fmtTime(Date.now() - balLapStart);
-  }, 100);
+function startBalLap(){
+  stopBalLap();balLapStart=Date.now();
+  balLapTick=setInterval(()=>{const el=document.getElementById('bal-lap-display');if(el)el.textContent=fmtTime(Date.now()-balLapStart);},100);
 }
-
-function stopBalLap() {
-  if (balLapTick) { clearInterval(balLapTick); balLapTick = null; }
-  return balLapStart ? Date.now() - balLapStart : 0;
-}
-
-function recordBalLap(name, ms, ok) {
-  balLaps.push({name, time: ms, ok});
-  renderBalLaps();
-}
-
-function renderBalLaps() {
-  const list = document.getElementById('bal-lap-list');
-  if (!list) return;
-  const times = balLaps.map(l => l.time);
-  const best = Math.min(...times), worst = Math.max(...times);
-  list.innerHTML = [...balLaps].reverse().map(l => {
-    const cls = times.length > 1 ? (l.time === best ? ' best' : l.time === worst ? ' worst' : '') : '';
-    return `<div class="lap-item${cls}">
-      <span class="lap-item-label">${l.ok ? '✓' : '✗'} ${l.name}</span>
-      <span class="lap-item-time">${fmtTime(l.time)}</span>
-    </div>`;
+function stopBalLap(){if(balLapTick){clearInterval(balLapTick);balLapTick=null;}return balLapStart?Date.now()-balLapStart:0;}
+function recordBalLap(name,ms,ok){
+  balLaps.push({name,time:ms,ok});
+  const list=document.getElementById('bal-lap-list');if(!list)return;
+  const times=balLaps.map(l=>l.time);
+  const best=Math.min(...times),worst=Math.max(...times);
+  list.innerHTML=[...balLaps].reverse().map(l=>{
+    const cls=times.length>1?(l.time===best?' best':l.time===worst?' worst':''):'';
+    return `<div class="lap-item${cls}"><span class="lap-item-label">${l.ok?'✓':'✗'} ${l.name}</span><span class="lap-item-time">${fmtTime(l.time)}</span></div>`;
   }).join('');
-  const sub = document.getElementById('bal-lap-sub');
-  if (sub && balLaps.length > 1) sub.textContent = `最速 ${fmtTime(best)} / 最遅 ${fmtTime(worst)}`;
+  const sub=document.getElementById('bal-lap-sub');
+  if(sub&&balLaps.length>1)sub.textContent=`最速 ${fmtTime(best)} / 最遅 ${fmtTime(worst)}`;
 }
 
-/* ==================== CANVAS DRAWING ==================== */
-let drawing = false, lastX = 0, lastY = 0, ctx = null;
-
-function initCanvas() {
-  const canvas = document.getElementById('draw-canvas');
-  if (!canvas) return;
-  canvas.width = canvas.offsetWidth * window.devicePixelRatio;
-  canvas.height = canvas.offsetHeight * window.devicePixelRatio;
-  ctx = canvas.getContext('2d');
-  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-  ctx.strokeStyle = '#1fd4a0';
-  ctx.lineWidth = 2.5;
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-
-  function pos(e) {
-    const r = canvas.getBoundingClientRect();
-    const src = e.touches ? e.touches[0] : e;
-    return [src.clientX - r.left, src.clientY - r.top];
-  }
-  function start(e) { e.preventDefault(); drawing = true; [lastX, lastY] = pos(e); }
-  function move(e) {
-    if (!drawing) return; e.preventDefault();
-    const [x, y] = pos(e);
-    ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(x, y); ctx.stroke();
-    [lastX, lastY] = [x, y];
-  }
-  function stop() { drawing = false; }
-
-  canvas.addEventListener('mousedown', start);
-  canvas.addEventListener('mousemove', move);
-  canvas.addEventListener('mouseup', stop);
-  canvas.addEventListener('mouseleave', stop);
-  canvas.addEventListener('touchstart', start, {passive: false});
-  canvas.addEventListener('touchmove', move, {passive: false});
-  canvas.addEventListener('touchend', stop);
+/* CANVAS */
+let drawing=false,lastX=0,lastY=0,ctx=null;
+function initCanvas(){
+  const canvas=document.getElementById('draw-canvas');if(!canvas)return;
+  canvas.width=canvas.offsetWidth*window.devicePixelRatio;
+  canvas.height=canvas.offsetHeight*window.devicePixelRatio;
+  ctx=canvas.getContext('2d');
+  ctx.scale(window.devicePixelRatio,window.devicePixelRatio);
+  ctx.strokeStyle='#ff85a1';ctx.lineWidth=3;ctx.lineCap='round';ctx.lineJoin='round';
+  const pos=e=>{const r=canvas.getBoundingClientRect();const s=e.touches?e.touches[0]:e;return[s.clientX-r.left,s.clientY-r.top];};
+  const start=e=>{e.preventDefault();drawing=true;[lastX,lastY]=pos(e);};
+  const move=e=>{if(!drawing)return;e.preventDefault();const[x,y]=pos(e);ctx.beginPath();ctx.moveTo(lastX,lastY);ctx.lineTo(x,y);ctx.stroke();[lastX,lastY]=[x,y];};
+  const stop=()=>{drawing=false;};
+  canvas.addEventListener('mousedown',start);
+  canvas.addEventListener('mousemove',move);
+  canvas.addEventListener('mouseup',stop);
+  canvas.addEventListener('mouseleave',stop);
+  canvas.addEventListener('touchstart',start,{passive:false});
+  canvas.addEventListener('touchmove',move,{passive:false});
+  canvas.addEventListener('touchend',stop);
 }
-
-function clearCanvas() {
-  const canvas = document.getElementById('draw-canvas');
-  if (ctx && canvas) ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
-}
-
-/* ==================== INIT ==================== */
+function clearCanvas(){const canvas=document.getElementById('draw-canvas');if(ctx&&canvas)ctx.clearRect(0,0,canvas.offsetWidth,canvas.offsetHeight);}
 </script>
 </body>
 </html>
