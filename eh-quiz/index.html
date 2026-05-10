@@ -138,6 +138,27 @@ body {
 .back-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--text-dark); }
 .back-btn:active { transform: translateY(4px); box-shadow: none; }
 
+/* サイトに戻るボタン */
+.site-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--white);
+  border: var(--border-width) solid var(--text-dark);
+  border-radius: 999px;
+  color: var(--text-dark);
+  font-size: 13px;
+  font-weight: 900;
+  padding: 8px 18px;
+  text-decoration: none;
+  box-shadow: 0 4px 0 var(--text-dark);
+  margin-bottom: 14px;
+  font-family: 'Nunito', 'M PLUS Rounded 1c', sans-serif;
+  transition: all 0.1s;
+}
+.site-back-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--text-dark); }
+.site-back-btn:active { transform: translateY(4px); box-shadow: none; }
+
 /* ベストスコア */
 .best-row { text-align: center; margin-top: 15px; font-size: 12px; font-weight: 800; color: #a084bd; min-height: 18px; }
 
@@ -279,6 +300,10 @@ body {
 </head>
 <body>
 <div class="app-wrap">
+
+  <div style="text-align:left; margin-bottom:4px;">
+    <a class="site-back-btn" href="https://sun-ed-tech.vercel.app/">🏠 サイトに戻る</a>
+  </div>
 
   <div class="kq-header">
     <div class="kq-title">ENGLISH MASTER</div>
