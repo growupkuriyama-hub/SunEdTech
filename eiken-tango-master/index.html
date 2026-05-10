@@ -1,0 +1,2359 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>英検単語マスター - Eiken Vocab!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@700;800;900&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-color: #f0faff;
+  --primary: #ff9ecd;
+  --secondary: #7ce2d6;
+  --accent: #ffd95b;
+  --text-dark: #4a3b5a;
+  --white: #ffffff;
+  --border-width: 3px;
+  --pre2-color: #86efac;
+  --g2-color: #93c5fd;
+  --pre1-color: #c4b5fd;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body {
+  background-color: var(--bg-color);
+  background-image: radial-gradient(#d1f0ff 2px, transparent 2px);
+  background-size: 30px 30px;
+  font-family: 'Nunito', 'M PLUS Rounded 1c', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px 16px;
+  color: var(--text-dark);
+}
+.app-wrap { width: 100%; max-width: 500px; }
+
+.kq-header {
+  text-align: center;
+  padding: 1.5rem 1rem;
+  background: var(--white);
+  border: var(--border-width) solid var(--text-dark);
+  border-radius: 24px;
+  box-shadow: 0 6px 0 var(--text-dark);
+  margin-bottom: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.kq-header::before { content: "📗"; position: absolute; left: 10px; top: 10px; font-size: 20px; }
+.kq-title { font-size: 28px; font-weight: 900; color: var(--primary); }
+.kq-sub { font-size: 14px; color: #a084bd; font-weight: 800; margin-top: 4px; }
+
+.card-base {
+  background: var(--white);
+  border: var(--border-width) solid var(--text-dark);
+  border-radius: 24px;
+  box-shadow: 0 6px 0 var(--text-dark);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.section-label {
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--text-dark);
+  margin-bottom: 12px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.section-label::before, .section-label::after {
+  content: "";
+  height: 2px;
+  width: 20px;
+  background: var(--accent);
+}
+
+.opt-section { margin-bottom: 1rem; }
+.btn-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 0; }
+
+.grade-btn, .opt-btn {
+  padding: 12px 20px;
+  border-radius: 16px;
+  border: var(--border-width) solid var(--text-dark);
+  background: var(--white);
+  color: var(--text-dark);
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.1s;
+  box-shadow: 0 4px 0 var(--text-dark);
+  font-family: 'Nunito', 'M PLUS Rounded 1c', sans-serif;
+}
+.grade-btn:hover, .opt-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--text-dark); }
+.grade-btn:active, .opt-btn:active { transform: translateY(4px); box-shadow: none; }
+.grade-btn.active { background: var(--secondary); color: var(--text-dark); }
+.grade-btn[data-g="pre2"].active { background: var(--pre2-color); }
+.grade-btn[data-g="g2"].active { background: var(--g2-color); }
+.grade-btn[data-g="pre1"].active { background: var(--pre1-color); }
+.grade-btn[data-g="all"].active { background: var(--accent); }
+.opt-btn.active { background: var(--accent); color: var(--text-dark); }
+
+.grade-count { font-size: 10px; font-weight: 800; display: block; margin-top: 2px; opacity: 0.75; }
+
+.start-btn {
+  display: block;
+  width: 100%;
+  margin: 1.5rem auto 0;
+  padding: 18px 0;
+  border-radius: 20px;
+  background: var(--primary);
+  color: var(--white);
+  font-size: 22px;
+  font-weight: 900;
+  border: var(--border-width) solid var(--text-dark);
+  box-shadow: 0 6px 0 var(--text-dark);
+  cursor: pointer;
+  transition: all 0.1s;
+  font-family: 'Nunito', 'M PLUS Rounded 1c', sans-serif;
+}
+.start-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 0 var(--text-dark); }
+.start-btn:active { transform: translateY(6px); box-shadow: none; }
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--white);
+  border: var(--border-width) solid var(--text-dark);
+  border-radius: 999px;
+  color: var(--text-dark);
+  font-size: 13px;
+  font-weight: 900;
+  padding: 8px 18px;
+  cursor: pointer;
+  box-shadow: 0 4px 0 var(--text-dark);
+  margin-bottom: 14px;
+  font-family: 'Nunito', 'M PLUS Rounded 1c', sans-serif;
+  transition: all 0.1s;
+}
+.back-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--text-dark); }
+.back-btn:active { transform: translateY(4px); box-shadow: none; }
+
+.site-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--white);
+  border: var(--border-width) solid var(--text-dark);
+  border-radius: 999px;
+  color: var(--text-dark);
+  font-size: 13px;
+  font-weight: 900;
+  padding: 8px 18px;
+  text-decoration: none;
+  box-shadow: 0 4px 0 var(--text-dark);
+  margin-bottom: 14px;
+  font-family: 'Nunito', 'M PLUS Rounded 1c', sans-serif;
+  transition: all 0.1s;
+}
+.site-back-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--text-dark); }
+.site-back-btn:active { transform: translateY(4px); box-shadow: none; }
+
+.best-row { text-align: center; margin-top: 15px; font-size: 12px; font-weight: 800; color: #a084bd; min-height: 18px; }
+
+.lives-row { font-size: 26px; text-align: center; margin-bottom: 10px; filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.1)); }
+.prog-wrap { margin-bottom: 0; }
+.prog-bg { height: 16px; background: #e0e0e0; border: 2px solid var(--text-dark); border-radius: 999px; overflow: hidden; }
+.prog-fill { height: 100%; background: linear-gradient(90deg, var(--secondary), var(--primary)); transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.prog-label { text-align: right; font-size: 12px; font-weight: 900; margin-top: 5px; }
+
+.q-badge {
+  background: var(--accent);
+  border: 2px solid var(--text-dark);
+  padding: 4px 15px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 900;
+  display: inline-block;
+}
+.combo-badge {
+  background: #fde68a;
+  border: 2px solid #b45309;
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+  color: #92400e;
+  margin-left: 8px;
+  display: inline-block;
+}
+.q-prompt { font-size: 13px; font-weight: 800; color: #a084bd; margin: 10px 0 4px; }
+.q-word { font-size: 36px; font-weight: 900; color: var(--text-dark); margin: 12px 0; line-height: 1.2; word-break: break-all; }
+
+.choices-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+.choice-btn {
+  padding: 15px 10px;
+  border-radius: 18px;
+  border: var(--border-width) solid var(--text-dark);
+  background: var(--white);
+  color: var(--text-dark);
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 0 var(--text-dark);
+  transition: all 0.1s;
+  font-family: 'Nunito', 'M PLUS Rounded 1c', sans-serif;
+  line-height: 1.3;
+  min-height: 56px;
+}
+.choice-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 0 var(--text-dark); }
+.choice-btn:active:not(:disabled) { transform: translateY(4px); box-shadow: none; }
+.choice-btn.correct { background: #a7f3d0 !important; animation: bounce 0.5s; }
+.choice-btn.wrong { background: #fca5a5 !important; animation: shake 0.4s; }
+.choice-btn:disabled { cursor: default; transform: none; }
+
+@keyframes bounce { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+
+.feedback-area { margin-top: 15px; font-size: 20px; font-weight: 900; min-height: 30px; text-align: center; }
+.fb-ok { color: #059669; }
+.fb-ng { color: #dc2626; }
+
+.next-btn {
+  width: 100%;
+  padding: 15px;
+  border-radius: 999px;
+  background: var(--secondary);
+  color: var(--text-dark);
+  border: var(--border-width) solid var(--text-dark);
+  box-shadow: 0 5px 0 var(--text-dark);
+  font-size: 18px;
+  font-weight: 900;
+  margin-top: 15px;
+  cursor: pointer;
+  font-family: 'Nunito', 'M PLUS Rounded 1c', sans-serif;
+  transition: all 0.1s;
+}
+.next-btn:hover { transform: translateY(-2px); box-shadow: 0 7px 0 var(--text-dark); }
+.next-btn:active { transform: translateY(5px); box-shadow: none; }
+
+.result-score { font-size: 64px; font-weight: 900; color: var(--primary); -webkit-text-stroke: 2px var(--text-dark); margin: 10px 0; }
+.result-icon { font-size: 56px; margin-bottom: 4px; }
+.result-msg { font-size: 20px; font-weight: 900; margin-bottom: 8px; }
+.result-detail { font-size: 14px; font-weight: 800; color: #a084bd; margin-bottom: 20px; }
+.action-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.act-btn {
+  padding: 12px 24px;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 900;
+  border: var(--border-width) solid var(--text-dark);
+  cursor: pointer;
+  box-shadow: 0 4px 0 var(--text-dark);
+  font-family: 'Nunito', 'M PLUS Rounded 1c', sans-serif;
+  transition: all 0.1s;
+}
+.act-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--text-dark); }
+.act-btn:active { transform: translateY(4px); box-shadow: none; }
+.act-primary { background: var(--primary); color: var(--white); }
+.act-secondary { background: var(--accent); color: var(--text-dark); }
+
+.miss-section { text-align: left; margin-top: 1.5rem; }
+.miss-title { font-size: 14px; font-weight: 900; color: var(--text-dark); margin-bottom: 10px; text-align: center; }
+.miss-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: #fff7ed;
+  border: 2px solid var(--text-dark);
+  margin-bottom: 8px;
+  gap: 12px;
+}
+.miss-en { font-size: 15px; font-weight: 900; color: var(--primary); }
+.miss-ja { font-size: 14px; font-weight: 800; color: var(--text-dark); }
+
+.word-list-card { background: var(--white); border: var(--border-width) solid var(--text-dark); border-radius: 24px; box-shadow: 0 6px 0 var(--text-dark); padding: 1.25rem; }
+.word-list-title { font-size: 18px; font-weight: 900; color: var(--text-dark); margin-bottom: 6px; text-align: center; }
+.wl-count { text-align: center; font-size: 12px; font-weight: 800; color: #a084bd; margin-bottom: 12px; }
+.word-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-height: 55vh; overflow-y: auto; padding-right: 4px; }
+.word-grid::-webkit-scrollbar { width: 8px; }
+.word-grid::-webkit-scrollbar-track { background: #eee; border-radius: 10px; }
+.word-grid::-webkit-scrollbar-thumb { background: var(--text-dark); border-radius: 10px; }
+.word-cell { background: #fff; border: 2px solid var(--text-dark); border-radius: 12px; padding: 10px; }
+.word-cell-en { font-size: 14px; font-weight: 900; color: var(--primary); }
+.word-cell-ja { font-size: 12px; font-weight: 800; color: var(--text-dark); margin-top: 2px; }
+
+/* 英検バッジ */
+.eiken-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 900;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 2px solid var(--text-dark);
+  margin-bottom: 8px;
+}
+.badge-pre2 { background: var(--pre2-color); }
+.badge-g2 { background: var(--g2-color); }
+.badge-pre1 { background: var(--pre1-color); }
+
+@media(max-width:400px){
+  .q-word { font-size: 28px; }
+  .choices-grid { grid-template-columns: 1fr; }
+  .choice-btn { font-size: 14px; }
+}
+</style>
+</head>
+<body>
+<div class="app-wrap">
+
+  <div style="text-align:left; margin-bottom:4px;">
+    <a class="site-back-btn" href="https://sun-ed-tech.vercel.app/">🏠 サイトに戻る</a>
+  </div>
+
+  <div class="kq-header">
+    <div class="kq-title">EIKEN MASTER</div>
+    <div class="kq-sub">〜 英検単語を攻略せよ！ 〜</div>
+  </div>
+
+  <!-- スタート画面 -->
+  <div id="setup-screen" class="card-base">
+    <div class="opt-section">
+      <div class="section-label">級をえらぶ</div>
+      <div class="btn-row">
+        <button class="grade-btn active" data-g="pre2" onclick="setGrade('pre2')">準2級<span class="grade-count" id="cnt-pre2"></span></button>
+        <button class="grade-btn" data-g="g2" onclick="setGrade('g2')">2級<span class="grade-count" id="cnt-g2"></span></button>
+        <button class="grade-btn" data-g="pre1" onclick="setGrade('pre1')">準1級<span class="grade-count" id="cnt-pre1"></span></button>
+        <button class="grade-btn" data-g="all" onclick="setGrade('all')">全部<span class="grade-count" id="cnt-all"></span></button>
+      </div>
+    </div>
+    <div class="opt-section">
+      <div class="section-label">テストの形式</div>
+      <div class="btn-row">
+        <button class="opt-btn active" onclick="setMode('en2ja')">英 → 日</button>
+        <button class="opt-btn" onclick="setMode('ja2en')">日 → 英</button>
+      </div>
+    </div>
+    <div class="opt-section">
+      <div class="section-label">問題数</div>
+      <div class="btn-row">
+        <button class="opt-btn active" onclick="setCount(5)">5問</button>
+        <button class="opt-btn" onclick="setCount(10)">10問</button>
+        <button class="opt-btn" onclick="setCount(20)">20問</button>
+      </div>
+    </div>
+    <button class="start-btn" onclick="startQuiz()">QUIZ START! 🚀</button>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px;">
+      <button class="opt-btn" style="font-size:12px;padding:8px 14px;" onclick="showWordList('pre2')">準2級 単語帳</button>
+      <button class="opt-btn" style="font-size:12px;padding:8px 14px;" onclick="showWordList('g2')">2級 単語帳</button>
+      <button class="opt-btn" style="font-size:12px;padding:8px 14px;" onclick="showWordList('pre1')">準1級 単語帳</button>
+    </div>
+    <div class="best-row" id="best-display"></div>
+  </div>
+
+  <!-- クイズ画面 -->
+  <div id="quiz-screen" style="display:none;">
+    <button class="back-btn" onclick="showSetup()">← もどる</button>
+    <div class="lives-row" id="lives-row"></div>
+    <div class="card-base" style="padding-top:12px;">
+      <div class="prog-wrap">
+        <div class="prog-bg"><div class="prog-fill" id="prog" style="width:0%"></div></div>
+        <div class="prog-label" id="prog-label"></div>
+      </div>
+      <div style="text-align:center; margin-top:18px;">
+        <span class="q-badge" id="q-badge">第1問</span>
+        <span class="combo-badge" id="combo-badge" style="display:none;">コンボ x0</span>
+        <div class="q-prompt" id="q-prompt"></div>
+        <div class="q-word" id="q-word"></div>
+        <div id="choices-area"></div>
+        <div class="feedback-area" id="feedback"></div>
+        <button class="next-btn" id="next-btn" style="display:none;" onclick="nextQ()">つぎの問題へ 🚀</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 結果画面 -->
+  <div id="result-screen" style="display:none;">
+    <button class="back-btn" onclick="showSetup()">← もどる</button>
+    <div class="card-base" style="text-align:center;">
+      <div class="result-icon" id="r-icon"></div>
+      <div class="result-score" id="r-score"></div>
+      <div class="result-msg" id="r-msg"></div>
+      <div class="result-detail" id="r-detail"></div>
+      <div class="action-row">
+        <button class="act-btn act-primary" onclick="showSetup()">もう一度！</button>
+        <button class="act-btn act-secondary" id="retry-miss-btn" onclick="retryMissed()" style="display:none;">間違い復習</button>
+      </div>
+      <div class="miss-section" id="miss-section" style="display:none;">
+        <div class="miss-title">間違えた単語</div>
+        <div id="miss-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 単語リスト画面 -->
+  <div id="word-list-screen" style="display:none;">
+    <button class="back-btn" onclick="showSetup()">← もどる</button>
+    <div class="word-list-card">
+      <div class="word-list-title" id="wl-title"></div>
+      <div class="wl-count" id="wl-count"></div>
+      <div class="word-grid" id="wl-grid"></div>
+    </div>
+  </div>
+
+</div>
+<script>
+
+// ========== 状態変数 ==========
+let grade = 'pre2', mode = 'en2ja', totalCount = 5;
+let pool = [], queue = [], qIdx = 0, correct = 0, missed = [], hearts = 3, combo = 0, maxCombo = 0, answered = false;
+
+// ========== UI状態更新 ==========
+function setGrade(g){
+  grade = g;
+  document.querySelectorAll('.grade-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.grade-btn[data-g="${g}"]`).classList.add('active');
+  updateBestDisplay();
+}
+function setMode(m){
+  mode = m;
+  document.querySelectorAll('.opt-section:nth-child(2) .opt-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  updateBestDisplay();
+}
+function setCount(n){
+  totalCount = n;
+  document.querySelectorAll('.opt-section:nth-child(3) .opt-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+function updateBestDisplay(){
+  const key = 'bestScore_eiken_'+grade+'_'+mode;
+  const saved = localStorage.getItem(key);
+  const el = document.getElementById('best-display');
+  if(saved){
+    const d = JSON.parse(saved);
+    el.textContent = '🏆 ベストスコア: '+d.score+'点 ('+d.date+')';
+  } else {
+    el.textContent = '';
+  }
+}
+function updateWordCounts(){
+  const counts = {pre2: WPre2.length, g2: WG2.length, pre1: WPre1.length};
+  counts.all = counts.pre2 + counts.g2 + counts.pre1;
+  document.getElementById('cnt-pre2').textContent = counts.pre2+'語';
+  document.getElementById('cnt-g2').textContent = counts.g2+'語';
+  document.getElementById('cnt-pre1').textContent = counts.pre1+'語';
+  document.getElementById('cnt-all').textContent = counts.all+'語';
+}
+
+// ========== SRS ==========
+const SRS_KEY = 'eiken_srs_v2';
+function wordKey(word){ return (word.level || grade) + ':' + word.en + ':' + word.ja; }
+function loadSRS(){ return JSON.parse(localStorage.getItem(SRS_KEY)||'{}'); }
+function saveSRS(data){ localStorage.setItem(SRS_KEY, JSON.stringify(data)); }
+function getWeight(word, srsData){
+  const d = srsData[wordKey(word)];
+  if(!d) return 10;
+  const c = d.correct||0, w = d.wrong||0;
+  return Math.max(1, 10 + w*3 - c*2);
+}
+function weightedSample(pool, n, srsData){
+  const arr = [...pool];
+  const result = [];
+  for(let i=0; i<n && arr.length>0; i++){
+    const weights = arr.map(w => getWeight(w, srsData));
+    const total = weights.reduce((a,b)=>a+b, 0);
+    let r = Math.random()*total;
+    let idx = 0;
+    for(let j=0; j<weights.length; j++){ r -= weights[j]; if(r<=0){idx=j;break;} }
+    result.push(arr[idx]);
+    arr.splice(idx, 1);
+  }
+  return result;
+}
+
+// ========== プール作成 ==========
+function getPool(){
+  if(grade==='all') return [...WPre2,...WG2,...WPre1];
+  if(grade==='pre2') return [...WPre2];
+  if(grade==='g2') return [...WG2];
+  return [...WPre1];
+}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+// ========== クイズ開始 ==========
+function startQuiz(){
+  const srsData = loadSRS();
+  pool = getPool();
+  queue = weightedSample(pool, Math.min(totalCount, pool.length), srsData);
+  qIdx=0;correct=0;missed=[];hearts=3;combo=0;maxCombo=0;answered=false;
+  document.getElementById('setup-screen').style.display='none';
+  document.getElementById('result-screen').style.display='none';
+  document.getElementById('quiz-screen').style.display='block';
+  renderLives();
+  showQ();
+}
+function renderLives(){
+  document.getElementById('lives-row').innerHTML=
+    Array.from({length:3},(_,i)=>`<span>${i<hearts?'❤️':'🖤'}</span>`).join('');
+}
+
+// ========== 問題表示 ==========
+function showQ(){
+  answered=false;
+  const w=queue[qIdx];
+  const pct=Math.round((qIdx/queue.length)*100);
+  document.getElementById('prog').style.width=pct+'%';
+  document.getElementById('prog-label').textContent=(qIdx+1)+' / '+queue.length+'問';
+  document.getElementById('q-badge').textContent='第'+(qIdx+1)+'問';
+  const cb=document.getElementById('combo-badge');
+  if(combo>=2){cb.style.display='';cb.textContent='コンボ x'+combo;}else{cb.style.display='none';}
+  document.getElementById('feedback').textContent='';
+  document.getElementById('feedback').className='feedback-area';
+  document.getElementById('next-btn').style.display='none';
+  const isEn=(mode==='en2ja');
+  document.getElementById('q-prompt').textContent=isEn?'この英語の日本語訳は？':'この日本語の英語は？';
+  document.getElementById('q-word').textContent=isEn?w.en:w.ja;
+  const allPool=getPool();
+  const others=shuffle(allPool.filter(x=>x.en!==w.en)).slice(0,3);
+  const choices=shuffle([w,...others]);
+  document.getElementById('choices-area').innerHTML=
+    '<div class="choices-grid">'+
+    choices.map(c=>`<button class="choice-btn" data-en="${c.en}" onclick="checkChoice(this,'${w.en}')">${isEn?c.ja:c.en}</button>`).join('')+
+    '</div>';
+}
+
+// ========== 正誤判定 ==========
+function checkChoice(btn,correctEn){
+  if(answered)return;
+  answered=true;
+  const chosen=btn.getAttribute('data-en');
+  const isOk=(chosen===correctEn);
+  document.querySelectorAll('.choice-btn').forEach(b=>{
+    b.disabled=true;
+    if(b.getAttribute('data-en')===correctEn)b.classList.add('correct');
+  });
+  const w=queue[qIdx];
+  const srsData=loadSRS();
+  const key = wordKey(w);
+  if(!srsData[key])srsData[key]={correct:0,wrong:0};
+  if(isOk){
+    srsData[key].correct++;
+    correct++;combo++;if(combo>maxCombo)maxCombo=combo;
+    setFb(true,combo>=3?'すごい! コンボ '+combo+'!! 🎉':'せいかい! ✓');
+  } else {
+    srsData[key].wrong++;
+    hearts=Math.max(0,hearts-1);combo=0;missed.push(w);
+    btn.classList.add('wrong');
+    setFb(false,'ざんねん... 正解: '+(mode==='en2ja'?w.ja:w.en)+' ✗');
+  }
+  saveSRS(srsData);
+  renderLives();
+  updateCombo();
+  document.getElementById('next-btn').style.display='block';
+  if(hearts<=0)setTimeout(()=>showResult(),800);
+}
+function setFb(ok,msg){
+  const el=document.getElementById('feedback');
+  el.className='feedback-area '+(ok?'fb-ok':'fb-ng');
+  el.textContent=msg;
+}
+function updateCombo(){
+  const cb=document.getElementById('combo-badge');
+  if(combo>=2){cb.style.display='';cb.textContent='コンボ x'+combo;}else{cb.style.display='none';}
+}
+
+// ========== 次の問題 ==========
+function nextQ(){
+  qIdx++;
+  if(qIdx>=queue.length||hearts<=0)showResult();
+  else showQ();
+}
+
+// ========== 結果表示 ==========
+function showResult(){
+  document.getElementById('quiz-screen').style.display='none';
+  document.getElementById('result-screen').style.display='block';
+  const done=Math.min(qIdx+(answered?1:0),queue.length);
+  const pct=done>0?Math.round((correct/done)*100):0;
+  const icons=['😢','😅','🙂','😊','🌟','🎉'];
+  const msgs=['もう少し練習しよう!','だいじょうぶ、またやってみて!','いいかんじ!','よくできました!','すばらしい!','かんぺき! 天才!!'];
+  const idx=pct===100?5:Math.min(Math.floor(pct/20),4);
+  document.getElementById('r-icon').textContent=icons[idx];
+  document.getElementById('r-score').textContent=pct+'点';
+  document.getElementById('r-msg').textContent=msgs[idx];
+  document.getElementById('r-detail').textContent=correct+' / '+done+' 問正解 | 最高コンボ: '+maxCombo;
+  const key='bestScore_eiken_'+grade+'_'+mode;
+  const saved=localStorage.getItem(key);
+  const today=new Date().toLocaleDateString('ja-JP');
+  if(!saved||JSON.parse(saved).score<pct){
+    localStorage.setItem(key,JSON.stringify({score:pct,date:today}));
+    if(saved&&JSON.parse(saved).score<pct)
+      document.getElementById('r-msg').textContent+=' 🏆ベスト更新!';
+  }
+  const srsData=loadSRS();
+  const poolAll=getPool();
+  const weakWords=poolAll
+    .filter(w=>srsData[wordKey(w)]&&srsData[wordKey(w)].wrong>0)
+    .sort((a,b)=>((srsData[wordKey(b)].wrong||0)-(srsData[wordKey(b)].correct||0)*0.5)-((srsData[wordKey(a)].wrong||0)-(srsData[wordKey(a)].correct||0)*0.5))
+    .slice(0,3);
+  const weakStr=weakWords.length>0?' | 要注意: '+weakWords.map(w=>w.en).join('・'):'';
+  document.getElementById('r-detail').textContent+=weakStr;
+  const retryBtn=document.getElementById('retry-miss-btn');
+  const missSection=document.getElementById('miss-section');
+  if(missed.length>0){
+    retryBtn.style.display='';
+    missSection.style.display='';
+    document.getElementById('miss-list').innerHTML=
+      missed.map(w=>`<div class="miss-item"><span class="miss-en">${w.en}</span><span class="miss-ja">${w.ja}</span></div>`).join('');
+  } else {
+    retryBtn.style.display='none';
+    missSection.style.display='none';
+  }
+}
+
+function retryMissed(){
+  const srsData=loadSRS();
+  pool=getPool();
+  queue=weightedSample([...missed],missed.length,srsData);
+  qIdx=0;correct=0;missed=[];hearts=3;combo=0;maxCombo=0;answered=false;
+  document.getElementById('result-screen').style.display='none';
+  document.getElementById('quiz-screen').style.display='block';
+  renderLives();
+  showQ();
+}
+
+function showSetup(){
+  ['quiz-screen','result-screen','word-list-screen'].forEach(id=>{
+    document.getElementById(id).style.display='none';
+  });
+  document.getElementById('setup-screen').style.display='block';
+  updateBestDisplay();
+}
+
+function showWordList(g){
+  const names={pre2:'英検準2級',g2:'英検2級',pre1:'英検準1級'};
+  const wlist = g==='pre2'?WPre2:g==='g2'?WG2:WPre1;
+  const srsData=loadSRS();
+  document.getElementById('setup-screen').style.display='none';
+  document.getElementById('word-list-screen').style.display='block';
+  document.getElementById('wl-title').textContent=names[g]+' 単語帳';
+  document.getElementById('wl-count').textContent='全'+wlist.length+'語';
+  document.getElementById('wl-grid').innerHTML=
+    wlist.map(w=>{
+      const d=srsData[wordKey(w)];
+      let badge='', bg='';
+      if(d){
+        const net=(d.correct||0)-(d.wrong||0)*1.5;
+        if(net>=3){bg='background:#d1fae5;';badge='<span style="font-size:10px;color:#065f46;">✓ 得意</span>';}
+        else if(d.wrong>0){bg='background:#fff7ed;';badge='<span style="font-size:10px;color:#c2410c;">✗ 要注意</span>';}
+      }
+      return `<div class="word-cell" style="${bg}">
+        <div class="word-cell-en">${w.en}</div>
+        <div class="word-cell-ja">${w.ja}</div>
+        ${badge}
+      </div>`;
+    }).join('');
+}
+
+// =====================================================
+// ========== 単語データ（英検準2級: 増量版 549語）==========
+// =====================================================
+const WPre2 = [
+  {en:"achieve",ja:"達成する"},
+  {en:"afford",ja:"〜する余裕がある"},
+  {en:"announce",ja:"発表する"},
+  {en:"apply",ja:"応募する・適用する"},
+  {en:"attack",ja:"攻撃する"},
+  {en:"avoid",ja:"避ける"},
+  {en:"belong",ja:"属する"},
+  {en:"borrow",ja:"借りる"},
+  {en:"cause",ja:"引き起こす・原因"},
+  {en:"choose",ja:"選ぶ"},
+  {en:"collect",ja:"集める"},
+  {en:"communicate",ja:"伝える"},
+  {en:"compare",ja:"比較する"},
+  {en:"complete",ja:"完成する"},
+  {en:"consider",ja:"考慮する"},
+  {en:"contain",ja:"含む"},
+  {en:"continue",ja:"続ける"},
+  {en:"control",ja:"管理する"},
+  {en:"damage",ja:"損傷を与える・被害"},
+  {en:"decide",ja:"決める"},
+  {en:"decrease",ja:"減る"},
+  {en:"deliver",ja:"配達する"},
+  {en:"depend",ja:"頼る・依存する"},
+  {en:"describe",ja:"説明する"},
+  {en:"destroy",ja:"破壊する"},
+  {en:"develop",ja:"発展させる"},
+  {en:"disagree",ja:"反対する"},
+  {en:"discover",ja:"発見する"},
+  {en:"discuss",ja:"議論する"},
+  {en:"divide",ja:"分ける"},
+  {en:"encourage",ja:"励ます"},
+  {en:"enjoy",ja:"楽しむ"},
+  {en:"enter",ja:"入る"},
+  {en:"establish",ja:"設立する"},
+  {en:"examine",ja:"調べる"},
+  {en:"exist",ja:"存在する"},
+  {en:"explain",ja:"説明する"},
+  {en:"fail",ja:"失敗する"},
+  {en:"focus",ja:"集中する"},
+  {en:"follow",ja:"従う"},
+  {en:"gather",ja:"集まる"},
+  {en:"grow",ja:"育つ"},
+  {en:"guide",ja:"案内する"},
+  {en:"happen",ja:"起こる"},
+  {en:"increase",ja:"増える"},
+  {en:"influence",ja:"影響を与える"},
+  {en:"introduce",ja:"紹介する"},
+  {en:"invite",ja:"招待する"},
+  {en:"involve",ja:"含む・関係させる"},
+  {en:"lead",ja:"導く"},
+  {en:"lend",ja:"貸す"},
+  {en:"manage",ja:"管理する・なんとかする"},
+  {en:"mention",ja:"言及する"},
+  {en:"miss",ja:"見逃す・恋しく思う"},
+  {en:"offer",ja:"申し出る"},
+  {en:"perform",ja:"演じる"},
+  {en:"prepare",ja:"準備する"},
+  {en:"prevent",ja:"防ぐ"},
+  {en:"produce",ja:"生産する"},
+  {en:"protect",ja:"守る"},
+  {en:"provide",ja:"提供する"},
+  {en:"raise",ja:"育てる・上げる"},
+  {en:"reach",ja:"到達する"},
+  {en:"realize",ja:"気づく"},
+  {en:"reduce",ja:"減らす"},
+  {en:"refuse",ja:"断る"},
+  {en:"remain",ja:"残る"},
+  {en:"repair",ja:"修理する"},
+  {en:"repeat",ja:"繰り返す"},
+  {en:"replace",ja:"取り替える"},
+  {en:"require",ja:"必要とする"},
+  {en:"return",ja:"戻る・返す"},
+  {en:"solve",ja:"解決する"},
+  {en:"spend",ja:"過ごす・使う"},
+  {en:"succeed",ja:"成功する"},
+  {en:"suggest",ja:"提案する"},
+  {en:"support",ja:"支持する"},
+  {en:"survive",ja:"生き残る"},
+  {en:"spread",ja:"広がる"},
+  {en:"suffer",ja:"苦しむ"},
+  {en:"train",ja:"訓練する"},
+  {en:"treat",ja:"扱う・治療する"},
+  {en:"turn",ja:"曲がる"},
+  {en:"waste",ja:"無駄にする"},
+  {en:"ability",ja:"能力"},
+  {en:"accident",ja:"事故"},
+  {en:"activity",ja:"活動"},
+  {en:"advantage",ja:"利点"},
+  {en:"adventure",ja:"冒険"},
+  {en:"advice",ja:"アドバイス"},
+  {en:"age",ja:"年齢・時代"},
+  {en:"airport",ja:"空港"},
+  {en:"amount",ja:"量"},
+  {en:"area",ja:"地域"},
+  {en:"art",ja:"芸術"},
+  {en:"attention",ja:"注意"},
+  {en:"attitude",ja:"態度"},
+  {en:"audience",ja:"観客・聴衆"},
+  {en:"author",ja:"著者"},
+  {en:"behavior",ja:"行動"},
+  {en:"belief",ja:"信念"},
+  {en:"benefit",ja:"利益"},
+  {en:"career",ja:"職業・キャリア"},
+  {en:"challenge",ja:"挑戦"},
+  {en:"chance",ja:"チャンス"},
+  {en:"character",ja:"性格・登場人物"},
+  {en:"choice",ja:"選択"},
+  {en:"citizen",ja:"市民"},
+  {en:"climate",ja:"気候"},
+  {en:"community",ja:"地域社会"},
+  {en:"competition",ja:"競争"},
+  {en:"condition",ja:"状態"},
+  {en:"confidence",ja:"自信"},
+  {en:"connection",ja:"つながり"},
+  {en:"conversation",ja:"会話"},
+  {en:"culture",ja:"文化"},
+  {en:"customer",ja:"客"},
+  {en:"danger",ja:"危険"},
+  {en:"decision",ja:"決断"},
+  {en:"difference",ja:"違い"},
+  {en:"difficulty",ja:"困難"},
+  {en:"direction",ja:"方向"},
+  {en:"discovery",ja:"発見"},
+  {en:"disease",ja:"病気"},
+  {en:"distance",ja:"距離"},
+  {en:"education",ja:"教育"},
+  {en:"effect",ja:"効果"},
+  {en:"effort",ja:"努力"},
+  {en:"emotion",ja:"感情"},
+  {en:"energy",ja:"エネルギー"},
+  {en:"environment",ja:"環境"},
+  {en:"event",ja:"出来事"},
+  {en:"experience",ja:"経験"},
+  {en:"experiment",ja:"実験"},
+  {en:"explanation",ja:"説明"},
+  {en:"fact",ja:"事実"},
+  {en:"failure",ja:"失敗"},
+  {en:"feature",ja:"特徴"},
+  {en:"freedom",ja:"自由"},
+  {en:"government",ja:"政府"},
+  {en:"habit",ja:"習慣"},
+  {en:"health",ja:"健康"},
+  {en:"history",ja:"歴史"},
+  {en:"hobby",ja:"趣味"},
+  {en:"hunger",ja:"空腹・飢え"},
+  {en:"image",ja:"イメージ"},
+  {en:"imagination",ja:"想像力"},
+  {en:"information",ja:"情報"},
+  {en:"instruction",ja:"指示"},
+  {en:"interest",ja:"興味"},
+  {en:"introduction",ja:"紹介"},
+  {en:"issue",ja:"問題"},
+  {en:"journey",ja:"旅"},
+  {en:"knowledge",ja:"知識"},
+  {en:"language",ja:"言語"},
+  {en:"law",ja:"法律"},
+  {en:"leader",ja:"リーダー"},
+  {en:"material",ja:"材料"},
+  {en:"memory",ja:"記憶"},
+  {en:"method",ja:"方法"},
+  {en:"mistake",ja:"間違い"},
+  {en:"nature",ja:"自然"},
+  {en:"neighborhood",ja:"近所"},
+  {en:"opportunity",ja:"機会"},
+  {en:"organization",ja:"組織"},
+  {en:"patience",ja:"忍耐"},
+  {en:"peace",ja:"平和"},
+  {en:"pleasure",ja:"喜び"},
+  {en:"pollution",ja:"汚染"},
+  {en:"population",ja:"人口"},
+  {en:"position",ja:"位置・立場"},
+  {en:"possibility",ja:"可能性"},
+  {en:"power",ja:"力・権力"},
+  {en:"pressure",ja:"圧力"},
+  {en:"problem",ja:"問題"},
+  {en:"progress",ja:"進歩"},
+  {en:"project",ja:"プロジェクト"},
+  {en:"purpose",ja:"目的"},
+  {en:"quality",ja:"質"},
+  {en:"reason",ja:"理由"},
+  {en:"relationship",ja:"関係"},
+  {en:"research",ja:"研究"},
+  {en:"respect",ja:"尊敬"},
+  {en:"responsibility",ja:"責任"},
+  {en:"result",ja:"結果"},
+  {en:"role",ja:"役割"},
+  {en:"rule",ja:"規則"},
+  {en:"safety",ja:"安全"},
+  {en:"situation",ja:"状況"},
+  {en:"skill",ja:"技術"},
+  {en:"society",ja:"社会"},
+  {en:"solution",ja:"解決策"},
+  {en:"species",ja:"種"},
+  {en:"subject",ja:"科目・話題"},
+  {en:"technology",ja:"技術"},
+  {en:"topic",ja:"話題"},
+  {en:"tradition",ja:"伝統"},
+  {en:"travel",ja:"旅行・旅行する"},
+  {en:"trouble",ja:"問題"},
+  {en:"truth",ja:"真実"},
+  {en:"value",ja:"価値"},
+  {en:"view",ja:"眺め・意見"},
+  {en:"volunteer",ja:"ボランティア"},
+  {en:"weapon",ja:"武器"},
+  {en:"weight",ja:"重さ"},
+  {en:"wildlife",ja:"野生生物"},
+  {en:"able",ja:"〜できる"},
+  {en:"active",ja:"活動的な"},
+  {en:"ancient",ja:"古代の"},
+  {en:"basic",ja:"基本的な"},
+  {en:"careful",ja:"注意深い"},
+  {en:"clever",ja:"賢い"},
+  {en:"comfortable",ja:"快適な"},
+  {en:"common",ja:"一般的な"},
+  {en:"creative",ja:"創造的な"},
+  {en:"cultural",ja:"文化的な"},
+  {en:"current",ja:"現在の"},
+  {en:"delicious",ja:"おいしい"},
+  {en:"difficult",ja:"難しい"},
+  {en:"effective",ja:"効果的な"},
+  {en:"empty",ja:"空の"},
+  {en:"environmental",ja:"環境の"},
+  {en:"excellent",ja:"優秀な"},
+  {en:"expensive",ja:"高価な"},
+  {en:"familiar",ja:"なじみ深い"},
+  {en:"famous",ja:"有名な"},
+  {en:"foreign",ja:"外国の"},
+  {en:"formal",ja:"正式な"},
+  {en:"friendly",ja:"親しみやすい"},
+  {en:"global",ja:"世界的な"},
+  {en:"grateful",ja:"感謝している"},
+  {en:"helpful",ja:"役に立つ"},
+  {en:"historical",ja:"歴史的な"},
+  {en:"honest",ja:"正直な"},
+  {en:"huge",ja:"巨大な"},
+  {en:"impossible",ja:"不可能な"},
+  {en:"independent",ja:"独立した"},
+  {en:"local",ja:"地域の"},
+  {en:"main",ja:"主な"},
+  {en:"mental",ja:"精神的な"},
+  {en:"modern",ja:"現代の"},
+  {en:"natural",ja:"自然な"},
+  {en:"necessary",ja:"必要な"},
+  {en:"negative",ja:"否定的な"},
+  {en:"nervous",ja:"緊張した"},
+  {en:"official",ja:"公式の"},
+  {en:"ordinary",ja:"普通の"},
+  {en:"original",ja:"元の・独創的な"},
+  {en:"physical",ja:"身体的な"},
+  {en:"pleased",ja:"喜んでいる"},
+  {en:"positive",ja:"肯定的な"},
+  {en:"possible",ja:"可能な"},
+  {en:"powerful",ja:"力強い"},
+  {en:"previous",ja:"以前の"},
+  {en:"private",ja:"私的な"},
+  {en:"public",ja:"公の"},
+  {en:"recent",ja:"最近の"},
+  {en:"serious",ja:"深刻な"},
+  {en:"similar",ja:"似ている"},
+  {en:"social",ja:"社会的な"},
+  {en:"successful",ja:"成功した"},
+  {en:"traditional",ja:"伝統的な"},
+  {en:"typical",ja:"典型的な"},
+  {en:"unique",ja:"独特な"},
+  {en:"useful",ja:"役立つ"},
+  {en:"various",ja:"様々な"},
+  {en:"violent",ja:"暴力的な"},
+  {en:"wild",ja:"野生の"},
+  {en:"wonderful",ja:"すばらしい"},
+  {en:"accept",ja:"受け入れる"},
+  {en:"agree",ja:"同意する"},
+  {en:"allow",ja:"許可する"},
+  {en:"appear",ja:"現れる・〜のように見える"},
+  {en:"arrive",ja:"到着する"},
+  {en:"believe",ja:"信じる"},
+  {en:"build",ja:"建てる"},
+  {en:"carry",ja:"運ぶ"},
+  {en:"catch",ja:"捕まえる・間に合う"},
+  {en:"change",ja:"変える・変わる"},
+  {en:"check",ja:"確認する"},
+  {en:"climb",ja:"登る"},
+  {en:"close",ja:"閉じる"},
+  {en:"create",ja:"創造する"},
+  {en:"cross",ja:"横切る"},
+  {en:"cry",ja:"泣く・叫ぶ"},
+  {en:"cut",ja:"切る"},
+  {en:"die",ja:"死ぬ"},
+  {en:"draw",ja:"描く"},
+  {en:"drive",ja:"運転する"},
+  {en:"earn",ja:"稼ぐ"},
+  {en:"expect",ja:"予期する"},
+  {en:"fall",ja:"落ちる"},
+  {en:"feed",ja:"食べ物を与える"},
+  {en:"finish",ja:"終える"},
+  {en:"fit",ja:"合う"},
+  {en:"fly",ja:"飛ぶ"},
+  {en:"forget",ja:"忘れる"},
+  {en:"hope",ja:"望む"},
+  {en:"hurt",ja:"傷つける・痛む"},
+  {en:"join",ja:"参加する"},
+  {en:"keep",ja:"保つ"},
+  {en:"learn",ja:"学ぶ"},
+  {en:"leave",ja:"去る・残す"},
+  {en:"lose",ja:"失う・負ける"},
+  {en:"marry",ja:"結婚する"},
+  {en:"move",ja:"動く・引っ越す"},
+  {en:"notice",ja:"気づく"},
+  {en:"pass",ja:"通る・合格する"},
+  {en:"pick",ja:"選ぶ・摘む"},
+  {en:"plant",ja:"植える・植物・工場"},
+  {en:"remember",ja:"覚えている"},
+  {en:"save",ja:"救う・貯める"},
+  {en:"sell",ja:"売る"},
+  {en:"send",ja:"送る"},
+  {en:"share",ja:"共有する"},
+  {en:"shout",ja:"叫ぶ"},
+  {en:"show",ja:"見せる"},
+  {en:"smell",ja:"においがする"},
+  {en:"stay",ja:"滞在する"},
+  {en:"teach",ja:"教える"},
+  {en:"throw",ja:"投げる"},
+  {en:"touch",ja:"触れる"},
+  {en:"try",ja:"試す"},
+  {en:"visit",ja:"訪れる"},
+  {en:"wait",ja:"待つ"},
+  {en:"wear",ja:"身につける"},
+  {en:"win",ja:"勝つ"},
+  {en:"worry",ja:"心配する"},
+  {en:"wonder",ja:"不思議に思う"},
+  {en:"answer",ja:"答える"},
+  {en:"arrange",ja:"手配する"},
+  {en:"burn",ja:"燃える・燃やす"},
+  {en:"care",ja:"気にする・世話する"},
+  {en:"celebrate",ja:"祝う"},
+  {en:"connect",ja:"つなぐ"},
+  {en:"cook",ja:"料理する"},
+  {en:"count",ja:"数える"},
+  {en:"cover",ja:"覆う・含む"},
+  {en:"design",ja:"設計する"},
+  {en:"drop",ja:"落とす"},
+  {en:"educate",ja:"教育する"},
+  {en:"face",ja:"直面する"},
+  {en:"force",ja:"強制する"},
+  {en:"hate",ja:"嫌う"},
+  {en:"hide",ja:"隠す"},
+  {en:"hit",ja:"打つ"},
+  {en:"hold",ja:"持つ・開催する"},
+  {en:"imagine",ja:"想像する"},
+  {en:"include",ja:"含む"},
+  {en:"invent",ja:"発明する"},
+  {en:"lie",ja:"横たわる・嘘をつく"},
+  {en:"mark",ja:"印をつける"},
+  {en:"mind",ja:"気にする"},
+  {en:"name",ja:"名づける"},
+  {en:"need",ja:"必要とする"},
+  {en:"order",ja:"注文する・命じる"},
+  {en:"own",ja:"所有する"},
+  {en:"paint",ja:"塗る・描く"},
+  {en:"plan",ja:"計画する"},
+  {en:"push",ja:"押す"},
+  {en:"receive",ja:"受け取る"},
+  {en:"record",ja:"記録する"},
+  {en:"rest",ja:"休む"},
+  {en:"ride",ja:"乗る"},
+  {en:"ring",ja:"鳴る"},
+  {en:"search",ja:"探す"},
+  {en:"serve",ja:"仕える・提供する"},
+  {en:"sign",ja:"署名する・標識・合図"},
+  {en:"stand",ja:"立つ"},
+  {en:"taste",ja:"味がする"},
+  {en:"trust",ja:"信頼する"},
+  {en:"understand",ja:"理解する"},
+  {en:"use",ja:"使う"},
+  {en:"wish",ja:"願う"},
+  {en:"address",ja:"住所・演説"},
+  {en:"adult",ja:"大人"},
+  {en:"animal",ja:"動物"},
+  {en:"apartment",ja:"アパート"},
+  {en:"article",ja:"記事"},
+  {en:"artist",ja:"芸術家"},
+  {en:"battle",ja:"戦い"},
+  {en:"birth",ja:"誕生"},
+  {en:"blood",ja:"血"},
+  {en:"boat",ja:"ボート"},
+  {en:"bridge",ja:"橋"},
+  {en:"business",ja:"事業・仕事"},
+  {en:"camp",ja:"キャンプ"},
+  {en:"capital",ja:"首都・資本"},
+  {en:"case",ja:"場合・事件"},
+  {en:"century",ja:"世紀"},
+  {en:"ceremony",ja:"式典"},
+  {en:"college",ja:"大学"},
+  {en:"company",ja:"会社"},
+  {en:"cost",ja:"費用"},
+  {en:"countryside",ja:"田舎"},
+  {en:"couple",ja:"夫婦・2つ"},
+  {en:"course",ja:"講座・進路"},
+  {en:"crowd",ja:"群衆"},
+  {en:"custom",ja:"習慣"},
+  {en:"data",ja:"データ"},
+  {en:"date",ja:"日付・デート"},
+  {en:"degree",ja:"程度・度"},
+  {en:"department",ja:"部門・売り場"},
+  {en:"earthquake",ja:"地震"},
+  {en:"enemy",ja:"敵"},
+  {en:"engine",ja:"エンジン"},
+  {en:"entrance",ja:"入口"},
+  {en:"example",ja:"例"},
+  {en:"factory",ja:"工場"},
+  {en:"field",ja:"野原・分野"},
+  {en:"fire",ja:"火・火事"},
+  {en:"flight",ja:"飛行・便"},
+  {en:"forest",ja:"森"},
+  {en:"future",ja:"未来"},
+  {en:"goal",ja:"目標"},
+  {en:"guest",ja:"客"},
+  {en:"hall",ja:"ホール"},
+  {en:"hero",ja:"英雄"},
+  {en:"holiday",ja:"休日"},
+  {en:"host",ja:"主人・司会者"},
+  {en:"hotel",ja:"ホテル"},
+  {en:"human",ja:"人間"},
+  {en:"island",ja:"島"},
+  {en:"item",ja:"品物"},
+  {en:"job",ja:"仕事"},
+  {en:"kid",ja:"子ども"},
+  {en:"king",ja:"王"},
+  {en:"lake",ja:"湖"},
+  {en:"line",ja:"線・列"},
+  {en:"magazine",ja:"雑誌"},
+  {en:"market",ja:"市場"},
+  {en:"meal",ja:"食事"},
+  {en:"member",ja:"一員"},
+  {en:"message",ja:"伝言"},
+  {en:"model",ja:"模型・模範"},
+  {en:"mountain",ja:"山"},
+  {en:"museum",ja:"博物館"},
+  {en:"news",ja:"ニュース"},
+  {en:"newspaper",ja:"新聞"},
+  {en:"note",ja:"メモ"},
+  {en:"office",ja:"事務所"},
+  {en:"owner",ja:"所有者"},
+  {en:"page",ja:"ページ"},
+  {en:"partner",ja:"相手・パートナー"},
+  {en:"party",ja:"パーティー・政党"},
+  {en:"passenger",ja:"乗客"},
+  {en:"path",ja:"小道"},
+  {en:"patient",ja:"患者"},
+  {en:"period",ja:"期間・時代"},
+  {en:"person",ja:"人"},
+  {en:"price",ja:"価格"},
+  {en:"prize",ja:"賞"},
+  {en:"product",ja:"製品"},
+  {en:"program",ja:"番組・プログラム"},
+  {en:"queen",ja:"女王"},
+  {en:"race",ja:"競争・人種"},
+  {en:"report",ja:"報告"},
+  {en:"restaurant",ja:"レストラン"},
+  {en:"river",ja:"川"},
+  {en:"road",ja:"道路"},
+  {en:"rock",ja:"岩・ロック音楽"},
+  {en:"seat",ja:"座席"},
+  {en:"secret",ja:"秘密"},
+  {en:"service",ja:"サービス"},
+  {en:"ship",ja:"船"},
+  {en:"site",ja:"場所・用地"},
+  {en:"sound",ja:"音"},
+  {en:"space",ja:"空間・宇宙"},
+  {en:"speech",ja:"演説"},
+  {en:"station",ja:"駅"},
+  {en:"storm",ja:"嵐"},
+  {en:"success",ja:"成功"},
+  {en:"team",ja:"チーム"},
+  {en:"temperature",ja:"温度"},
+  {en:"tour",ja:"旅行"},
+  {en:"traffic",ja:"交通"},
+  {en:"village",ja:"村"},
+  {en:"voice",ja:"声"},
+  {en:"war",ja:"戦争"},
+  {en:"weather",ja:"天気"},
+  {en:"wood",ja:"木材・森"},
+  {en:"world",ja:"世界"},
+  {en:"alive",ja:"生きている"},
+  {en:"alone",ja:"一人で"},
+  {en:"angry",ja:"怒った"},
+  {en:"bright",ja:"明るい"},
+  {en:"busy",ja:"忙しい"},
+  {en:"cheap",ja:"安い"},
+  {en:"clean",ja:"清潔な"},
+  {en:"clear",ja:"明らかな・澄んだ"},
+  {en:"cloudy",ja:"曇った"},
+  {en:"correct",ja:"正しい"},
+  {en:"dangerous",ja:"危険な"},
+  {en:"dark",ja:"暗い"},
+  {en:"deep",ja:"深い"},
+  {en:"dry",ja:"乾いた"},
+  {en:"early",ja:"早い"},
+  {en:"easy",ja:"簡単な"},
+  {en:"fair",ja:"公平な"},
+  {en:"fast",ja:"速い"},
+  {en:"favorite",ja:"お気に入りの"},
+  {en:"final",ja:"最後の"},
+  {en:"fresh",ja:"新鮮な"},
+  {en:"full",ja:"満腹の・いっぱいの"},
+  {en:"heavy",ja:"重い"},
+  {en:"important",ja:"重要な"},
+  {en:"inside",ja:"内側の"},
+  {en:"kind",ja:"親切な"},
+  {en:"large",ja:"大きい"},
+  {en:"late",ja:"遅い"},
+  {en:"loud",ja:"大きな音の"},
+  {en:"low",ja:"低い"},
+  {en:"middle",ja:"真ん中の"},
+  {en:"poor",ja:"貧しい"},
+  {en:"popular",ja:"人気のある"},
+  {en:"quiet",ja:"静かな"},
+  {en:"ready",ja:"準備ができた"},
+  {en:"rich",ja:"豊かな"},
+  {en:"safe",ja:"安全な"},
+  {en:"simple",ja:"単純な"},
+  {en:"special",ja:"特別な"},
+  {en:"strange",ja:"奇妙な"},
+  {en:"strong",ja:"強い"},
+  {en:"sure",ja:"確信している"},
+  {en:"thin",ja:"薄い・細い"},
+  {en:"tired",ja:"疲れた"},
+  {en:"usual",ja:"いつもの"},
+  {en:"wide",ja:"広い"},
+  {en:"young",ja:"若い"},
+  {en:"abroad",ja:"海外へ"},
+  {en:"actually",ja:"実際に"},
+  {en:"almost",ja:"ほとんど"},
+  {en:"already",ja:"すでに"},
+  {en:"carefully",ja:"注意深く"},
+  {en:"especially",ja:"特に"},
+  {en:"finally",ja:"ついに"},
+  {en:"hardly",ja:"ほとんど〜ない"},
+  {en:"however",ja:"しかしながら"},
+  {en:"instead",ja:"その代わりに"},
+  {en:"perhaps",ja:"おそらく"},
+  {en:"probably",ja:"おそらく"},
+  {en:"quickly",ja:"すばやく"},
+  {en:"recently",ja:"最近"},
+  {en:"suddenly",ja:"突然"},
+  {en:"usually",ja:"たいてい"},
+  {en:"while",ja:"〜する間に"},
+  {en:"although",ja:"〜だけれども"},
+  {en:"because",ja:"〜なので"},
+  {en:"unless",ja:"〜でない限り"}
+];
+
+// =====================================================
+// ========== 単語データ（英検2級: 増量版 538語）==========
+// =====================================================
+const WG2 = [
+  {en:"abandon",ja:"捨てる・断念する"},
+  {en:"absorb",ja:"吸収する"},
+  {en:"accompany",ja:"同行する"},
+  {en:"accumulate",ja:"蓄積する"},
+  {en:"adapt",ja:"適応させる"},
+  {en:"affect",ja:"影響を与える"},
+  {en:"analyze",ja:"分析する"},
+  {en:"assist",ja:"手伝う"},
+  {en:"assume",ja:"仮定する"},
+  {en:"attempt",ja:"試みる"},
+  {en:"attract",ja:"引き付ける"},
+  {en:"calculate",ja:"計算する"},
+  {en:"challenge",ja:"挑戦する"},
+  {en:"claim",ja:"主張する"},
+  {en:"classify",ja:"分類する"},
+  {en:"collaborate",ja:"協力する"},
+  {en:"combine",ja:"組み合わせる"},
+  {en:"commit",ja:"犯す・誓約する"},
+  {en:"compete",ja:"競争する"},
+  {en:"concentrate",ja:"集中する"},
+  {en:"conclude",ja:"結論を出す"},
+  {en:"conduct",ja:"行う"},
+  {en:"confirm",ja:"確認する"},
+  {en:"consume",ja:"消費する"},
+  {en:"contribute",ja:"貢献する"},
+  {en:"convert",ja:"変換する"},
+  {en:"convince",ja:"説得する"},
+  {en:"cope",ja:"対処する"},
+  {en:"criticize",ja:"批判する"},
+  {en:"decline",ja:"断る・減少する"},
+  {en:"demonstrate",ja:"実証する"},
+  {en:"detect",ja:"検出する"},
+  {en:"determine",ja:"決定する"},
+  {en:"disagree",ja:"反対する"},
+  {en:"distribute",ja:"配布する"},
+  {en:"dominate",ja:"支配する"},
+  {en:"eliminate",ja:"除去する"},
+  {en:"emphasize",ja:"強調する"},
+  {en:"enable",ja:"可能にする"},
+  {en:"evaluate",ja:"評価する"},
+  {en:"evolve",ja:"進化する"},
+  {en:"expand",ja:"拡大する"},
+  {en:"exploit",ja:"利用する・開発する"},
+  {en:"express",ja:"表現する"},
+  {en:"extend",ja:"伸ばす・拡張する"},
+  {en:"generate",ja:"生み出す"},
+  {en:"identify",ja:"特定する"},
+  {en:"illustrate",ja:"説明する・描く・例示する"},
+  {en:"implement",ja:"実施する"},
+  {en:"improve",ja:"改善する"},
+  {en:"indicate",ja:"示す"},
+  {en:"interpret",ja:"解釈する"},
+  {en:"invest",ja:"投資する"},
+  {en:"maintain",ja:"維持する"},
+  {en:"migrate",ja:"移住する"},
+  {en:"monitor",ja:"監視する"},
+  {en:"motivate",ja:"動機づける"},
+  {en:"obtain",ja:"得る"},
+  {en:"overcome",ja:"克服する"},
+  {en:"permit",ja:"許可する"},
+  {en:"predict",ja:"予測する"},
+  {en:"promote",ja:"促進する"},
+  {en:"propose",ja:"提案する"},
+  {en:"publish",ja:"出版する"},
+  {en:"pursue",ja:"追求する"},
+  {en:"refer",ja:"言及する"},
+  {en:"reflect",ja:"反映する"},
+  {en:"reject",ja:"拒否する"},
+  {en:"release",ja:"解放する"},
+  {en:"rely",ja:"頼る"},
+  {en:"resolve",ja:"解決する"},
+  {en:"reveal",ja:"明らかにする"},
+  {en:"rotate",ja:"回転させる"},
+  {en:"select",ja:"選ぶ"},
+  {en:"separate",ja:"分ける"},
+  {en:"stimulate",ja:"刺激する"},
+  {en:"submit",ja:"提出する"},
+  {en:"transform",ja:"変える"},
+  {en:"transport",ja:"輸送する"},
+  {en:"update",ja:"更新する"},
+  {en:"vary",ja:"異なる"},
+  {en:"abuse",ja:"乱用・虐待"},
+  {en:"achievement",ja:"業績"},
+  {en:"agriculture",ja:"農業"},
+  {en:"atmosphere",ja:"大気・雰囲気"},
+  {en:"authority",ja:"権威・当局"},
+  {en:"awareness",ja:"意識"},
+  {en:"campaign",ja:"キャンペーン"},
+  {en:"capitalism",ja:"資本主義"},
+  {en:"catastrophe",ja:"大災害"},
+  {en:"civilization",ja:"文明"},
+  {en:"circumstance",ja:"状況"},
+  {en:"commitment",ja:"約束・責任"},
+  {en:"consequence",ja:"結果"},
+  {en:"conservation",ja:"保護・保全"},
+  {en:"consumer",ja:"消費者"},
+  {en:"consumption",ja:"消費"},
+  {en:"contribution",ja:"貢献"},
+  {en:"controversy",ja:"論争"},
+  {en:"corporation",ja:"企業"},
+  {en:"crisis",ja:"危機"},
+  {en:"debate",ja:"討論・議論する"},
+  {en:"democracy",ja:"民主主義"},
+  {en:"development",ja:"発展"},
+  {en:"discrimination",ja:"差別"},
+  {en:"diversity",ja:"多様性"},
+  {en:"economy",ja:"経済"},
+  {en:"emission",ja:"排出"},
+  {en:"evidence",ja:"証拠"},
+  {en:"evolution",ja:"進化"},
+  {en:"expansion",ja:"拡大"},
+  {en:"extinction",ja:"絶滅"},
+  {en:"facility",ja:"施設"},
+  {en:"factor",ja:"要因"},
+  {en:"foundation",ja:"基礎・財団"},
+  {en:"function",ja:"機能"},
+  {en:"generation",ja:"世代"},
+  {en:"habitat",ja:"生息地"},
+  {en:"immigration",ja:"移民"},
+  {en:"impact",ja:"影響"},
+  {en:"income",ja:"収入"},
+  {en:"industry",ja:"産業"},
+  {en:"inequality",ja:"不平等"},
+  {en:"inflation",ja:"インフレ"},
+  {en:"infrastructure",ja:"インフラ"},
+  {en:"institution",ja:"機関"},
+  {en:"investment",ja:"投資"},
+  {en:"labor",ja:"労働"},
+  {en:"legislation",ja:"法律・立法"},
+  {en:"media",ja:"メディア"},
+  {en:"migration",ja:"移住"},
+  {en:"minority",ja:"少数派"},
+  {en:"motivation",ja:"動機"},
+  {en:"movement",ja:"運動・動き"},
+  {en:"nutrition",ja:"栄養"},
+  {en:"obesity",ja:"肥満"},
+  {en:"perspective",ja:"見方・観点"},
+  {en:"phenomenon",ja:"現象"},
+  {en:"poverty",ja:"貧困"},
+  {en:"principle",ja:"原則"},
+  {en:"procedure",ja:"手順"},
+  {en:"profit",ja:"利益"},
+  {en:"reaction",ja:"反応"},
+  {en:"recovery",ja:"回復"},
+  {en:"regulation",ja:"規制"},
+  {en:"resource",ja:"資源"},
+  {en:"revolution",ja:"革命"},
+  {en:"statistics",ja:"統計"},
+  {en:"strategy",ja:"戦略"},
+  {en:"stress",ja:"ストレス"},
+  {en:"structure",ja:"構造"},
+  {en:"substance",ja:"物質"},
+  {en:"system",ja:"システム"},
+  {en:"tension",ja:"緊張"},
+  {en:"territory",ja:"領土"},
+  {en:"theory",ja:"理論"},
+  {en:"threat",ja:"脅威"},
+  {en:"trade",ja:"貿易"},
+  {en:"trend",ja:"傾向"},
+  {en:"unemployment",ja:"失業"},
+  {en:"violence",ja:"暴力"},
+  {en:"welfare",ja:"福祉"},
+  {en:"accurate",ja:"正確な"},
+  {en:"advanced",ja:"進んだ"},
+  {en:"aggressive",ja:"攻撃的な"},
+  {en:"appropriate",ja:"適切な"},
+  {en:"available",ja:"利用できる"},
+  {en:"aware",ja:"気づいている"},
+  {en:"beneficial",ja:"有益な"},
+  {en:"capable",ja:"有能な"},
+  {en:"competitive",ja:"競争力のある"},
+  {en:"complex",ja:"複雑な"},
+  {en:"compulsory",ja:"義務的な"},
+  {en:"conscious",ja:"意識している"},
+  {en:"controversial",ja:"論争の的な"},
+  {en:"convenient",ja:"便利な"},
+  {en:"cooperative",ja:"協力的な"},
+  {en:"critical",ja:"重要な・批判的な"},
+  {en:"diverse",ja:"多様な"},
+  {en:"dominant",ja:"支配的な"},
+  {en:"dramatic",ja:"劇的な"},
+  {en:"economic",ja:"経済的な"},
+  {en:"efficient",ja:"効率的な"},
+  {en:"emotional",ja:"感情的な"},
+  {en:"essential",ja:"不可欠な"},
+  {en:"ethical",ja:"倫理的な"},
+  {en:"excessive",ja:"過度な"},
+  {en:"flexible",ja:"柔軟な"},
+  {en:"fundamental",ja:"根本的な"},
+  {en:"genetic",ja:"遺伝的な"},
+  {en:"gradual",ja:"緩やかな"},
+  {en:"harmful",ja:"有害な"},
+  {en:"ideal",ja:"理想的な"},
+  {en:"illegal",ja:"違法な"},
+  {en:"intellectual",ja:"知的な"},
+  {en:"intense",ja:"激しい"},
+  {en:"legal",ja:"合法的な"},
+  {en:"logical",ja:"論理的な"},
+  {en:"mandatory",ja:"義務的な"},
+  {en:"massive",ja:"大規模な"},
+  {en:"mature",ja:"成熟した"},
+  {en:"mutual",ja:"相互の"},
+  {en:"optional",ja:"任意の"},
+  {en:"partial",ja:"部分的な"},
+  {en:"potential",ja:"潜在的な"},
+  {en:"practical",ja:"実用的な"},
+  {en:"primary",ja:"主要な"},
+  {en:"productive",ja:"生産的な"},
+  {en:"rational",ja:"合理的な"},
+  {en:"reasonable",ja:"合理的な"},
+  {en:"relevant",ja:"関連した"},
+  {en:"remarkable",ja:"注目すべき"},
+  {en:"renewable",ja:"再生可能な"},
+  {en:"responsible",ja:"責任ある"},
+  {en:"significant",ja:"重要な"},
+  {en:"stable",ja:"安定した"},
+  {en:"sufficient",ja:"十分な"},
+  {en:"sustainable",ja:"持続可能な"},
+  {en:"technical",ja:"技術的な"},
+  {en:"temporary",ja:"一時的な"},
+  {en:"urban",ja:"都市の"},
+  {en:"voluntary",ja:"自発的な"},
+  {en:"accomplish",ja:"成し遂げる"},
+  {en:"acquire",ja:"獲得する"},
+  {en:"adjust",ja:"調整する"},
+  {en:"admit",ja:"認める・入場を許す"},
+  {en:"adopt",ja:"採用する・養子にする"},
+  {en:"advance",ja:"進歩する・進める"},
+  {en:"advise",ja:"助言する"},
+  {en:"appeal",ja:"訴える・魅力がある"},
+  {en:"approve",ja:"承認する"},
+  {en:"arise",ja:"生じる"},
+  {en:"attach",ja:"取り付ける"},
+  {en:"benefit",ja:"利益を得る"},
+  {en:"blame",ja:"非難する"},
+  {en:"boost",ja:"押し上げる"},
+  {en:"capture",ja:"捕らえる"},
+  {en:"celebrate",ja:"祝う"},
+  {en:"cooperate",ja:"協力する"},
+  {en:"coordinate",ja:"調整する"},
+  {en:"define",ja:"定義する"},
+  {en:"delay",ja:"遅らせる"},
+  {en:"demand",ja:"要求する・需要・要求"},
+  {en:"deny",ja:"否定する"},
+  {en:"depend",ja:"依存する"},
+  {en:"derive",ja:"由来する"},
+  {en:"deserve",ja:"〜に値する"},
+  {en:"differ",ja:"異なる"},
+  {en:"discourage",ja:"思いとどまらせる"},
+  {en:"dismiss",ja:"退ける・解雇する"},
+  {en:"display",ja:"展示する・示す"},
+  {en:"distinguish",ja:"区別する"},
+  {en:"donate",ja:"寄付する"},
+  {en:"emerge",ja:"現れる"},
+  {en:"employ",ja:"雇う・用いる"},
+  {en:"encounter",ja:"遭遇する"},
+  {en:"enhance",ja:"高める"},
+  {en:"ensure",ja:"確実にする"},
+  {en:"estimate",ja:"見積もる"},
+  {en:"exhibit",ja:"展示する・示す"},
+  {en:"explore",ja:"探検する・調査する"},
+  {en:"export",ja:"輸出する"},
+  {en:"facilitate",ja:"容易にする"},
+  {en:"float",ja:"浮かぶ"},
+  {en:"found",ja:"設立する"},
+  {en:"handle",ja:"扱う"},
+  {en:"ignore",ja:"無視する"},
+  {en:"import",ja:"輸入する"},
+  {en:"impress",ja:"感銘を与える"},
+  {en:"inform",ja:"知らせる"},
+  {en:"insist",ja:"主張する"},
+  {en:"inspire",ja:"刺激する・鼓舞する"},
+  {en:"instruct",ja:"指示する"},
+  {en:"intend",ja:"意図する"},
+  {en:"interact",ja:"交流する"},
+  {en:"investigate",ja:"調査する"},
+  {en:"launch",ja:"開始する・発射する"},
+  {en:"locate",ja:"位置を突き止める"},
+  {en:"manufacture",ja:"製造する"},
+  {en:"measure",ja:"測定する"},
+  {en:"negotiate",ja:"交渉する"},
+  {en:"observe",ja:"観察する"},
+  {en:"oppose",ja:"反対する"},
+  {en:"organize",ja:"組織する"},
+  {en:"participate",ja:"参加する"},
+  {en:"persuade",ja:"説得する"},
+  {en:"preserve",ja:"保存する"},
+  {en:"proceed",ja:"進む"},
+  {en:"purchase",ja:"購入する"},
+  {en:"recommend",ja:"推薦する"},
+  {en:"recognize",ja:"認識する"},
+  {en:"recover",ja:"回復する"},
+  {en:"regard",ja:"見なす"},
+  {en:"regulate",ja:"規制する"},
+  {en:"respond",ja:"反応する・返答する"},
+  {en:"restrict",ja:"制限する"},
+  {en:"retain",ja:"保持する"},
+  {en:"retire",ja:"退職する"},
+  {en:"seek",ja:"探し求める"},
+  {en:"settle",ja:"解決する・定住する"},
+  {en:"shift",ja:"移す・変わる"},
+  {en:"surround",ja:"取り囲む"},
+  {en:"threaten",ja:"脅す・危険にさらす"},
+  {en:"tolerate",ja:"我慢する"},
+  {en:"transfer",ja:"移す"},
+  {en:"translate",ja:"翻訳する"},
+  {en:"urge",ja:"強く促す"},
+  {en:"warn",ja:"警告する"},
+  {en:"weigh",ja:"重さがある・比較検討する"},
+  {en:"access",ja:"利用する・接近する"},
+  {en:"account",ja:"説明する・占める"},
+  {en:"alter",ja:"変える"},
+  {en:"arrest",ja:"逮捕する"},
+  {en:"ban",ja:"禁止する"},
+  {en:"breed",ja:"繁殖する"},
+  {en:"broadcast",ja:"放送する"},
+  {en:"cite",ja:"引用する"},
+  {en:"compose",ja:"構成する・作曲する"},
+  {en:"consult",ja:"相談する"},
+  {en:"contrast",ja:"対比する"},
+  {en:"decrease",ja:"減少する"},
+  {en:"defeat",ja:"打ち負かす"},
+  {en:"deliver",ja:"届ける・演説する"},
+  {en:"desire",ja:"強く望む"},
+  {en:"devise",ja:"考案する"},
+  {en:"distract",ja:"気をそらす"},
+  {en:"domesticate",ja:"家庭化する"},
+  {en:"edit",ja:"編集する"},
+  {en:"endure",ja:"耐える"},
+  {en:"examine",ja:"調べる"},
+  {en:"file",ja:"提出する・保管する"},
+  {en:"finance",ja:"資金を出す・財政・金融"},
+  {en:"govern",ja:"統治する"},
+  {en:"highlight",ja:"強調する"},
+  {en:"imply",ja:"暗示する"},
+  {en:"install",ja:"設置する"},
+  {en:"lack",ja:"欠いている"},
+  {en:"lower",ja:"下げる"},
+  {en:"merge",ja:"合併する"},
+  {en:"occupy",ja:"占める・占領する"},
+  {en:"outline",ja:"概説する"},
+  {en:"overlook",ja:"見落とす"},
+  {en:"pollute",ja:"汚染する"},
+  {en:"pose",ja:"引き起こす・提起する"},
+  {en:"presume",ja:"推定する"},
+  {en:"protest",ja:"抗議する"},
+  {en:"restore",ja:"回復する"},
+  {en:"schedule",ja:"予定を組む"},
+  {en:"specialize",ja:"専門にする"},
+  {en:"strengthen",ja:"強化する"},
+  {en:"stretch",ja:"伸ばす"},
+  {en:"struggle",ja:"苦闘する"},
+  {en:"surpass",ja:"上回る"},
+  {en:"survey",ja:"調査する"},
+  {en:"survive",ja:"生き残る"},
+  {en:"target",ja:"標的にする"},
+  {en:"undergo",ja:"経験する"},
+  {en:"adaptation",ja:"適応"},
+  {en:"administration",ja:"行政・管理"},
+  {en:"advertisement",ja:"広告"},
+  {en:"alternative",ja:"代替案"},
+  {en:"analysis",ja:"分析"},
+  {en:"ancestor",ja:"祖先"},
+  {en:"appearance",ja:"外見・出現"},
+  {en:"application",ja:"応用・応募"},
+  {en:"approach",ja:"接近・方法"},
+  {en:"architecture",ja:"建築"},
+  {en:"aspect",ja:"側面"},
+  {en:"assessment",ja:"評価"},
+  {en:"association",ja:"協会・関連"},
+  {en:"assumption",ja:"仮定"},
+  {en:"attorney",ja:"弁護士"},
+  {en:"barrier",ja:"障壁"},
+  {en:"bias",ja:"偏見・傾向"},
+  {en:"burden",ja:"負担"},
+  {en:"capacity",ja:"能力・容量"},
+  {en:"category",ja:"分類"},
+  {en:"charity",ja:"慈善"},
+  {en:"civilian",ja:"民間人"},
+  {en:"commerce",ja:"商業"},
+  {en:"commission",ja:"委員会・手数料"},
+  {en:"comparison",ja:"比較"},
+  {en:"concept",ja:"概念"},
+  {en:"conclusion",ja:"結論"},
+  {en:"conflict",ja:"対立"},
+  {en:"contact",ja:"接触・連絡"},
+  {en:"content",ja:"内容"},
+  {en:"context",ja:"文脈"},
+  {en:"contract",ja:"契約"},
+  {en:"courage",ja:"勇気"},
+  {en:"crime",ja:"犯罪"},
+  {en:"criterion",ja:"基準"},
+  {en:"criticism",ja:"批判"},
+  {en:"damage",ja:"損害"},
+  {en:"debt",ja:"借金"},
+  {en:"defense",ja:"防衛"},
+  {en:"definition",ja:"定義"},
+  {en:"delivery",ja:"配達"},
+  {en:"departure",ja:"出発"},
+  {en:"device",ja:"装置"},
+  {en:"diet",ja:"食事・食生活"},
+  {en:"dimension",ja:"側面・寸法"},
+  {en:"disaster",ja:"災害"},
+  {en:"discipline",ja:"規律・学問分野"},
+  {en:"district",ja:"地区"},
+  {en:"document",ja:"文書"},
+  {en:"domestic",ja:"国内の"},
+  {en:"editor",ja:"編集者"},
+  {en:"element",ja:"要素"},
+  {en:"employment",ja:"雇用"},
+  {en:"enterprise",ja:"企業・事業"},
+  {en:"episode",ja:"出来事・一話"},
+  {en:"expense",ja:"費用"},
+  {en:"expert",ja:"専門家"},
+  {en:"exposure",ja:"さらされること"},
+  {en:"extension",ja:"拡張"},
+  {en:"fiber",ja:"繊維"},
+  {en:"frequency",ja:"頻度"},
+  {en:"fuel",ja:"燃料"},
+  {en:"gender",ja:"性別"},
+  {en:"genius",ja:"天才"},
+  {en:"growth",ja:"成長"},
+  {en:"guarantee",ja:"保証"},
+  {en:"heritage",ja:"遺産"},
+  {en:"identity",ja:"身元・同一性"},
+  {en:"illustration",ja:"図・例示"},
+  {en:"incident",ja:"出来事・事件"},
+  {en:"independence",ja:"独立"},
+  {en:"inspection",ja:"検査"},
+  {en:"instance",ja:"例"},
+  {en:"interaction",ja:"相互作用"},
+  {en:"interpretation",ja:"解釈"},
+  {en:"investigation",ja:"調査"},
+  {en:"justice",ja:"正義"},
+  {en:"landscape",ja:"風景・景観"},
+  {en:"leadership",ja:"指導力"},
+  {en:"medicine",ja:"薬・医学"},
+  {en:"membership",ja:"会員資格"},
+  {en:"mission",ja:"使命"},
+  {en:"observation",ja:"観察"},
+  {en:"origin",ja:"起源"},
+  {en:"outcome",ja:"結果"},
+  {en:"participant",ja:"参加者"},
+  {en:"patent",ja:"特許"},
+  {en:"percentage",ja:"割合"},
+  {en:"permission",ja:"許可"},
+  {en:"personality",ja:"個性"},
+  {en:"policy",ja:"政策・方針"},
+  {en:"priority",ja:"優先事項"},
+  {en:"proposal",ja:"提案"},
+  {en:"proportion",ja:"割合"},
+  {en:"prospect",ja:"見込み"},
+  {en:"quantity",ja:"量"},
+  {en:"recommendation",ja:"推薦"},
+  {en:"region",ja:"地域"},
+  {en:"reliance",ja:"依存"},
+  {en:"remark",ja:"発言"},
+  {en:"reputation",ja:"評判"},
+  {en:"requirement",ja:"必要条件"},
+  {en:"resident",ja:"住民"},
+  {en:"resistance",ja:"抵抗"},
+  {en:"revenue",ja:"収入"},
+  {en:"sample",ja:"標本・サンプル"},
+  {en:"satellite",ja:"衛星"},
+  {en:"scale",ja:"規模・尺度"},
+  {en:"sequence",ja:"順序"},
+  {en:"shortage",ja:"不足"},
+  {en:"significance",ja:"重要性"},
+  {en:"source",ja:"源・情報源"},
+  {en:"species",ja:"種"},
+  {en:"supply",ja:"供給"},
+  {en:"surface",ja:"表面"},
+  {en:"survival",ja:"生存"},
+  {en:"treatment",ja:"治療・扱い"},
+  {en:"vehicle",ja:"乗り物"},
+  {en:"victim",ja:"被害者"},
+  {en:"vision",ja:"視力・構想"},
+  {en:"workforce",ja:"労働力"},
+  {en:"absolute",ja:"絶対的な"},
+  {en:"academic",ja:"学問の"},
+  {en:"annual",ja:"年1回の"},
+  {en:"artificial",ja:"人工の"},
+  {en:"automatic",ja:"自動の"},
+  {en:"biological",ja:"生物学的な"},
+  {en:"chemical",ja:"化学の"},
+  {en:"civil",ja:"市民の・民事の"},
+  {en:"commercial",ja:"商業の"},
+  {en:"constant",ja:"絶え間ない"},
+  {en:"corporate",ja:"企業の"},
+  {en:"crucial",ja:"極めて重要な"},
+  {en:"dependent",ja:"依存した"},
+  {en:"distinct",ja:"明確に異なる"},
+  {en:"dramatically",ja:"劇的に"},
+  {en:"elderly",ja:"高齢の"},
+  {en:"electronic",ja:"電子の"},
+  {en:"entire",ja:"全体の"},
+  {en:"external",ja:"外部の"},
+  {en:"financial",ja:"財政の"},
+  {en:"former",ja:"以前の"},
+  {en:"frequent",ja:"頻繁な"},
+  {en:"industrial",ja:"産業の"},
+  {en:"internal",ja:"内部の"},
+  {en:"international",ja:"国際的な"},
+  {en:"likely",ja:"ありそうな"},
+  {en:"limited",ja:"限られた"},
+  {en:"military",ja:"軍事の"},
+  {en:"native",ja:"出生地の・母語の"},
+  {en:"nuclear",ja:"核の"},
+  {en:"overall",ja:"全体的な"},
+  {en:"precise",ja:"正確な"},
+  {en:"rapid",ja:"急速な"},
+  {en:"rare",ja:"珍しい"},
+  {en:"regional",ja:"地域の"},
+  {en:"relative",ja:"相対的な・親戚の"},
+  {en:"scientific",ja:"科学的な"},
+  {en:"severe",ja:"深刻な"},
+  {en:"specific",ja:"具体的な"},
+  {en:"steady",ja:"着実な"},
+  {en:"typical",ja:"典型的な"},
+  {en:"unlikely",ja:"ありそうもない"},
+  {en:"valuable",ja:"価値ある"},
+  {en:"visible",ja:"目に見える"},
+  {en:"widely",ja:"広く"},
+  {en:"barely",ja:"かろうじて"},
+  {en:"eventually",ja:"最終的に"},
+  {en:"frequently",ja:"頻繁に"},
+  {en:"generally",ja:"一般に"},
+  {en:"gradually",ja:"徐々に"},
+  {en:"initially",ja:"最初は"},
+  {en:"primarily",ja:"主に"},
+  {en:"rarely",ja:"めったに〜ない"},
+  {en:"relatively",ja:"比較的"},
+  {en:"roughly",ja:"おおよそ"},
+  {en:"specifically",ja:"具体的に"},
+  {en:"whereas",ja:"一方で"},
+  {en:"therefore",ja:"それゆえ"},
+  {en:"nevertheless",ja:"それにもかかわらず"},
+  {en:"otherwise",ja:"さもなければ"}
+];
+
+// =====================================================
+// ========== 単語データ（英検準1級: 増量版 580語）==========
+// =====================================================
+const WPre1 = [
+  {en:"abolish",ja:"廃止する"},
+  {en:"accelerate",ja:"加速する"},
+  {en:"accommodate",ja:"収容する"},
+  {en:"acknowledge",ja:"認める"},
+  {en:"advocate",ja:"提唱する"},
+  {en:"allocate",ja:"割り当てる"},
+  {en:"alleviate",ja:"軽減する"},
+  {en:"anticipate",ja:"予期する"},
+  {en:"articulate",ja:"はっきり述べる・明瞭に話す"},
+  {en:"assess",ja:"評価する"},
+  {en:"attribute",ja:"〜のせいにする"},
+  {en:"authorize",ja:"権限を与える"},
+  {en:"cease",ja:"止む・やめる"},
+  {en:"compensate",ja:"補償する"},
+  {en:"comply",ja:"従う"},
+  {en:"confine",ja:"閉じ込める"},
+  {en:"confront",ja:"直面する"},
+  {en:"constitute",ja:"構成する"},
+  {en:"constraint",ja:"制限"},
+  {en:"contemplate",ja:"よく考える"},
+  {en:"counteract",ja:"打ち消す"},
+  {en:"cultivate",ja:"耕す・養う"},
+  {en:"curb",ja:"抑制する"},
+  {en:"deplete",ja:"使い果たす"},
+  {en:"deprive",ja:"奪う"},
+  {en:"designate",ja:"指定する"},
+  {en:"devote",ja:"捧げる"},
+  {en:"diminish",ja:"減らす"},
+  {en:"discriminate",ja:"差別する"},
+  {en:"disrupt",ja:"混乱させる"},
+  {en:"enforce",ja:"施行する"},
+  {en:"ensure",ja:"確かにする"},
+  {en:"exceed",ja:"超える"},
+  {en:"exploit",ja:"搾取する"},
+  {en:"facilitate",ja:"促進する"},
+  {en:"formulate",ja:"立案する"},
+  {en:"halt",ja:"止まる"},
+  {en:"implement",ja:"実施する"},
+  {en:"impose",ja:"課す"},
+  {en:"initiate",ja:"始める"},
+  {en:"justify",ja:"正当化する"},
+  {en:"legislate",ja:"法律を制定する"},
+  {en:"manipulate",ja:"操作する"},
+  {en:"mitigate",ja:"軽減する"},
+  {en:"modify",ja:"修正する"},
+  {en:"neglect",ja:"無視する"},
+  {en:"negotiate",ja:"交渉する"},
+  {en:"originate",ja:"起源を持つ"},
+  {en:"perceive",ja:"知覚する"},
+  {en:"persevere",ja:"耐え抜く"},
+  {en:"portray",ja:"描写する"},
+  {en:"postpone",ja:"延期する"},
+  {en:"presume",ja:"推定する"},
+  {en:"prioritize",ja:"優先する"},
+  {en:"prohibit",ja:"禁止する"},
+  {en:"rectify",ja:"修正する"},
+  {en:"reinforce",ja:"強化する"},
+  {en:"restore",ja:"回復させる"},
+  {en:"revise",ja:"修正する"},
+  {en:"stimulate",ja:"刺激する"},
+  {en:"suppress",ja:"抑圧する"},
+  {en:"sustain",ja:"維持する"},
+  {en:"tackle",ja:"取り組む"},
+  {en:"undertake",ja:"引き受ける"},
+  {en:"violate",ja:"違反する"},
+  {en:"withstand",ja:"耐える"},
+  {en:"accountability",ja:"説明責任"},
+  {en:"adolescent",ja:"青少年"},
+  {en:"adversity",ja:"逆境"},
+  {en:"affluence",ja:"裕福"},
+  {en:"aggression",ja:"攻撃性"},
+  {en:"alienation",ja:"疎外感"},
+  {en:"allegiance",ja:"忠誠"},
+  {en:"ambiguity",ja:"曖昧さ"},
+  {en:"amendment",ja:"修正"},
+  {en:"autonomy",ja:"自律性"},
+  {en:"bureaucracy",ja:"官僚制度"},
+  {en:"cohesion",ja:"結束"},
+  {en:"commodity",ja:"商品"},
+  {en:"competence",ja:"能力"},
+  {en:"compliance",ja:"遵守"},
+  {en:"complication",ja:"複雑化"},
+  {en:"consensus",ja:"コンセンサス・合意の"},
+  {en:"corruption",ja:"汚職"},
+  {en:"criterion",ja:"基準"},
+  {en:"deficiency",ja:"欠乏"},
+  {en:"degradation",ja:"劣化・堕落"},
+  {en:"deliberation",ja:"熟慮"},
+  {en:"deterrent",ja:"抑止力"},
+  {en:"dilemma",ja:"ジレンマ"},
+  {en:"disparity",ja:"格差"},
+  {en:"disposition",ja:"気質"},
+  {en:"dominance",ja:"支配"},
+  {en:"drawback",ja:"欠点"},
+  {en:"ecosystem",ja:"生態系"},
+  {en:"elaboration",ja:"詳述"},
+  {en:"empathy",ja:"共感"},
+  {en:"endeavor",ja:"努力"},
+  {en:"enforcement",ja:"施行"},
+  {en:"epidemic",ja:"流行病"},
+  {en:"equilibrium",ja:"均衡"},
+  {en:"eradication",ja:"根絶"},
+  {en:"erosion",ja:"侵食"},
+  {en:"exploitation",ja:"搾取"},
+  {en:"famine",ja:"飢饉"},
+  {en:"fluctuation",ja:"変動"},
+  {en:"fossil",ja:"化石"},
+  {en:"fraud",ja:"詐欺"},
+  {en:"globalization",ja:"グローバル化"},
+  {en:"governance",ja:"統治"},
+  {en:"hierarchy",ja:"階層"},
+  {en:"hypothesis",ja:"仮説"},
+  {en:"ideology",ja:"イデオロギー"},
+  {en:"implication",ja:"意味・含意"},
+  {en:"incentive",ja:"動機・奨励金"},
+  {en:"inequality",ja:"不平等"},
+  {en:"infrastructure",ja:"インフラ"},
+  {en:"initiative",ja:"主導権"},
+  {en:"innovation",ja:"革新"},
+  {en:"integrity",ja:"誠実さ"},
+  {en:"intervention",ja:"介入"},
+  {en:"intimidation",ja:"脅迫"},
+  {en:"legacy",ja:"遺産"},
+  {en:"legitimacy",ja:"正当性"},
+  {en:"liability",ja:"責任・負債"},
+  {en:"limitation",ja:"制限"},
+  {en:"manipulation",ja:"操作"},
+  {en:"mechanism",ja:"仕組み"},
+  {en:"momentum",ja:"勢い"},
+  {en:"monopoly",ja:"独占"},
+  {en:"mortality",ja:"死亡率"},
+  {en:"narrative",ja:"物語"},
+  {en:"negligence",ja:"過失"},
+  {en:"obligation",ja:"義務"},
+  {en:"paradigm",ja:"パラダイム"},
+  {en:"persecution",ja:"迫害"},
+  {en:"philanthropy",ja:"慈善活動"},
+  {en:"prejudice",ja:"偏見"},
+  {en:"predominance",ja:"優勢"},
+  {en:"propaganda",ja:"プロパガンダ"},
+  {en:"protocol",ja:"議定書・手順"},
+  {en:"referendum",ja:"国民投票"},
+  {en:"regime",ja:"政権"},
+  {en:"resilience",ja:"回復力"},
+  {en:"revelation",ja:"暴露・啓示"},
+  {en:"rhetoric",ja:"修辞法"},
+  {en:"sanction",ja:"制裁"},
+  {en:"scarcity",ja:"不足"},
+  {en:"sovereignty",ja:"主権"},
+  {en:"speculation",ja:"推測・投機"},
+  {en:"stigma",ja:"汚名"},
+  {en:"subsidy",ja:"補助金"},
+  {en:"surplus",ja:"余剰"},
+  {en:"susceptibility",ja:"かかりやすさ"},
+  {en:"skepticism",ja:"懐疑主義"},
+  {en:"transparency",ja:"透明性"},
+  {en:"turbulence",ja:"混乱・乱気流"},
+  {en:"tyranny",ja:"専制政治"},
+  {en:"vulnerability",ja:"脆弱性"},
+  {en:"abstract",ja:"抽象的な"},
+  {en:"acute",ja:"深刻な・鋭い"},
+  {en:"adequate",ja:"適切な"},
+  {en:"ambiguous",ja:"曖昧な"},
+  {en:"arbitrary",ja:"恣意的な"},
+  {en:"chronic",ja:"慢性的な"},
+  {en:"coherent",ja:"一貫した"},
+  {en:"collective",ja:"集合的な"},
+  {en:"comparable",ja:"比較できる"},
+  {en:"comprehensive",ja:"包括的な"},
+  {en:"concurrent",ja:"同時の"},
+  {en:"conditional",ja:"条件付きの"},
+  {en:"conspicuous",ja:"目立つ"},
+  {en:"contemporary",ja:"現代の"},
+  {en:"cumulative",ja:"累積的な"},
+  {en:"cynical",ja:"冷笑的な"},
+  {en:"decisive",ja:"決定的な"},
+  {en:"detrimental",ja:"有害な"},
+  {en:"disproportionate",ja:"不釣り合いな"},
+  {en:"dubious",ja:"疑わしい"},
+  {en:"enduring",ja:"持続する"},
+  {en:"equitable",ja:"公平な"},
+  {en:"explicit",ja:"明白な・明示的な"},
+  {en:"feasible",ja:"実行可能な"},
+  {en:"fragile",ja:"壊れやすい"},
+  {en:"forthcoming",ja:"まもなくの"},
+  {en:"gradual",ja:"段階的な"},
+  {en:"implicit",ja:"暗黙の"},
+  {en:"inherent",ja:"固有の"},
+  {en:"innovative",ja:"革新的な"},
+  {en:"integral",ja:"不可欠な"},
+  {en:"intensive",ja:"集中的な"},
+  {en:"legitimate",ja:"正当な"},
+  {en:"marginal",ja:"わずかな・周辺的な"},
+  {en:"meticulous",ja:"几帳面な・細心の注意を払った"},
+  {en:"negligible",ja:"無視できるほど小さい"},
+  {en:"neutral",ja:"中立の"},
+  {en:"obsolete",ja:"時代遅れの"},
+  {en:"paramount",ja:"最重要な・最重要の"},
+  {en:"persistent",ja:"持続的な"},
+  {en:"plausible",ja:"もっともらしい"},
+  {en:"preliminary",ja:"予備の・予備的な"},
+  {en:"prevalent",ja:"普及している・広く行き渡った"},
+  {en:"profound",ja:"深い"},
+  {en:"proportional",ja:"比例した"},
+  {en:"provoke",ja:"挑発する"},
+  {en:"radical",ja:"根本的な・急進的な・根本的な"},
+  {en:"reciprocal",ja:"相互の"},
+  {en:"redundant",ja:"冗長な"},
+  {en:"rigid",ja:"硬直した"},
+  {en:"robust",ja:"強健な"},
+  {en:"scrutinize",ja:"精査する"},
+  {en:"sequential",ja:"順次の"},
+  {en:"skeptical",ja:"懐疑的な"},
+  {en:"spontaneous",ja:"自発的な"},
+  {en:"stringent",ja:"厳しい"},
+  {en:"subjective",ja:"主観的な"},
+  {en:"subtle",ja:"微妙な"},
+  {en:"tedious",ja:"退屈な"},
+  {en:"trivial",ja:"些細な"},
+  {en:"unanimous",ja:"全員一致の"},
+  {en:"unprecedented",ja:"前例のない"},
+  {en:"versatile",ja:"多才な"},
+  {en:"viable",ja:"実行可能な"},
+  {en:"abstain",ja:"控える"},
+  {en:"accede",ja:"同意する・就任する"},
+  {en:"accentuate",ja:"強調する"},
+  {en:"adjudicate",ja:"裁定する"},
+  {en:"administer",ja:"管理する・投与する"},
+  {en:"admonish",ja:"忠告する"},
+  {en:"aggregate",ja:"集める"},
+  {en:"amplify",ja:"増幅する"},
+  {en:"appease",ja:"なだめる"},
+  {en:"appraise",ja:"評価する"},
+  {en:"ascertain",ja:"確かめる"},
+  {en:"aspire",ja:"熱望する"},
+  {en:"assemble",ja:"集める"},
+  {en:"assert",ja:"主張する"},
+  {en:"attain",ja:"達成する"},
+  {en:"augment",ja:"増やす"},
+  {en:"avert",ja:"避ける"},
+  {en:"bolster",ja:"強化する"},
+  {en:"coerce",ja:"強制する"},
+  {en:"collide",ja:"衝突する"},
+  {en:"commence",ja:"始める"},
+  {en:"compel",ja:"強いる"},
+  {en:"concede",ja:"認める・譲歩する"},
+  {en:"condemn",ja:"非難する"},
+  {en:"confer",ja:"授与する・相談する"},
+  {en:"consolidate",ja:"統合する"},
+  {en:"contend",ja:"主張する・争う"},
+  {en:"contradict",ja:"矛盾する"},
+  {en:"convene",ja:"招集する"},
+  {en:"correlate",ja:"相互に関連する"},
+  {en:"culminate",ja:"最高潮に達する"},
+  {en:"decipher",ja:"解読する"},
+  {en:"deem",ja:"〜と見なす"},
+  {en:"defy",ja:"反抗する"},
+  {en:"denounce",ja:"公然と非難する"},
+  {en:"depict",ja:"描写する"},
+  {en:"deter",ja:"思いとどまらせる"},
+  {en:"differentiate",ja:"区別する"},
+  {en:"dismantle",ja:"解体する"},
+  {en:"displace",ja:"追い出す・置き換える"},
+  {en:"distort",ja:"ゆがめる"},
+  {en:"diverge",ja:"分岐する"},
+  {en:"elaborate",ja:"詳しく述べる"},
+  {en:"embrace",ja:"受け入れる"},
+  {en:"endow",ja:"授ける"},
+  {en:"entail",ja:"伴う"},
+  {en:"envisage",ja:"心に描く"},
+  {en:"eradicate",ja:"根絶する"},
+  {en:"evoke",ja:"呼び起こす"},
+  {en:"exacerbate",ja:"悪化させる"},
+  {en:"exert",ja:"及ぼす"},
+  {en:"expedite",ja:"促進する"},
+  {en:"extract",ja:"抽出する"},
+  {en:"foster",ja:"育成する"},
+  {en:"hamper",ja:"妨げる"},
+  {en:"hinder",ja:"妨げる"},
+  {en:"illuminate",ja:"明らかにする"},
+  {en:"incorporate",ja:"組み込む"},
+  {en:"induce",ja:"引き起こす"},
+  {en:"infer",ja:"推論する"},
+  {en:"inhabit",ja:"居住する"},
+  {en:"inhibit",ja:"抑制する"},
+  {en:"intensify",ja:"強める"},
+  {en:"jeopardize",ja:"危険にさらす"},
+  {en:"legitimize",ja:"正当化する"},
+  {en:"levy",ja:"課す"},
+  {en:"loom",ja:"不気味に迫る"},
+  {en:"marginalize",ja:"周辺に追いやる"},
+  {en:"mediate",ja:"仲裁する"},
+  {en:"mobilize",ja:"動員する"},
+  {en:"obscure",ja:"曖昧にする・曖昧な"},
+  {en:"offset",ja:"相殺する"},
+  {en:"outweigh",ja:"〜より重い・勝る"},
+  {en:"perpetuate",ja:"永続させる"},
+  {en:"persist",ja:"持続する"},
+  {en:"pledge",ja:"誓約する"},
+  {en:"precede",ja:"先行する"},
+  {en:"preclude",ja:"妨げる"},
+  {en:"prosecute",ja:"起訴する"},
+  {en:"reconcile",ja:"和解させる・調和させる"},
+  {en:"refute",ja:"反論する"},
+  {en:"reiterate",ja:"繰り返し述べる"},
+  {en:"relinquish",ja:"手放す"},
+  {en:"remedy",ja:"治療する・改善する・治療法・解決策"},
+  {en:"render",ja:"〜にする・表現する"},
+  {en:"replicate",ja:"複製する"},
+  {en:"reside",ja:"住む"},
+  {en:"resort",ja:"訴える"},
+  {en:"restrain",ja:"抑える"},
+  {en:"retrieve",ja:"取り戻す"},
+  {en:"segregate",ja:"分離する"},
+  {en:"shun",ja:"避ける"},
+  {en:"simulate",ja:"シミュレーションする"},
+  {en:"solicit",ja:"求める"},
+  {en:"specify",ja:"明示する"},
+  {en:"substantiate",ja:"実証する"},
+  {en:"succumb",ja:"屈する"},
+  {en:"transcend",ja:"超越する"},
+  {en:"undermine",ja:"弱める"},
+  {en:"uphold",ja:"支持する"},
+  {en:"utilize",ja:"利用する"},
+  {en:"verify",ja:"検証する"},
+  {en:"wane",ja:"衰える"},
+  {en:"withhold",ja:"差し控える"},
+  {en:"yield",ja:"生み出す・譲る"},
+  {en:"absurdity",ja:"不条理"},
+  {en:"acclaim",ja:"称賛"},
+  {en:"acquisition",ja:"獲得"},
+  {en:"advocacy",ja:"擁護・提唱"},
+  {en:"affinity",ja:"親近感"},
+  {en:"affliction",ja:"苦悩"},
+  {en:"anomaly",ja:"異常"},
+  {en:"apprehension",ja:"不安・理解"},
+  {en:"arbitration",ja:"仲裁"},
+  {en:"aspiration",ja:"熱望"},
+  {en:"assertion",ja:"主張"},
+  {en:"asset",ja:"資産"},
+  {en:"atrocity",ja:"残虐行為"},
+  {en:"authenticity",ja:"真正性"},
+  {en:"breakthrough",ja:"突破口"},
+  {en:"calamity",ja:"災難"},
+  {en:"causality",ja:"因果関係"},
+  {en:"census",ja:"国勢調査"},
+  {en:"chronology",ja:"年代順"},
+  {en:"circulation",ja:"循環・流通"},
+  {en:"coalition",ja:"連合"},
+  {en:"coexistence",ja:"共存"},
+  {en:"collaboration",ja:"協力"},
+  {en:"collision",ja:"衝突"},
+  {en:"compassion",ja:"思いやり"},
+  {en:"concession",ja:"譲歩"},
+  {en:"configuration",ja:"配置・構成"},
+  {en:"conformity",ja:"順応"},
+  {en:"congestion",ja:"混雑"},
+  {en:"connotation",ja:"含意"},
+  {en:"contamination",ja:"汚染"},
+  {en:"contempt",ja:"軽蔑"},
+  {en:"contradiction",ja:"矛盾"},
+  {en:"counterpart",ja:"対応する人・もの"},
+  {en:"credibility",ja:"信頼性"},
+  {en:"deficit",ja:"赤字・不足"},
+  {en:"demise",ja:"終焉・死"},
+  {en:"denial",ja:"否定"},
+  {en:"dependency",ja:"依存"},
+  {en:"deprivation",ja:"剥奪"},
+  {en:"descendant",ja:"子孫"},
+  {en:"detention",ja:"拘留"},
+  {en:"deviation",ja:"逸脱"},
+  {en:"diagnosis",ja:"診断"},
+  {en:"dictatorship",ja:"独裁政権"},
+  {en:"disclosure",ja:"開示"},
+  {en:"discretion",ja:"裁量・慎重さ"},
+  {en:"disguise",ja:"変装"},
+  {en:"disruption",ja:"混乱"},
+  {en:"dissatisfaction",ja:"不満"},
+  {en:"doctrine",ja:"教義・主義"},
+  {en:"domain",ja:"領域"},
+  {en:"duration",ja:"期間"},
+  {en:"elite",ja:"エリート"},
+  {en:"emigration",ja:"移住"},
+  {en:"encroachment",ja:"侵害・侵入"},
+  {en:"endorsement",ja:"支持・承認"},
+  {en:"enrollment",ja:"登録・入学"},
+  {en:"entity",ja:"実体・存在"},
+  {en:"equation",ja:"方程式・同等視"},
+  {en:"ethics",ja:"倫理"},
+  {en:"exclusion",ja:"排除"},
+  {en:"expenditure",ja:"支出"},
+  {en:"faction",ja:"派閥"},
+  {en:"feasibility",ja:"実現可能性"},
+  {en:"fertility",ja:"出生率・肥沃さ"},
+  {en:"fragment",ja:"断片"},
+  {en:"grievance",ja:"不満・苦情"},
+  {en:"hostility",ja:"敵意"},
+  {en:"immunity",ja:"免疫"},
+  {en:"inclusion",ja:"包含"},
+  {en:"indictment",ja:"起訴"},
+  {en:"inference",ja:"推論"},
+  {en:"influx",ja:"流入"},
+  {en:"injustice",ja:"不正"},
+  {en:"insight",ja:"洞察"},
+  {en:"insistence",ja:"主張"},
+  {en:"instability",ja:"不安定"},
+  {en:"interdependence",ja:"相互依存"},
+  {en:"jurisdiction",ja:"管轄権"},
+  {en:"literacy",ja:"読み書き能力"},
+  {en:"magnitude",ja:"大きさ・重要性"},
+  {en:"mandate",ja:"権限・命令"},
+  {en:"manifestation",ja:"現れ"},
+  {en:"mediation",ja:"仲裁"},
+  {en:"merger",ja:"合併"},
+  {en:"metaphor",ja:"比喩"},
+  {en:"migration",ja:"移住"},
+  {en:"misconception",ja:"誤解"},
+  {en:"mobility",ja:"移動性"},
+  {en:"obstacle",ja:"障害"},
+  {en:"oppression",ja:"抑圧"},
+  {en:"orientation",ja:"方向づけ"},
+  {en:"paradox",ja:"逆説"},
+  {en:"parameter",ja:"要因・変数"},
+  {en:"perception",ja:"認識"},
+  {en:"persistence",ja:"持続"},
+  {en:"plight",ja:"苦境"},
+  {en:"precedent",ja:"先例"},
+  {en:"premise",ja:"前提"},
+  {en:"preservation",ja:"保存"},
+  {en:"prestige",ja:"名声"},
+  {en:"probability",ja:"可能性・確率"},
+  {en:"prohibition",ja:"禁止"},
+  {en:"proliferation",ja:"急増・拡散"},
+  {en:"proximity",ja:"近接"},
+  {en:"rationale",ja:"根拠"},
+  {en:"recession",ja:"景気後退"},
+  {en:"reciprocity",ja:"相互関係"},
+  {en:"reconciliation",ja:"和解"},
+  {en:"redundancy",ja:"余剰・冗長性"},
+  {en:"refugee",ja:"難民"},
+  {en:"reluctance",ja:"気が進まないこと"},
+  {en:"repression",ja:"抑圧"},
+  {en:"retention",ja:"保持"},
+  {en:"sanctuary",ja:"避難所"},
+  {en:"scrutiny",ja:"精査"},
+  {en:"segregation",ja:"分離"},
+  {en:"sentiment",ja:"感情・意見"},
+  {en:"solidarity",ja:"連帯"},
+  {en:"sophistication",ja:"洗練・高度化"},
+  {en:"stability",ja:"安定"},
+  {en:"stance",ja:"立場"},
+  {en:"statute",ja:"法令"},
+  {en:"stereotype",ja:"固定観念"},
+  {en:"stimulation",ja:"刺激"},
+  {en:"stipulation",ja:"規定"},
+  {en:"sustainability",ja:"持続可能性"},
+  {en:"symmetry",ja:"対称性"},
+  {en:"tendency",ja:"傾向"},
+  {en:"threshold",ja:"限界点・入口"},
+  {en:"tolerance",ja:"寛容・耐性"},
+  {en:"trajectory",ja:"軌道・道筋"},
+  {en:"transaction",ja:"取引"},
+  {en:"transition",ja:"移行"},
+  {en:"transmission",ja:"伝達"},
+  {en:"validity",ja:"妥当性"},
+  {en:"vicinity",ja:"近辺"},
+  {en:"vocation",ja:"職業・天職"},
+  {en:"abundant",ja:"豊富な"},
+  {en:"adverse",ja:"不利な"},
+  {en:"aesthetic",ja:"美的な"},
+  {en:"affluent",ja:"裕福な"},
+  {en:"agile",ja:"機敏な"},
+  {en:"altruistic",ja:"利他的な"},
+  {en:"analogous",ja:"類似した"},
+  {en:"anonymous",ja:"匿名の"},
+  {en:"applicable",ja:"適用可能な"},
+  {en:"arid",ja:"乾燥した"},
+  {en:"assertive",ja:"断固とした"},
+  {en:"austere",ja:"質素な・厳格な"},
+  {en:"autonomous",ja:"自律した"},
+  {en:"benign",ja:"良性の・穏やかな"},
+  {en:"biased",ja:"偏った"},
+  {en:"candid",ja:"率直な"},
+  {en:"chaotic",ja:"混沌とした"},
+  {en:"civic",ja:"市民の"},
+  {en:"coincidental",ja:"偶然の"},
+  {en:"compatible",ja:"両立できる"},
+  {en:"compelling",ja:"説得力のある"},
+  {en:"conceivable",ja:"考えられる"},
+  {en:"confidential",ja:"機密の"},
+  {en:"consecutive",ja:"連続した"},
+  {en:"considerable",ja:"かなりの"},
+  {en:"contingent",ja:"依存した・偶発的な"},
+  {en:"contradictory",ja:"矛盾した"},
+  {en:"controversial",ja:"論争の的な"},
+  {en:"conventional",ja:"従来の"},
+  {en:"credible",ja:"信頼できる"},
+  {en:"definitive",ja:"決定的な"},
+  {en:"deliberate",ja:"意図的な・慎重な"},
+  {en:"dense",ja:"密集した"},
+  {en:"deprived",ja:"恵まれない"},
+  {en:"derivative",ja:"派生的な"},
+  {en:"designated",ja:"指定された"},
+  {en:"deviant",ja:"逸脱した"},
+  {en:"diligent",ja:"勤勉な"},
+  {en:"diplomatic",ja:"外交の"},
+  {en:"discrete",ja:"別個の"},
+  {en:"distinctive",ja:"特有の"},
+  {en:"divergent",ja:"分岐する"},
+  {en:"dominant",ja:"支配的な"},
+  {en:"drastic",ja:"抜本的な"},
+  {en:"durable",ja:"耐久性のある"},
+  {en:"ecological",ja:"生態系の"},
+  {en:"eligible",ja:"資格がある"},
+  {en:"empirical",ja:"経験的な"},
+  {en:"equivalent",ja:"同等の"},
+  {en:"erroneous",ja:"誤った"},
+  {en:"exclusive",ja:"排他的な"},
+  {en:"exempt",ja:"免除された"},
+  {en:"external",ja:"外部の"},
+  {en:"formidable",ja:"手ごわい"},
+  {en:"hostile",ja:"敵対的な"},
+  {en:"imminent",ja:"差し迫った"},
+  {en:"impartial",ja:"公平な"},
+  {en:"inadequate",ja:"不十分な"},
+  {en:"indispensable",ja:"不可欠な"},
+  {en:"indigenous",ja:"先住の"},
+  {en:"inevitable",ja:"避けられない"},
+  {en:"influential",ja:"影響力のある"},
+  {en:"intact",ja:"無傷の"},
+  {en:"intricate",ja:"複雑な"},
+  {en:"intrinsic",ja:"本質的な"},
+  {en:"irrational",ja:"不合理な"},
+  {en:"legislative",ja:"立法の"},
+  {en:"notorious",ja:"悪名高い"},
+  {en:"objective",ja:"客観的な"},
+  {en:"precarious",ja:"不安定な"},
+  {en:"prominent",ja:"著名な"},
+  {en:"prospective",ja:"将来の"},
+  {en:"reluctant",ja:"気が進まない"},
+  {en:"respective",ja:"それぞれの"},
+  {en:"rigorous",ja:"厳密な"},
+  {en:"scarce",ja:"乏しい"},
+  {en:"simultaneous",ja:"同時の"},
+  {en:"socioeconomic",ja:"社会経済的な"},
+  {en:"solitary",ja:"孤独な"},
+  {en:"sophisticated",ja:"洗練された"},
+  {en:"sporadic",ja:"散発的な"},
+  {en:"subordinate",ja:"従属した"},
+  {en:"subsequent",ja:"その後の"},
+  {en:"substantial",ja:"かなりの"},
+  {en:"superficial",ja:"表面的な"},
+  {en:"tangible",ja:"有形の・明白な"},
+  {en:"tentative",ja:"暫定的な"},
+  {en:"terminal",ja:"末期の・終端の"},
+  {en:"transparent",ja:"透明な"},
+  {en:"underlying",ja:"根本的な"},
+  {en:"unilateral",ja:"一方的な"},
+  {en:"universal",ja:"普遍的な"},
+  {en:"valid",ja:"妥当な"},
+  {en:"volatile",ja:"不安定な"},
+  {en:"vulnerable",ja:"弱い・脆弱な"},
+  {en:"widespread",ja:"広範囲に及ぶ"},
+  {en:"allegedly",ja:"申し立てによると"},
+  {en:"arguably",ja:"おそらく・議論の余地はあるが"},
+  {en:"comparatively",ja:"比較的"},
+  {en:"consequently",ja:"結果として"},
+  {en:"deliberately",ja:"故意に"},
+  {en:"exclusively",ja:"もっぱら"},
+  {en:"formerly",ja:"以前は"},
+  {en:"implicitly",ja:"暗黙のうちに"},
+  {en:"increasingly",ja:"ますます"},
+  {en:"inevitably",ja:"必然的に"},
+  {en:"predominantly",ja:"主に"},
+  {en:"presumably",ja:"おそらく"},
+  {en:"simultaneously",ja:"同時に"},
+  {en:"substantially",ja:"大幅に"},
+  {en:"thereby",ja:"それによって"},
+  {en:"ultimately",ja:"最終的に"},
+  {en:"virtually",ja:"事実上"}
+];
+
+// ========== 級情報を付与 ==========
+WPre2.forEach(w=>w.level='pre2');
+WG2.forEach(w=>w.level='g2');
+WPre1.forEach(w=>w.level='pre1');
+
+// ========== 起動 ==========
+updateWordCounts();
+updateBestDisplay();
+</script>
+</body>
+</html>
