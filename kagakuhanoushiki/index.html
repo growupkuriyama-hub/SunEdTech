@@ -117,6 +117,12 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
 .skip-btn{background:transparent;border:2px solid #eee;border-radius:30px;padding:7px 18px;font-size:12px;font-weight:800;color:var(--text-light);transition:.2s;display:block;margin:10px auto 0}
 .skip-btn:hover{border-color:var(--pink);color:var(--pink)}
 
+/* HINT */
+.hint-btn{background:rgba(194,175,240,.15);border:2px solid var(--purple);border-radius:30px;padding:7px 18px;font-size:12px;font-weight:800;color:var(--purple);transition:.2s;display:block;margin:8px auto 0}
+.hint-btn:hover{background:rgba(194,175,240,.3)}
+.hint-panel{background:rgba(194,175,240,.12);border:2px solid var(--purple);border-radius:var(--r-md);padding:12px 14px;font-size:12px;font-weight:700;color:#6b5ba0;line-height:1.8;white-space:pre-line;margin-top:8px;display:none}
+.hint-panel.show{display:block}
+
 /* LAP TIME */
 .lap-wrap{background:rgba(255,255,255,.5);border-radius:var(--r-lg);padding:1rem;margin-bottom:1rem}
 .lap-label{font-size:11px;color:var(--text-light);font-weight:800;letter-spacing:.5px;margin-bottom:.4rem}
@@ -190,6 +196,8 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
       <div class="q-text" id="q-text"></div>
       <div class="eq-box" id="q-eq"></div>
       <div class="choices" id="choices"></div>
+      <button class="hint-btn" id="hint-btn" onclick="toggleHint()">🔍 ヒントを見る</button>
+      <div class="hint-panel" id="hint-panel"></div>
       <div class="fb" id="fb"></div>
       <button class="next-btn" id="next-btn" onclick="nextQ()">次の問題へ →</button>
       <button class="skip-btn" id="skip-btn" onclick="skipQ()">この問題をスキップ →</button>
@@ -265,34 +273,44 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
 const Qs = [
   {cat:"燃焼",q:"水素が燃焼するときの化学反応式はどれ？",eq:"H<sub>2</sub> + O<sub>2</sub> → ?",
    cs:["2H<sub>2</sub>+O<sub>2</sub>→2H<sub>2</sub>O","H<sub>2</sub>+O<sub>2</sub>→H<sub>2</sub>O","2H+O→H<sub>2</sub>O","H<sub>2</sub>+2O→H<sub>2</sub>O<sub>2</sub>"],a:0,
-   hint:"水素2分子＋酸素1分子→水2分子。係数は2:1:2。"},
+   hint:"水素2分子＋酸素1分子→水2分子。係数は2:1:2。",
+   hint2:"💡 両辺の原子数をそろえよう！\nH：左 2×2=4個 → 右 2×2=4個 ✓\nO：左 1×2=2個 → 右 2×1=2個 ✓\n→ 係数は 2H₂ + O₂ → 2H₂O"},
   {cat:"燃焼",q:"炭素が完全燃焼するとできるものは？",eq:"C + O<sub>2</sub> → ?",
    cs:["CO","CO<sub>2</sub>","C<sub>2</sub>O","CO<sub>3</sub>"],a:1,
-   hint:"炭素＋酸素→二酸化炭素。完全燃焼がポイント。"},
+   hint:"炭素＋酸素→二酸化炭素。完全燃焼がポイント。",
+   hint2:"💡「完全燃焼」= 酸素が十分にある状態。\nC + O₂ → CO₂（二酸化炭素）\n酸素が不足すると CO（一酸化炭素）になるよ！"},
   {cat:"燃焼",q:"マグネシウムが燃えるとき正しい反応式は？",eq:"2Mg + O<sub>2</sub> → ?",
    cs:["MgO","2MgO","Mg<sub>2</sub>O","MgO<sub>2</sub>"],a:1,
-   hint:"2Mg+O₂→2MgO。係数を両辺そろえよう。"},
+   hint:"2Mg+O₂→2MgO。係数を両辺そろえよう。",
+   hint2:"💡 Mg は必ず Mg²⁺、O は O²⁻ で結びつく（1:1）。\n左辺に Mg が2個あるので、右辺も MgO が2個必要。\n→ 2Mg + O₂ → 2MgO"},
   {cat:"分解",q:"酸化銀を加熱すると、酸素のほかに何ができる？",eq:"2Ag<sub>2</sub>O → 4Ag + ?",
    cs:["H<sub>2</sub>O","CO<sub>2</sub>","O<sub>2</sub>","N<sub>2</sub>"],a:2,
-   hint:"酸化銀→銀＋酸素。銀がキラリと光る！"},
+   hint:"酸化銀→銀＋酸素。銀がキラリと光る！",
+   hint2:"💡 酸化銀（Ag₂O）は「銀＋酸素」に分解される。\n式を見ると左辺に O が 2個 → 右辺に O₂ が1個。\n残りは Ag（銀）だけ！ 水や CO₂ は出てこない。"},
   {cat:"分解",q:"水の電気分解でできるものは？",eq:"2H<sub>2</sub>O → ?",
    cs:["H<sub>2</sub>+O","2H<sub>2</sub>+O<sub>2</sub>","H<sub>2</sub>+O<sub>2</sub>","4H+2O<sub>2</sub>"],a:1,
-   hint:"水→水素2＋酸素1。電気で分解！"},
+   hint:"水→水素2＋酸素1。電気で分解！",
+   hint2:"💡 水 2分子を分解すると…\nH が 4個 → H₂ が 2個\nO が 2個 → O₂ が 1個\n→ 2H₂O → 2H₂ + O₂（体積比 水素:酸素 = 2:1）"},
   {cat:"化合",q:"鉄と硫黄が化合してできる物質は？",eq:"Fe + S → ?",
    cs:["FeS","Fe<sub>2</sub>S","FeS<sub>2</sub>","Fe<sub>2</sub>S<sub>3</sub>"],a:0,
-   hint:"Fe＋S→FeS（硫化鉄Ⅱ）。1:1の化合。"},
+   hint:"Fe＋S→FeS（硫化鉄Ⅱ）。1:1の化合。",
+   hint2:"💡 Fe（鉄）は2価、S（硫黄）は2価のイオンになる。\n電荷がつり合うのは 1:1 の組み合わせ。\n→ FeS（硫化鉄Ⅱ）。Fe₂S や FeS₂ にはならないよ！"},
   {cat:"化合",q:"銅が酸素と結びつくとできるものは？",eq:"2Cu + O<sub>2</sub> → ?",
    cs:["CuO","2CuO","Cu<sub>2</sub>O","CuO<sub>2</sub>"],a:1,
-   hint:"2Cu+O₂→2CuO。銅の表面が黒くなる！"},
+   hint:"2Cu+O₂→2CuO。銅の表面が黒くなる！",
+   hint2:"💡 Cu は Cu²⁺（2価）、O は O²⁻（2価）で結合。\n1:1 で結びついて CuO（酸化銅Ⅱ）になる。\n左辺 Cu が2個 → 右辺 CuO が 2個必要！"},
   {cat:"中和",q:"塩酸と水酸化NaOHの中和でできるものは？",eq:"HCl + NaOH → NaCl + ?",
    cs:["CO<sub>2</sub>","O<sub>2</sub>","H<sub>2</sub>O","H<sub>2</sub>"],a:2,
-   hint:"酸＋塩基→塩＋水。中和の基本！"},
+   hint:"酸＋塩基→塩＋水。中和の基本！",
+   hint2:"💡 中和反応の公式：酸 ＋ 塩基 → 塩 ＋ 水\nHCl（酸）＋ NaOH（塩基）→ NaCl（食塩）＋ H₂O（水）\nH⁺ と OH⁻ が結びついて水になるよ！"},
   {cat:"中和",q:"硫酸とBa(OH)₂の中和でできる塩は？",eq:"H<sub>2</sub>SO<sub>4</sub>+Ba(OH)<sub>2</sub>→?+2H<sub>2</sub>O",
    cs:["BaS","BaSO<sub>3</sub>","BaSO<sub>4</sub>","BaO"],a:2,
-   hint:"硫酸バリウムBaSO₄は白い沈殿ができる！"},
+   hint:"硫酸バリウムBaSO₄は白い沈殿ができる！",
+   hint2:"💡 硫酸（H₂SO₄）の酸の部分は SO₄²⁻（硫酸イオン）。\nBa²⁺ ＋ SO₄²⁻ → BaSO₄（硫酸バリウム）\nBaSO₄ は水に溶けない白い沈殿が特徴！"},
   {cat:"燃焼",q:"メタン燃焼でCO₂のほかにできるものは？",eq:"CH<sub>4</sub>+2O<sub>2</sub>→CO<sub>2</sub>+?",
    cs:["H<sub>2</sub>","2H<sub>2</sub>O","4H<sub>2</sub>O","O<sub>2</sub>"],a:1,
-   hint:"CH₄+2O₂→CO₂+2H₂O。水素4つ→水2分子。"}
+   hint:"CH₄+2O₂→CO₂+2H₂O。水素4つ→水2分子。",
+   hint2:"💡 CH₄ には H が4個含まれている。\nH 4個 → H₂O 2個（H₂O 1個に H が2個）\n→ CH₄ + 2O₂ → CO₂ + 2H₂O\n天然ガスを燃やすと水蒸気が出る！"}
 ];
 
 const BALS = [
@@ -358,6 +376,10 @@ function loadQ(){
   document.getElementById('fb').className='fb';
   document.getElementById('next-btn').className='next-btn';
   document.getElementById('skip-btn').style.display='block';
+  document.getElementById('hint-btn').style.display='block';
+  document.getElementById('hint-btn').textContent='🔍 ヒントを見る';
+  document.getElementById('hint-panel').className='hint-panel';
+  document.getElementById('hint-panel').textContent='';
   const ch=document.getElementById('choices');ch.innerHTML='';
   shuffle(q.cs.map((c,i)=>({c,i}))).forEach(({c,i})=>{
     const b=document.createElement('button');
@@ -393,6 +415,7 @@ function pick(i,btn){
   recordQuizLap(qIdx+1,lapTime,i===q.a);
   updateHUD();
   document.getElementById('skip-btn').style.display='none';
+  document.getElementById('hint-btn').style.display='none';
   if(lives===0){setTimeout(endGame,1400);return;}
   document.getElementById('next-btn').className='next-btn show';
 }
@@ -404,9 +427,25 @@ function skipQ(){
   stopQuizLap();
   combo=0; updateHUD();
   document.getElementById('skip-btn').style.display='none';
+  document.getElementById('hint-btn').style.display='none';
+  document.getElementById('hint-panel').className='hint-panel';
   qIdx++;
   if(qIdx>=shuffledQs.length){endGame();return;}
   updateHUD();loadQ();
+}
+
+function toggleHint(){
+  const q=shuffledQs[qIdx];
+  const panel=document.getElementById('hint-panel');
+  const btn=document.getElementById('hint-btn');
+  if(panel.classList.contains('show')){
+    panel.classList.remove('show');
+    btn.textContent='🔍 ヒントを見る';
+  } else {
+    panel.textContent=q.hint2||q.hint;
+    panel.classList.add('show');
+    btn.textContent='🙈 ヒントを隠す';
+  }
 }
 
 function endGame(){
