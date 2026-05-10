@@ -1,8 +1,3 @@
-// ============================================================
-// アプリ一覧データ — URLやタグはここを編集するだけでOK
-// ============================================================
-// updated
-// updated
 export const APP_LIST = [
   {
     id: "science-reading-lab",
@@ -68,5 +63,18 @@ export const APP_LIST = [
     color: "#10B981",
     bgColor: "#ECFDF5",
     icon: "⚗️",
+  },
+  {
+    id: "english-vocab-quiz",
+    paid: false,
+    name: "English Vocabulary Quiz",
+    nameJa: "英単語クイズ",
+    description: "小学校〜中3レベルの約2,400語をレベル別・ランダムに4択で出題。苦手単語の復習機能つき。完全オフライン動作。",
+    target: "小学校～中3 ／ 英検5級～3級前後",
+    tags: ["英語", "英単語", "語彙"],
+    url: "https://sun-ed-tech-u14y.vercel.app/",
+    color: "#F59E0B",
+    bgColor: "#FFFBEB",
+    icon: "📚",
   },
 ];
