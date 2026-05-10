@@ -1,51 +1,55 @@
-# 中学卒業レベル 英単語クイズ
+# 英単語マスター ★
 
-小学校内容も含めた中学卒業レベルの英単語クイズです。
-React + Vite で作った完全静的アプリです。
+中学生のための英語単語テストアプリです。
 
 ## 特徴
 
-- AI通信なし
-- API通信なし
-- 外部データ取得なし
-- 問題データは `src/data/` 内のローカルファイルのみ
-- 学習データはブラウザの localStorage のみに保存
-- Cloudflare Pages で静的デプロイ可能
+- 中1・中2・中3レベルの英単語 **1,555語**収録
+- 英語→日本語 / 日本語→英語 / スペリング入力の3モード
+- ライフ制（ハート3つ）・コンボシステムでゲーム感覚で学習
+- ベストスコア記録（localStorage）
+- 外部APIなし・完全オフライン動作
+- 単体HTMLファイル（index.html 1ファイルのみ）
 
-## ローカル実行
+## 単語数内訳
 
-```bash
-npm install
-npm run dev
-```
+| 学年 | 語数 |
+|------|------|
+| 中1  | 716語 |
+| 中2  | 422語 |
+| 中3  | 417語 |
+| 合計 | 1,555語 |
 
-## ビルド
+## ゲームの遊び方
 
-```bash
-npm run build
-```
+1. 学年を選ぶ（中1 / 中2 / 中3 / 全部）
+2. 出題形式を選ぶ（英→日 / 日→英 / スペリング入力）
+3. 問題数を選ぶ（10 / 20 / 30 / 50問）
+4. 「スタート!」ボタンを押す
+5. ハートが3つ。間違えるとハートが減る。全部なくなるとゲームオーバー
+6. 連続正解でコンボボーナス！
 
-`dist` フォルダが生成されます。
+## デプロイ方法（Cloudflare Pages）
 
-## Cloudflare Pages 設定
+### 手順
+1. このリポジトリをGitHubにpush（index.html と README.md）
+2. [Cloudflare Pages](https://pages.cloudflare.com/) にログイン
+3. 「Create a project」→「Connect to Git」
+4. GitHubリポジトリを選択して接続
+5. ビルド設定：
+   - **Framework preset**: None
+   - **Build command**: （空欄）
+   - **Build output directory**: `/`（ルート）
+6. 「Save and Deploy」をクリック
+7. 数秒〜数分でデプロイ完了！
 
-- Framework preset: Vite
-- Build command: npm run build
-- Build output directory: dist
+### ローカルで使う場合
+`index.html` をブラウザで直接開くだけで動作します。
+サーバー不要・インストール不要です。
 
-## 単語データの追加
+## 技術仕様
 
-`src/data/elementaryWords.js`, `grade1Words.js`, `grade2Words.js`, `grade3Words.js` に以下の形式で追加してください。
-
-```js
-{
-  word: 'apple',
-  meaning: 'りんご',
-  level: 'elementary',
-  partOfSpeech: 'noun'
-}
-```
-
-## 注意
-
-外部通信を入れない方針です。通信処理や外部サービス接続は追加しないでください。
+- 純粋なHTML / CSS / JavaScript（バニラJS）
+- 外部ライブラリ：Google Fonts（Nunito）のみ
+- 外部API・AI通信：一切なし
+- ブラウザのlocalStorageでベストスコードを保存
