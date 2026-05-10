@@ -113,6 +113,10 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
 .check-btn:hover{opacity:.9}
 .check-btn:active{transform:translateY(2px);box-shadow:none}
 
+/* SKIP */
+.skip-btn{background:transparent;border:2px solid #eee;border-radius:30px;padding:7px 18px;font-size:12px;font-weight:800;color:var(--text-light);transition:.2s;display:block;margin:10px auto 0}
+.skip-btn:hover{border-color:var(--pink);color:var(--pink)}
+
 /* LAP TIME */
 .lap-wrap{background:rgba(255,255,255,.5);border-radius:var(--r-lg);padding:1rem;margin-bottom:1rem}
 .lap-label{font-size:11px;color:var(--text-light);font-weight:800;letter-spacing:.5px;margin-bottom:.4rem}
@@ -188,6 +192,7 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
       <div class="choices" id="choices"></div>
       <div class="fb" id="fb"></div>
       <button class="next-btn" id="next-btn" onclick="nextQ()">次の問題へ →</button>
+      <button class="skip-btn" id="skip-btn" onclick="skipQ()">この問題をスキップ →</button>
     </div>
 
     <div class="lap-wrap">
@@ -250,6 +255,7 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
       <div id="bal-area"></div>
       <div class="fb" id="bal-fb"></div>
       <button class="next-btn" id="bal-next-btn" onclick="nextBal()">次の問題へ →</button>
+      <button class="skip-btn" id="bal-skip-btn" onclick="skipBal()">この問題をスキップ →</button>
     </div>
   </div>
 
@@ -351,6 +357,7 @@ function loadQ(){
   document.getElementById('q-eq').innerHTML=q.eq;
   document.getElementById('fb').className='fb';
   document.getElementById('next-btn').className='next-btn';
+  document.getElementById('skip-btn').style.display='block';
   const ch=document.getElementById('choices');ch.innerHTML='';
   shuffle(q.cs.map((c,i)=>({c,i}))).forEach(({c,i})=>{
     const b=document.createElement('button');
@@ -385,11 +392,22 @@ function pick(i,btn){
   }
   recordQuizLap(qIdx+1,lapTime,i===q.a);
   updateHUD();
+  document.getElementById('skip-btn').style.display='none';
   if(lives===0){setTimeout(endGame,1400);return;}
   document.getElementById('next-btn').className='next-btn show';
 }
 
 function nextQ(){qIdx++;updateHUD();loadQ();}
+
+function skipQ(){
+  if(answered)return;
+  stopQuizLap();
+  combo=0; updateHUD();
+  document.getElementById('skip-btn').style.display='none';
+  qIdx++;
+  if(qIdx>=shuffledQs.length){endGame();return;}
+  updateHUD();loadQ();
+}
 
 function endGame(){
   stopQuizLap();
@@ -425,6 +443,7 @@ function loadBal(){
   document.getElementById('bal-fb').className='fb';
   document.getElementById('bal-next-btn').className='next-btn';
   document.getElementById('bal-next-btn').textContent='次の問題へ →';
+  document.getElementById('bal-skip-btn').style.display='block';
   const inp=i=>`<input class="coeff-inp" id="bi${i}" type="number" min="1" max="9" placeholder="?">`;
   const chip=i=>`${inp(i)}<span class="mol-chip">${bd.parts[i]}</span>`;
   let html=`<div style="font-size:13px;color:var(--text-light);font-weight:800;margin-bottom:1rem">${bd.name}</div>`;
@@ -452,10 +471,19 @@ function checkBal(){
   recordBalLap(bd.name,lapTime,isCorrect);
   const nb=document.getElementById('bal-next-btn');
   nb.className='next-btn show';
+  document.getElementById('bal-skip-btn').style.display='none';
   if(balIdx===shuffledBals.length-1) nb.textContent='結果を見る →';
 }
 
 function nextBal(){
+  balIdx++;
+  if(balIdx>=shuffledBals.length){endBal();return;}
+  loadBal();
+}
+
+function skipBal(){
+  stopBalLap();
+  document.getElementById('bal-skip-btn').style.display='none';
   balIdx++;
   if(balIdx>=shuffledBals.length){endBal();return;}
   loadBal();
