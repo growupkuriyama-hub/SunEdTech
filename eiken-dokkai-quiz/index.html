@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>英検アカデミック英語クイズ | SunEdTech</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #fbfaf7;
+      --card: #ffffff;
+      --card-2: #f2efe9;
+      --text: #1d1d1f;
+      --muted: #6b6863;
+      --line: rgba(29, 29, 31, 0.14);
+      --line-strong: rgba(29, 29, 31, 0.28);
+      --accent: #6157d8;
+      --accent-2: #eeeefe;
+      --accent-3: #3c3489;
+      --ok-bg: #eaf5e4;
+      --ok-text: #163708;
+      --ng-bg: #fdebec;
+      --ng-text: #521215;
+      --hint-bg: #fff2d7;
+      --hint-text: #4b2b02;
+      --shadow: 0 18px 45px rgba(30, 26, 20, 0.08);
+      --radius: 18px;
+      --radius-sm: 10px;
+      --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #151515;
+        --card: #202020;
+        --card-2: #2a2a2a;
+        --text: #f4f1ed;
+        --muted: #aaa39a;
+        --line: rgba(255,255,255,0.14);
+        --line-strong: rgba(255,255,255,0.28);
+        --accent: #aaa3ff;
+        --accent-2: #302c60;
+        --accent-3: #e0dcff;
+        --ok-bg: #173404;
+        --ok-text: #c9ecaa;
+        --ng-bg: #4c1113;
+        --ng-text: #ffc7c9;
+        --hint-bg: #432703;
+        --hint-text: #ffd58b;
+        --shadow: 0 18px 45px rgba(0,0,0,0.28);
+      }
+    }
+    body {
+      min-height: 100vh;
+      font-family: var(--font);
+      background:
+        radial-gradient(circle at top left, rgba(127,119,221,.16), transparent 34rem),
+        radial-gradient(circle at bottom right, rgba(42,157,143,.10), transparent 30rem),
+        var(--bg);
+      color: var(--text);
+      padding: 20px 14px 44px;
+      display: flex;
+      justify-content: center;
+    }
+    .page { width: min(920px, 100%); }
+    .topbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 18px; }
+    .home-link {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 9px 14px; border: 1px solid var(--line);
+      border-radius: 999px; color: var(--text); text-decoration: none;
+      background: rgba(255,255,255,.55); backdrop-filter: blur(8px);
+      font-size: 14px; box-shadow: 0 8px 22px rgba(30,26,20,.05);
+    }
+    @media (prefers-color-scheme: dark) { .home-link { background: rgba(32,32,32,.7); } }
+    .home-link:hover { border-color: var(--line-strong); transform: translateY(-1px); }
+    .brand { font-size: 12px; color: var(--muted); letter-spacing: .04em; }
+    .hero { margin: 14px 0 18px; }
+    .eyebrow { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+    h1 { font-size: clamp(28px, 5vw, 46px); line-height: 1.06; letter-spacing: -0.05em; font-weight: 750; }
+    .lead { margin-top: 10px; color: var(--muted); font-size: 15px; line-height: 1.8; max-width: 760px; }
+    .panel {
+      background: color-mix(in srgb, var(--card) 94%, transparent);
+      border: 1px solid var(--line); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 18px;
+    }
+    .selector { display: grid; gap: 14px; margin-bottom: 16px; }
+    .selector-label { font-size: 12px; color: var(--muted); margin-bottom: 7px; }
+    .btn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .sel-btn {
+      border: 1px solid var(--line); background: var(--card); color: var(--text);
+      border-radius: 14px; padding: 11px 10px; cursor: pointer; font-family: var(--font);
+      text-align: center; font-size: 14px; line-height: 1.25; transition: .15s ease;
+    }
+    .sel-btn small { display: block; margin-top: 3px; color: var(--muted); font-size: 11px; }
+    .sel-btn:hover { border-color: var(--line-strong); transform: translateY(-1px); }
+    .sel-btn.active { background: var(--accent-2); color: var(--accent-3); border-color: color-mix(in srgb, var(--accent) 58%, transparent); font-weight: 700; }
+    .course-note {
+      background: var(--card-2); border: 1px solid var(--line); border-radius: 14px;
+      padding: 12px 14px; font-size: 13px; line-height: 1.75; color: var(--muted);
+    }
+    .progress-bg { height: 8px; background: var(--card-2); border-radius: 999px; border: 1px solid var(--line); overflow: hidden; margin: 16px 0; }
+    .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #7f77dd, #2a9d8f); border-radius: inherit; transition: width .25s ease; }
+    .quiz-card { border: 1px solid var(--line); border-radius: var(--radius); background: var(--card); padding: 18px; }
+    .q-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+    .badge { font-size: 12px; color: var(--accent-3); background: var(--accent-2); border: 1px solid color-mix(in srgb, var(--accent) 34%, transparent); padding: 4px 10px; border-radius: 999px; font-weight: 700; }
+    .counter { margin-left: auto; color: var(--muted); font-size: 13px; }
+    .passage { background: var(--card-2); border-left: 4px solid var(--accent); border-radius: 0 14px 14px 0; padding: 14px 16px; line-height: 1.82; font-size: 15px; margin-bottom: 16px; }
+    .kw { text-decoration: underline dotted var(--accent); text-decoration-thickness: 2px; text-underline-offset: 4px; font-weight: 700; }
+    .q-text { font-size: 16px; line-height: 1.65; font-weight: 700; margin-bottom: 12px; }
+    .options { display: grid; gap: 9px; margin-bottom: 14px; }
+    .opt-btn { width: 100%; text-align: left; border: 1px solid var(--line); background: var(--card); color: var(--text); border-radius: 13px; padding: 11px 13px; cursor: pointer; font: inherit; font-size: 14px; line-height: 1.55; }
+    .opt-btn:hover:not(:disabled) { background: var(--card-2); border-color: var(--line-strong); }
+    .opt-btn:disabled { cursor: default; }
+    .opt-btn.correct { background: var(--ok-bg); color: var(--ok-text); border-color: color-mix(in srgb, var(--ok-text) 42%, transparent); font-weight: 700; }
+    .opt-btn.wrong { background: var(--ng-bg); color: var(--ng-text); border-color: color-mix(in srgb, var(--ng-text) 42%, transparent); }
+    .hint-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+    .hint-btn, .next-btn, .try-btn {
+      border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px;
+      cursor: pointer; font: inherit; font-size: 13px; color: var(--text); background: var(--card);
+    }
+    .hint-btn { color: var(--accent-3); background: var(--accent-2); border-color: color-mix(in srgb, var(--accent) 36%, transparent); }
+    .hint-btn:disabled { opacity: .45; cursor: default; }
+    .hint-box { background: var(--hint-bg); color: var(--hint-text); border: 1px solid color-mix(in srgb, var(--hint-text) 28%, transparent); border-radius: 14px; padding: 12px 14px; font-size: 13px; line-height: 1.7; margin: 10px 0; }
+    .hint-box p + p { margin-top: 6px; }
+    .feedback { border-radius: 14px; padding: 12px 14px; font-size: 13px; line-height: 1.75; margin: 10px 0; }
+    .feedback.ok { background: var(--ok-bg); color: var(--ok-text); border: 1px solid color-mix(in srgb, var(--ok-text) 38%, transparent); }
+    .feedback.ng { background: var(--ng-bg); color: var(--ng-text); border: 1px solid color-mix(in srgb, var(--ng-text) 38%, transparent); }
+    .next-btn, .try-btn { background: var(--text); color: var(--bg); border-color: var(--text); padding: 10px 18px; margin-top: 4px; }
+    .next-btn:hover, .try-btn:hover { opacity: .86; }
+    .result { text-align: center; padding: 22px 10px; }
+    .score { font-size: 46px; font-weight: 800; letter-spacing: -0.04em; color: var(--accent); }
+    .score-sub { color: var(--muted); font-size: 14px; margin: 6px 0 16px; }
+    .result-msg { line-height: 1.75; margin-bottom: 16px; }
+    .mini-actions { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+    .plain-btn { border: 1px solid var(--line); background: var(--card); color: var(--text); border-radius: 999px; padding: 10px 16px; font: inherit; font-size: 13px; cursor: pointer; }
+    footer { color: var(--muted); font-size: 12px; line-height: 1.7; margin-top: 14px; text-align: center; }
+    @media (max-width: 640px) {
+      body { padding-top: 14px; }
+      .topbar { align-items: flex-start; }
+      .brand { display: none; }
+      .btn-grid { grid-template-columns: 1fr; }
+      .panel, .quiz-card { padding: 14px; }
+      .counter { width: 100%; margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="topbar">
+      <a class="home-link" href="https://sunedtech-hp.pages.dev/">← サイトに戻る</a>
+      <div class="brand">SunEdTech / Static Quiz</div>
+    </div>
+
+    <section class="hero" aria-labelledby="title">
+      <div class="eyebrow">内部データだけで動く英検アカデミック英語トレーニング</div>
+      <h1 id="title">英検レベル別<br>科学・論理英語クイズ</h1>
+      <p class="lead">英検準2級・準1級・1級を選び、さらに各級の中で Level 1〜3 を選べます。外部API、AI通信、広告通信、課金APIは使っていません。</p>
+    </section>
+
+    <section class="panel" id="app"></section>
+
+    <footer>All quiz data is stored inside this single HTML file. No paid API calls are made.</footer>
+  </main>
+
+  <script>
+    const BANKS = {"pre2": {"l1": [{"cat": "Science", "passage": "When water gets enough heat, it can change into <span class=\"kw\">vapor</span>. This process is called <span class=\"kw\">evaporation</span>. It often happens from the surface of oceans, rivers, and puddles.", "q": "What helps evaporation happen faster?", "opts": ["Lower temperature", "More heat", "Less surface area", "Less air"], "ans": 1, "exp": "Heat gives water molecules more energy, so they can leave the liquid surface more easily.", "hints": ["evaporation は『蒸発』です。", "水が気体になるにはエネルギーが必要です。", "温度が上がると分子の動きが活発になります。"]}, {"cat": "Math", "passage": "A <span class=\"kw\">fraction</span> shows part of a whole. The top number is the numerator, and the bottom number is the <span class=\"kw\">denominator</span>. In 3/4, the whole is divided into four equal parts.", "q": "What does the denominator show?", "opts": ["How many parts are chosen", "How many equal parts make the whole", "The answer to a division problem", "The size of one side"], "ans": 1, "exp": "The denominator tells how many equal parts the whole is divided into.", "hints": ["3/4 の下の数に注目。", "下の数は『全体の分け方』を表します。", "denominator = 分母です。"]}, {"cat": "Biology", "passage": "A <span class=\"kw\">habitat</span> is the natural home of a living thing. Fish live in water, while many birds live in trees. A good habitat gives animals food, water, and shelter.", "q": "What is a habitat?", "opts": ["A type of weather", "An animal's natural home", "A tool for measuring heat", "A group of stars"], "ans": 1, "exp": "A habitat is the place where a plant or animal naturally lives and gets what it needs.", "hints": ["habitat は生物の生活場所です。", "food, water, shelter がヒントです。", "『すみか』に近い意味です。"]}, {"cat": "Math", "passage": "To find the <span class=\"kw\">average</span> of several numbers, add them together and divide by how many numbers there are. For example, the average of 2, 4, and 6 is 4. Averages help us summarize data.", "q": "How do you find the average of three numbers?", "opts": ["Multiply all numbers", "Add them and divide by three", "Choose the largest number", "Subtract the smallest number"], "ans": 1, "exp": "For three numbers, add the numbers and divide the total by 3.", "hints": ["average = 平均です。", "まず全部足します。", "3個の数なら最後に3で割ります。"]}, {"cat": "Physics", "passage": "A simple <span class=\"kw\">circuit</span> needs a battery, wires, and a bulb. Electric current can flow only when the path is closed. If the wire is broken, the bulb will not light.", "q": "Why will the bulb not light when the wire is broken?", "opts": ["The battery becomes heavier", "The current cannot flow", "The bulb changes color", "The wire becomes a magnet"], "ans": 1, "exp": "Current needs a complete path. A broken wire opens the circuit and stops the current.", "hints": ["circuit は回路です。", "電流は道がつながっていないと流れません。", "切れた回路 = open circuit です。"]}], "l2": [{"cat": "Biology", "passage": "Plants make food through <span class=\"kw\">photosynthesis</span>. They use sunlight, water, and carbon dioxide. Oxygen is released as a by-product.", "q": "Which gas do plants take in during photosynthesis?", "opts": ["Oxygen", "Carbon dioxide", "Hydrogen", "Nitrogen"], "ans": 1, "exp": "Plants take in carbon dioxide and release oxygen during photosynthesis.", "hints": ["photosynthesis = 光合成。", "植物が材料として使う気体です。", "二酸化炭素 = carbon dioxide。"]}, {"cat": "Physics", "passage": "<span class=\"kw\">Gravity</span> is a force that pulls objects toward each other. On Earth, it pulls objects toward the center of the planet. The strength of gravity depends on mass and distance.", "q": "Which two factors affect the strength of gravity?", "opts": ["Color and shape", "Mass and distance", "Speed and sound", "Temperature and light"], "ans": 1, "exp": "Gravity depends mainly on the masses of the objects and the distance between them.", "hints": ["gravity = 重力。", "重い物体ほど強く引きます。", "距離が遠いほど引力は弱くなります。"]}, {"cat": "Environment", "passage": "<span class=\"kw\">Renewable</span> energy comes from sources that can be replaced naturally. Sunlight and wind are examples. Fossil fuels, such as coal and oil, take millions of years to form.", "q": "Which source is renewable?", "opts": ["Coal", "Oil", "Wind", "Natural gas"], "ans": 2, "exp": "Wind is renewable because it is naturally available and does not run out in the same way fossil fuels do.", "hints": ["renewable = 再生可能。", "石炭や石油は化石燃料です。", "風や太陽光は自然に繰り返し得られます。"]}, {"cat": "Math", "passage": "Speed tells how far something travels in a certain time. If a train travels 120 kilometers in 2 hours, its <span class=\"kw\">speed</span> is 60 kilometers per hour. The formula is distance divided by time.", "q": "How is speed calculated?", "opts": ["Time divided by distance", "Distance divided by time", "Distance plus time", "Time minus distance"], "ans": 1, "exp": "Speed is distance divided by time.", "hints": ["speed = 速さ。", "『道のり ÷ 時間』です。", "120 km ÷ 2 h = 60 km/h。"]}, {"cat": "Biology", "passage": "Most cells are too small to see with only our eyes. A <span class=\"kw\">microscope</span> makes tiny things look larger. Inside many cells, the nucleus controls cell activities.", "q": "What does a microscope help us do?", "opts": ["Hear tiny sounds", "See very small things", "Make cells disappear", "Change sunlight into food"], "ans": 1, "exp": "A microscope magnifies tiny objects so we can observe them.", "hints": ["micro = とても小さい。", "scope は見る道具に関係します。", "顕微鏡 = microscope。"]}], "l3": [{"cat": "Ecology", "passage": "In an <span class=\"kw\">ecosystem</span>, living things depend on one another. If the number of predators falls sharply, the number of prey may increase. This can change the balance of the whole system.", "q": "What may happen if predators decrease?", "opts": ["Prey may increase", "All plants disappear immediately", "The ecosystem stops changing", "Gravity becomes weaker"], "ans": 0, "exp": "With fewer predators, more prey can survive, so their population may increase.", "hints": ["predator = 捕食者。", "prey = 食べられる側。", "捕食者が減ると、食べられる側はどうなりますか。"]}, {"cat": "Physics", "passage": "<span class=\"kw\">Insulation</span> slows the movement of heat. A thick coat keeps warm air near your body, and a thermos keeps hot drinks hot. Good insulation reduces heat transfer.", "q": "What is the main role of insulation?", "opts": ["To create electricity", "To slow heat transfer", "To increase gravity", "To turn liquid into solid"], "ans": 1, "exp": "Insulation reduces how quickly heat moves from one place to another.", "hints": ["insulation = 断熱。", "熱の移動を考えます。", "保温ボトルが冷めにくい理由です。"]}, {"cat": "Math", "passage": "<span class=\"kw\">Probability</span> describes how likely an event is. If a bag has one red ball and one blue ball, the chance of picking a red ball is one out of two. This can be written as 1/2 or 50%.", "q": "What does probability describe?", "opts": ["How heavy an object is", "How likely something is to happen", "How bright a light is", "How fast sound travels"], "ans": 1, "exp": "Probability measures the chance that an event will happen.", "hints": ["probability = 確率。", "likely は『起こりやすい』という意味です。", "chance と近い意味です。"]}, {"cat": "Earth Science", "passage": "<span class=\"kw\">Erosion</span> happens when wind, water, or ice carries away soil and rock. Over a long time, erosion can change the shape of mountains, rivers, and coastlines. Plants can help slow erosion by holding soil in place.", "q": "How can plants help reduce erosion?", "opts": ["By holding soil in place", "By making rocks heavier", "By stopping all rain", "By changing ice into steam"], "ans": 0, "exp": "Plant roots help hold soil, so wind and water cannot carry it away as easily.", "hints": ["erosion = 侵食。", "土が流される現象です。", "根が土をつかむイメージです。"]}, {"cat": "Chemistry", "passage": "A <span class=\"kw\">chemical reaction</span> changes substances into new substances. Signs of a reaction may include a color change, gas bubbles, heat, or light. Burning wood is one common example.", "q": "Which sign may show that a chemical reaction has happened?", "opts": ["A new gas appears", "The object becomes silent", "The object changes its name", "Time moves backward"], "ans": 0, "exp": "Gas bubbles, heat, light, or a color change can be evidence of a chemical reaction.", "hints": ["chemical reaction = 化学反応。", "反応では新しい物質ができます。", "泡・熱・色の変化などがサインです。"]}]}, "pre1": {"l1": [{"cat": "Biology", "passage": "When bacteria are exposed to antibiotics too often, some may survive and reproduce. Over time, a population can become <span class=\"kw\">resistant</span>. This makes infections harder to treat.", "q": "What does antibiotic resistance make harder?", "opts": ["Growing plants", "Treating infections", "Measuring distance", "Producing oxygen"], "ans": 1, "exp": "Resistant bacteria are not easily killed by antibiotics, so infections become harder to treat.", "hints": ["resistant = 抵抗力がある。", "antibiotics は抗生物質です。", "薬が効きにくくなる問題です。"]}, {"cat": "Science", "passage": "A <span class=\"kw\">correlation</span> means that two things tend to change together. However, correlation does not always prove <span class=\"kw\">causation</span>. A third factor may be responsible for both changes.", "q": "What does the passage warn us about?", "opts": ["All numbers are useless", "Correlation always proves causation", "Two related changes may not have a cause-and-effect relationship", "A third factor can never matter"], "ans": 2, "exp": "The passage explains that two things can be related without one directly causing the other.", "hints": ["correlation = 相関。", "causation = 因果関係。", "『一緒に変化する』ことと『原因である』ことは別です。"]}, {"cat": "Environment", "passage": "Cities often become warmer than nearby rural areas. This <span class=\"kw\">urban heat island</span> effect is caused by roads, buildings, and reduced vegetation. Planting trees can help lower temperatures.", "q": "What can help reduce the urban heat island effect?", "opts": ["Removing all shade", "Planting more trees", "Using only dark roofs", "Covering rivers with concrete"], "ans": 1, "exp": "Trees provide shade and release water vapor, which can help cool urban areas.", "hints": ["urban = 都市の。", "heat island = ヒートアイランド。", "木や緑は温度を下げる助けになります。"]}, {"cat": "Technology", "passage": "Solar and wind power can reduce carbon emissions, but their output is <span class=\"kw\">intermittent</span>. They depend on sunlight and wind conditions. Energy storage can help make the supply more stable.", "q": "Why can solar and wind power be intermittent?", "opts": ["They depend on weather conditions", "They always produce too much energy", "They require no equipment", "They work only underground"], "ans": 0, "exp": "Their output changes with sunlight and wind, so it is not constant.", "hints": ["intermittent = 断続的な。", "太陽光は夜に弱くなります。", "風力は風がないと発電しにくいです。"]}, {"cat": "Psychology", "passage": "<span class=\"kw\">Cognitive load</span> is the amount of mental effort needed to learn or solve a problem. If instructions are confusing, learners may spend too much effort understanding the task itself. Clear examples can reduce this load.", "q": "What can reduce cognitive load?", "opts": ["Confusing instructions", "Clear examples", "Longer passwords", "Louder music"], "ans": 1, "exp": "Clear examples make the task easier to understand and reduce unnecessary mental effort.", "hints": ["cognitive = 認知の、頭の働きの。", "load = 負荷。", "わかりやすい例は負担を減らします。"]}], "l2": [{"cat": "Academic Skills", "passage": "<span class=\"kw\">Peer review</span> is a process in which experts evaluate a study before publication. They check whether the methods are sound and whether the conclusions are supported by evidence. It does not guarantee perfection, but it improves reliability.", "q": "What is one purpose of peer review?", "opts": ["To remove all difficult words", "To check the quality of a study", "To make every paper famous", "To replace experiments with opinions"], "ans": 1, "exp": "Peer review helps evaluate whether a study is methodologically and logically reliable.", "hints": ["peer = 同じ分野の専門家。", "review = 評価・査読。", "研究の質を確認する仕組みです。"]}, {"cat": "Ecology", "passage": "<span class=\"kw\">Biodiversity</span> refers to the variety of living things in an area. High biodiversity can make ecosystems more resilient. If one species declines, others may still perform similar roles.", "q": "Why can biodiversity make ecosystems more resilient?", "opts": ["Every species becomes identical", "Other species may fill similar roles", "No species ever dies", "Weather stops changing"], "ans": 1, "exp": "Variety provides backup functions, so ecosystems may continue working even if one species declines.", "hints": ["biodiversity = 生物多様性。", "resilient = 回復力がある。", "似た役割をもつ種が残ることがあります。"]}, {"cat": "Technology", "passage": "An algorithm can produce unfair results if the data used to train it contains <span class=\"kw\">bias</span>. For example, a system may perform poorly for groups that were underrepresented in the data. Careful testing is therefore necessary.", "q": "Why should algorithms be carefully tested?", "opts": ["They never make mistakes", "Training data may contain bias", "They cannot use numbers", "Testing removes all computers"], "ans": 1, "exp": "Biased or incomplete data can lead algorithms to make unfair or inaccurate decisions.", "hints": ["bias = 偏り。", "データが偏ると結果も偏ります。", "underrepresented は『十分に含まれていない』という意味です。"]}, {"cat": "Climate", "passage": "Some climate processes create <span class=\"kw\">feedback loops</span>. For instance, melting ice reduces the amount of sunlight reflected back into space. Darker ocean water then absorbs more heat, causing further melting.", "q": "What happens when ice melts in the example?", "opts": ["More sunlight is reflected", "Darker water absorbs more heat", "The ocean becomes solid", "The atmosphere disappears"], "ans": 1, "exp": "Less ice means less reflection; darker water absorbs more heat and can cause more melting.", "hints": ["feedback loop = フィードバック循環。", "氷は太陽光を反射しやすいです。", "黒っぽい海水は熱を吸収しやすいです。"]}, {"cat": "Economics", "passage": "Every decision has an <span class=\"kw\">opportunity cost</span>. If a student spends two hours watching a movie, those hours cannot be used for studying or sleeping. The cost is the value of the best alternative given up.", "q": "What is opportunity cost?", "opts": ["The money paid for every choice", "The value of the best alternative given up", "A tax on schoolwork", "A way to remove all choices"], "ans": 1, "exp": "Opportunity cost is what you give up when you choose one option instead of another.", "hints": ["opportunity = 機会。", "cost はお金だけではありません。", "選ばなかった最良の選択肢の価値です。"]}], "l3": [{"cat": "Statistics", "passage": "A result may be called <span class=\"kw\">statistically significant</span> when it is unlikely to have occurred by chance under a specific model. However, significance does not necessarily mean the effect is large or practically important.", "q": "What does the passage emphasize?", "opts": ["Significance always means a large effect", "Significance and practical importance are not the same", "Chance is impossible in research", "Models are never used"], "ans": 1, "exp": "A statistically significant result can still have a small real-world effect.", "hints": ["statistically significant = 統計的に有意。", "有意でも効果が大きいとは限りません。", "practically important は実用上重要という意味です。"]}, {"cat": "Biology", "passage": "<span class=\"kw\">Gene expression</span> is the process by which information in a gene is used to make a functional product, often a protein. Environmental conditions can influence which genes are active. Thus, having a gene does not always mean it is being expressed.", "q": "What does gene expression involve?", "opts": ["Using genetic information to make a product", "Deleting all proteins", "Turning every cell into water", "Measuring the speed of light"], "ans": 0, "exp": "Gene expression uses information in DNA to produce RNA or proteins.", "hints": ["gene = 遺伝子。", "expression は『発現』です。", "遺伝情報が実際に使われる過程です。"]}, {"cat": "Policy", "passage": "Public policy often involves <span class=\"kw\">trade-offs</span>. A rule that increases safety may also raise costs or reduce convenience. Policymakers must decide which benefits and burdens are acceptable.", "q": "What is a trade-off?", "opts": ["A situation with no disadvantages", "A balance between benefits and costs", "A scientific instrument", "A type of chemical bond"], "ans": 1, "exp": "A trade-off means gaining something while giving up or reducing something else.", "hints": ["trade-off = トレードオフ。", "安全を高めると費用が増える、など。", "良い面と悪い面のバランスです。"]}, {"cat": "Ecology", "passage": "An <span class=\"kw\">invasive species</span> is introduced into a new environment and spreads in ways that harm native species. It may have few natural predators in the new area. As a result, it can disrupt the local ecosystem.", "q": "Why can an invasive species spread rapidly?", "opts": ["It may have few natural predators", "It never reproduces", "It always helps native species", "It cannot survive outside cities"], "ans": 0, "exp": "Without natural predators, an invasive species may reproduce and spread quickly.", "hints": ["invasive = 侵入性の。", "native species = 在来種。", "天敵が少ないと増えやすいです。"]}, {"cat": "Security", "passage": "<span class=\"kw\">Encryption</span> protects information by turning readable data into a coded form. Only someone with the right key can restore the original message. This is important for online banking and private communication.", "q": "What is the purpose of encryption?", "opts": ["To make data publicly readable", "To protect information by coding it", "To remove all passwords", "To slow down electricity"], "ans": 1, "exp": "Encryption makes information unreadable to unauthorized people unless they have the correct key.", "hints": ["encryption = 暗号化。", "readable data が coded form になります。", "鍵を持つ人だけ元に戻せます。"]}]}, "grade1": {"l1": [{"cat": "Academic English", "passage": "<span class=\"kw\">Epistemic humility</span> means recognizing the limits of one's knowledge. A researcher may hold a strong hypothesis while remaining open to evidence that contradicts it. This attitude supports careful inquiry.", "q": "What does epistemic humility involve?", "opts": ["Pretending to know everything", "Recognizing limits in one's knowledge", "Rejecting all evidence", "Avoiding every hypothesis"], "ans": 1, "exp": "It means being aware that one's knowledge may be incomplete or mistaken.", "hints": ["epistemic は『知識に関する』。", "humility = 謙虚さ。", "自分の知識の限界を認める態度です。"]}, {"cat": "Sociology", "passage": "<span class=\"kw\">Tacit knowledge</span> is knowledge that is difficult to express in words. A skilled craftsperson may know how much pressure to apply without being able to fully explain it. Such knowledge is often learned through practice.", "q": "How is tacit knowledge often learned?", "opts": ["Only by memorizing definitions", "Through practice and experience", "By deleting old skills", "Through random guessing alone"], "ans": 1, "exp": "Tacit knowledge is often acquired through doing, observing, and repeated practice.", "hints": ["tacit = 暗黙の。", "言葉で説明しにくい知識です。", "練習や経験で身につきます。"]}, {"cat": "Climate", "passage": "<span class=\"kw\">Mitigation</span> and <span class=\"kw\">adaptation</span> are two responses to climate change. Mitigation reduces the causes, such as greenhouse gas emissions. Adaptation reduces harm by preparing for unavoidable effects.", "q": "What does mitigation mainly aim to do?", "opts": ["Reduce the causes of climate change", "Ignore future risks", "Increase coastal damage", "Replace evidence with opinion"], "ans": 0, "exp": "Mitigation targets the causes, especially emissions that drive climate change.", "hints": ["mitigation = 緩和。", "原因を減らす方向です。", "adaptation は影響に備えることです。"]}, {"cat": "Demography", "passage": "A <span class=\"kw\">demographic transition</span> describes a shift from high birth and death rates to lower birth and death rates as societies develop. This shift can change population growth and age structure. It affects education, labor, and welfare systems.", "q": "What changes during a demographic transition?", "opts": ["Birth and death rates", "The chemical formula of water", "The laws of gravity", "The number of vowels in English"], "ans": 0, "exp": "The transition concerns long-term changes in birth rates and death rates.", "hints": ["demographic = 人口に関する。", "birth rate / death rate がキーワードです。", "出生率と死亡率の変化です。"]}, {"cat": "Institutions", "passage": "<span class=\"kw\">Institutional inertia</span> refers to the tendency of organizations to resist change. Rules, habits, and vested interests can keep old systems in place. Reform may therefore be slower than outsiders expect.", "q": "What does institutional inertia explain?", "opts": ["Why organizations may resist change", "Why all reforms happen instantly", "Why rules never matter", "Why habits always disappear"], "ans": 0, "exp": "It explains why established organizations often continue old practices even when change is proposed.", "hints": ["inertia = 慣性。", "institutional = 制度・組織の。", "組織が変わりにくい性質です。"]}], "l2": [{"cat": "Philosophy of Science", "passage": "A <span class=\"kw\">paradigm shift</span> occurs when the basic framework of a field changes. New evidence or methods may make an older model inadequate. Such shifts can alter what questions researchers ask.", "q": "What happens in a paradigm shift?", "opts": ["A field's basic framework changes", "All evidence is banned", "Researchers stop asking questions", "Old models automatically become perfect"], "ans": 0, "exp": "A paradigm shift changes the underlying framework through which a field understands problems.", "hints": ["paradigm = 基本的な枠組み。", "shift = 変化。", "研究分野の見方そのものが変わることです。"]}, {"cat": "Reasoning", "passage": "<span class=\"kw\">Counterfactual reasoning</span> considers what might have happened if conditions had been different. Historians, scientists, and policymakers use it cautiously to evaluate causes. It is useful, but it can become speculative.", "q": "What does counterfactual reasoning examine?", "opts": ["Only events that certainly happened", "What might have happened under different conditions", "The spelling of technical terms", "The weight of historical documents"], "ans": 1, "exp": "It asks how outcomes might have changed if some condition had been different.", "hints": ["counterfactual = 反事実の。", "『もし〜だったら』の推論です。", "原因を考えるときに使われます。"]}, {"cat": "Economics", "passage": "<span class=\"kw\">Moral hazard</span> occurs when a person or institution takes greater risks because someone else bears the cost. Insurance can create this problem if it reduces the incentive to avoid damage. Good policy tries to limit such incentives.", "q": "When can moral hazard occur?", "opts": ["When risk-takers do not bear the full cost", "When everyone has perfect information", "When no one changes behavior", "When costs and benefits are unrelated to choices"], "ans": 0, "exp": "Moral hazard arises when protection from loss encourages riskier behavior.", "hints": ["hazard = 危険。", "moral hazard は経済・保険で重要な語です。", "損失を他者が負担すると、リスクを取りやすくなります。"]}, {"cat": "Systems", "passage": "<span class=\"kw\">Emergent properties</span> appear at the level of a whole system, even if they are not obvious from the individual parts. A single ant follows simple rules, but an ant colony can display complex organization. The whole is more than a mere sum of parts.", "q": "What are emergent properties?", "opts": ["Features visible only in isolated parts", "System-level features arising from interactions", "Rules that prevent complexity", "Errors in every biological system"], "ans": 1, "exp": "They are properties of the whole system that arise from interactions among its parts.", "hints": ["emergent = 創発的な。", "個々の部分だけでは見えにくい性質です。", "相互作用から全体の性質が生まれます。"]}, {"cat": "History", "passage": "<span class=\"kw\">Path dependency</span> means that earlier decisions can strongly shape later possibilities. Once a society invests in a particular technology or institution, changing course may become costly. Small initial differences can therefore have lasting consequences.", "q": "What does path dependency emphasize?", "opts": ["Past choices can shape future options", "History has no influence", "All paths cost the same", "Technology changes without cost"], "ans": 0, "exp": "Path dependency highlights how earlier choices constrain or influence later developments.", "hints": ["path = 経路。dependency = 依存。", "過去の選択が未来を縛ります。", "一度進んだ道を変えるにはコストがかかります。"]}], "l3": [{"cat": "Economics", "passage": "<span class=\"kw\">Externalities</span> are costs or benefits that affect people who are not directly involved in a transaction. Pollution is a negative externality because others may suffer health costs. Public policy often tries to internalize such effects.", "q": "Why is pollution a negative externality?", "opts": ["It benefits only the buyer", "It imposes costs on others", "It has no social effect", "It eliminates policy problems"], "ans": 1, "exp": "Pollution harms people outside the transaction, so its costs are not fully borne by the polluter or buyer.", "hints": ["externality = 外部性。", "negative は悪影響。", "取引の外にいる人が被害を受ける点が重要です。"]}, {"cat": "Research Methods", "passage": "A measure has <span class=\"kw\">validity</span> when it actually captures what it is intended to measure. A test that measures memorization may not validly assess creativity. Proxy metrics are convenient, but they can distort behavior if treated as the real goal.", "q": "What is a risk of proxy metrics?", "opts": ["They may distort behavior when treated as the goal", "They always measure the true goal perfectly", "They eliminate the need for judgment", "They make validity irrelevant"], "ans": 0, "exp": "A proxy can become misleading when people optimize the indicator rather than the underlying goal.", "hints": ["validity = 妥当性。", "proxy metric = 代理指標。", "指標そのものを目的化すると行動が歪みます。"]}, {"cat": "Science", "passage": "<span class=\"kw\">Falsifiability</span> is the idea that a scientific claim should be testable in a way that could show it to be false. A claim that can explain every possible outcome may be difficult to evaluate scientifically. This criterion helps separate testable theories from vague assertions.", "q": "What does falsifiability require?", "opts": ["A claim must be impossible to test", "A claim should be testable against possible evidence", "A claim must avoid predictions", "A claim should fit every outcome automatically"], "ans": 1, "exp": "A falsifiable claim can, at least in principle, be tested and possibly refuted by evidence.", "hints": ["falsify = 反証する。", "科学的主張は検証可能であるべきです。", "どんな結果でも説明できる主張は評価しにくいです。"]}, {"cat": "Interdisciplinary Studies", "passage": "<span class=\"kw\">Interdisciplinary synthesis</span> combines concepts or methods from different fields to address complex problems. Climate policy, for example, requires science, economics, law, and ethics. The challenge is not merely adding fields together, but integrating their assumptions.", "q": "What is the main challenge of interdisciplinary synthesis?", "opts": ["Integrating assumptions from different fields", "Removing all methods", "Using only one discipline", "Avoiding complex problems"], "ans": 0, "exp": "The challenge is to connect methods and assumptions coherently, not just list several fields.", "hints": ["interdisciplinary = 学際的な。", "synthesis = 統合。", "複数分野をただ並べるだけでは不十分です。"]}, {"cat": "Systems Design", "passage": "<span class=\"kw\">Resilience</span> and optimization can point in different directions. A highly optimized system may be efficient under normal conditions but fragile when conditions change. Resilient systems often preserve redundancy, even at the cost of some efficiency.", "q": "Why might redundancy be valuable?", "opts": ["It can improve resilience when conditions change", "It always eliminates all costs", "It makes systems impossible to repair", "It prevents any backup from existing"], "ans": 0, "exp": "Redundancy provides backup capacity, which can help a system continue functioning under stress.", "hints": ["resilience = 回復力・しぶとさ。", "redundancy = 余裕・冗長性。", "効率だけを追うと予備がなくなりがちです。"]}]}};
+    const GRADES = {
+      pre2: { label: "英検準2級", sub: "高校基礎", note: "英検準2級目安。理科・数学の基本語彙を、短めの英文で確認します。" },
+      pre1: { label: "英検準1級", sub: "学術入門", note: "英検準1級目安。社会・科学・研究でよく出る抽象語彙と論理関係を扱います。" },
+      grade1: { label: "英検1級", sub: "高度読解", note: "英検1級目安。抽象概念、政策・研究・システム論の語彙を含む高めの読解です。" }
+    };
+    const LEVELS = {
+      l1: { label: "Level 1", sub: "基礎" },
+      l2: { label: "Level 2", sub: "標準" },
+      l3: { label: "Level 3", sub: "発展" }
+    };
+
+    const state = { grade: "pre2", level: "l1", quiz: [], cur: 0, score: 0, answered: false, hintsShown: 0 };
+
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"]/g, s => ({"&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;"}[s]));
+    }
+
+    function selectGrade(grade) {
+      state.grade = grade;
+      state.level = "l1";
+      startQuiz();
+    }
+
+    function selectLevel(level) {
+      state.level = level;
+      startQuiz();
+    }
+
+    function startQuiz() {
+      const pool = BANKS[state.grade][state.level] || [];
+      state.quiz = shuffle(pool);
+      state.cur = 0;
+      state.score = 0;
+      state.answered = false;
+      state.hintsShown = 0;
+      render();
+    }
+
+    function selectorHtml() {
+      const gradeButtons = Object.keys(GRADES).map(key => `
+        <button class="sel-btn ${state.grade === key ? "active" : ""}" onclick="selectGrade('${key}')">
+          ${GRADES[key].label}<small>${GRADES[key].sub}</small>
+        </button>`).join("");
+      const levelButtons = Object.keys(LEVELS).map(key => `
+        <button class="sel-btn ${state.level === key ? "active" : ""}" onclick="selectLevel('${key}')">
+          ${LEVELS[key].label}<small>${LEVELS[key].sub}</small>
+        </button>`).join("");
+      return `
+        <div class="selector">
+          <div>
+            <div class="selector-label">級を選ぶ</div>
+            <div class="btn-grid">${gradeButtons}</div>
+          </div>
+          <div>
+            <div class="selector-label">同じ級の中でレベルを選ぶ</div>
+            <div class="btn-grid">${levelButtons}</div>
+          </div>
+          <div class="course-note"><strong>${GRADES[state.grade].label} / ${LEVELS[state.level].label}</strong>：${GRADES[state.grade].note} 現在のセットは全${BANKS[state.grade][state.level].length}問です。</div>
+        </div>`;
+    }
+
+    function render() {
+      const app = document.getElementById("app");
+      if (!state.quiz.length) {
+        app.innerHTML = selectorHtml() + '<div class="quiz-card">このコースにはまだ問題がありません。</div>';
+        return;
+      }
+      if (state.cur >= state.quiz.length) {
+        renderResult(app);
+        return;
+      }
+      const q = state.quiz[state.cur];
+      const total = state.quiz.length;
+      const pct = Math.round((state.cur / total) * 100);
+      app.innerHTML = selectorHtml() + `
+        <div class="progress-bg"><div class="progress-fill" style="width:${pct}%"></div></div>
+        <article class="quiz-card">
+          <div class="q-meta">
+            <span class="badge">${escapeHtml(q.cat)}</span>
+            <span class="badge">${GRADES[state.grade].label}</span>
+            <span class="badge">${LEVELS[state.level].label}</span>
+            <span class="counter">Question ${state.cur + 1} / ${total}</span>
+          </div>
+          <div class="passage">${q.passage}</div>
+          <div class="q-text">${escapeHtml(q.q)}</div>
+          <div class="options" id="opts">
+            ${q.opts.map((o, i) => `<button class="opt-btn" onclick="choose(${i})">${String.fromCharCode(65+i)}. ${escapeHtml(o)}</button>`).join("")}
+          </div>
+          <div class="hint-row">
+            <button class="hint-btn" id="hb1" onclick="showHint(1)">Hint 1</button>
+            <button class="hint-btn" id="hb2" onclick="showHint(2)" disabled>Hint 2</button>
+            <button class="hint-btn" id="hb3" onclick="showHint(3)" disabled>Hint 3</button>
+          </div>
+          <div id="hint-area"></div>
+          <div id="feedback"></div>
+          <div id="next-area"></div>
+        </article>`;
+    }
+
+    function showHint(n) {
+      const q = state.quiz[state.cur];
+      state.hintsShown = n;
+      let html = '<div class="hint-box">';
+      for (let i = 0; i < n; i++) html += `<p><strong>Hint ${i + 1}:</strong> ${escapeHtml(q.hints[i])}</p>`;
+      html += '</div>';
+      document.getElementById("hint-area").innerHTML = html;
+      if (n < 3) document.getElementById(`hb${n + 1}`).disabled = false;
+      document.getElementById(`hb${n}`).disabled = true;
+    }
+
+    function choose(idx) {
+      if (state.answered) return;
+      state.answered = true;
+      const q = state.quiz[state.cur];
+      document.querySelectorAll(".opt-btn").forEach((b, i) => {
+        b.disabled = true;
+        if (i === q.ans) b.classList.add("correct");
+        else if (i === idx && idx !== q.ans) b.classList.add("wrong");
+      });
+      const fb = document.getElementById("feedback");
+      if (idx === q.ans) {
+        state.score++;
+        fb.innerHTML = `<div class="feedback ok"><strong>Correct!</strong> ${escapeHtml(q.exp)}</div>`;
+      } else {
+        fb.innerHTML = `<div class="feedback ng"><strong>Incorrect.</strong> The correct answer is <strong>${String.fromCharCode(65 + q.ans)}. ${escapeHtml(q.opts[q.ans])}</strong>. ${escapeHtml(q.exp)}</div>`;
+      }
+      const label = state.cur < state.quiz.length - 1 ? "Next question →" : "See results →";
+      document.getElementById("next-area").innerHTML = `<button class="next-btn" onclick="nextQ()">${label}</button>`;
+    }
+
+    function nextQ() {
+      state.cur++;
+      state.answered = false;
+      state.hintsShown = 0;
+      render();
+    }
+
+    function renderResult(app) {
+      const total = state.quiz.length;
+      const pct = Math.round((state.score / total) * 100);
+      let msg = "Keep practicing. Read the explanation for each missed question and try a different level next.";
+      if (pct >= 90) msg = "Excellent. This level is probably comfortable for you, so try the next level or the next EIKEN grade.";
+      else if (pct >= 70) msg = "Good work. You are close to stable mastery; review the missed vocabulary and try again.";
+      else if (pct >= 50) msg = "Nice effort. The level is useful training, but the key terms still need review.";
+      app.innerHTML = selectorHtml() + `
+        <div class="progress-bg"><div class="progress-fill" style="width:100%"></div></div>
+        <div class="quiz-card result">
+          <div class="score">${state.score} / ${total}</div>
+          <div class="score-sub">${GRADES[state.grade].label}・${LEVELS[state.level].label}：${pct}%</div>
+          <div class="result-msg">${escapeHtml(msg)}</div>
+          <div class="mini-actions">
+            <button class="try-btn" onclick="startQuiz()">同じレベルをもう一度</button>
+            <button class="plain-btn" onclick="selectLevel('l1')">Level 1へ</button>
+            <button class="plain-btn" onclick="selectLevel('l2')">Level 2へ</button>
+            <button class="plain-btn" onclick="selectLevel('l3')">Level 3へ</button>
+          </div>
+        </div>`;
+    }
+
+    startQuiz();
+  </script>
+</body>
+</html>
