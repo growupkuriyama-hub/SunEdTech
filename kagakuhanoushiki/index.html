@@ -1,623 +1,734 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ゆるふわ化学ラボ — 化学反応式マスター</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#fff5f7;
-  --bg-gradient:linear-gradient(135deg,#fff5f7 0%,#f0f4ff 100%);
-  --surface:rgba(255,255,255,0.8);
-  --text:#5a4a42;
-  --text-light:#a6968e;
-  --pink:#ff85a1;
-  --mint:#a1e3d8;
-  --purple:#c2aff0;
-  --white:#ffffff;
-  --r-lg:24px;
-  --r-md:16px;
-  --shadow:0 8px 20px rgba(255,133,161,0.12);
-}
-html,body{height:100%;font-family:'M PLUS Rounded 1c',sans-serif;background:var(--bg);background-image:var(--bg-gradient);background-attachment:fixed;color:var(--text);line-height:1.6;font-size:15px;overflow-x:hidden}
-sub{font-size:.72em;vertical-align:baseline;position:relative;bottom:-.15em;font-weight:700}
-button{font-family:inherit;cursor:pointer;border:none;outline:none}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>化学式練習アプリ🍰</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-#app{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:2rem 1rem 4rem}
-.container{width:100%;max-width:500px}
+    :root {
+      --bg: #FAF9F6;
+      --surface: #ffffff;
+      --surface2: #FFF5F7;
+      --border: #F0EAE3;
+      --text: #5D564F;
+      --text2: #8C847C;
+      --text3: #C2BBB5;
+      --main-color: #79C9C1;
+      --main-color-hover: #67B0A8;
+      --accent-pink: #FFB7C5;
+      --green-bg: #EDF7F1;
+      --green-text: #4A8561;
+      --red-bg: #FFF0F0;
+      --red-text: #BF5A5A;
+      --pip-ok: #98D9B4;
+      --pip-ng: #FFABAB;
+      --radius: 12px;
+      --radius-lg: 20px;
+      --shadow: 0 8px 20px rgba(180, 160, 140, 0.1);
+      --font-family: 'M PLUS Rounded 1c', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
 
-.screen{display:none;animation:fadeUp .35s ease-out}
-.screen.active{display:block}
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}60%{transform:translateX(5px)}}
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #2D2A27;
+        --surface: #383430;
+        --surface2: #403B37;
+        --border: #4A4540;
+        --text: #F2EFEA;
+        --text2: #D1CAC2;
+        --text3: #968F88;
+        --main-color: #8DDFD7;
+        --accent-pink: #FFC9D4;
+        --green-bg: #243D30;
+        --green-text: #A8D9BD;
+        --red-bg: #472929;
+        --red-text: #FFB3B3;
+        --pip-ok: #81C79D;
+        --pip-ng: #E58989;
+        --shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      }
+    }
 
-/* HEADER */
-.site-header{text-align:center;margin-bottom:2.5rem}
-.logo{font-family:'Quicksand',sans-serif;font-weight:800;font-size:2.2rem;color:var(--pink);letter-spacing:-1px;text-shadow:2px 2px 0 #fff}
-.logo span{color:var(--text-light);font-weight:700;font-size:.9rem;display:block;margin-top:4px;letter-spacing:1px}
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg);
+      background-image: radial-gradient(var(--border) 1px, transparent 1px);
+      background-size: 20px 20px;
+      color: var(--text);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 3.5rem 1rem 2.5rem;
+      letter-spacing: 0.02em;
+    }
 
-/* BACK */
-.back-btn{display:inline-flex;align-items:center;gap:6px;background:var(--white);border-radius:30px;padding:8px 18px;font-size:13px;color:var(--text-light);margin-bottom:1.5rem;box-shadow:var(--shadow);transition:.2s;font-weight:700}
-.back-btn:hover{transform:translateX(-3px);color:var(--pink)}
+    header {
+      width: 100%;
+      max-width: 580px;
+      margin-bottom: 2.5rem;
+      text-align: center;
+      background: var(--surface);
+      padding: 1.5rem;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--surface);
+    }
+    @media (prefers-color-scheme: dark) {
+      header { border-color: var(--border); }
+    }
 
-/* TITLE */
-.title-hero{text-align:center;margin-bottom:2rem}
-.title-hero h1{font-weight:800;font-size:2rem;color:var(--text);margin-bottom:.8rem;line-height:1.3}
-.title-hero p{color:var(--text-light);font-size:14px;background:rgba(255,255,255,.5);display:inline-block;padding:4px 14px;border-radius:20px;font-weight:700}
-.mode-grid{display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:1.5rem}
-.mode-card{background:var(--white);border:2px solid transparent;border-radius:var(--r-lg);padding:1rem 1.4rem;transition:all .3s cubic-bezier(.175,.885,.32,1.275);box-shadow:var(--shadow);display:inline-flex;align-items:center;gap:1rem;cursor:pointer}
-.mode-card:hover{transform:scale(1.04);border-color:var(--pink)}
-.mode-icon{font-size:1.8rem;background:var(--bg);width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:14px;flex-shrink:0}
-.mode-name{font-weight:800;font-size:1rem;color:var(--text)}
-.mode-desc{font-size:.78rem;color:var(--text-light)}
+    .header-top {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
 
-/* HUD */
-.hud{display:flex;align-items:center;gap:8px;margin-bottom:1.25rem;background:var(--surface);padding:8px 12px;border-radius:40px;backdrop-filter:blur(5px)}
-.hud-pill{background:var(--white);border-radius:20px;padding:6px 14px;font-size:12px;color:var(--text-light);font-weight:700}
-.hud-pill b{color:var(--pink)}
-.lives{letter-spacing:2px;font-size:14px}
-.combo-badge{background:rgba(161,227,216,.25);border-radius:20px;padding:6px 14px;font-size:12px;color:#2d8a7a;font-weight:800;display:none}
-.combo-badge.show{display:block}
+    header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--main-color);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    header h1::before, header h1::after { content: '🧪'; font-size: 0.8em; }
 
-.prog-wrap{height:10px;background:var(--white);border-radius:10px;margin-bottom:1.5rem;overflow:hidden;box-shadow:inset 0 2px 4px rgba(0,0,0,.05)}
-.prog-fill{height:100%;background:linear-gradient(90deg,var(--pink),#ffafbd);border-radius:10px;transition:width .5s ease}
+    header p {
+      font-size: 14px;
+      color: var(--text2);
+      background: var(--surface2);
+      padding: 4px 12px;
+      border-radius: 20px;
+      display: inline-block;
+    }
 
-/* QUESTION */
-.q-box-main{background:var(--white);border-radius:var(--r-lg);padding:1.5rem;box-shadow:var(--shadow);margin-bottom:1.25rem}
-.q-cat{font-size:11px;background:var(--mint);color:#fff;display:inline-block;padding:3px 12px;border-radius:10px;margin-bottom:.8rem;font-weight:800}
-.q-text{font-size:16px;font-weight:700;color:var(--text);margin-bottom:1rem}
-.eq-box{background:var(--bg);border-radius:var(--r-md);padding:1.2rem;font-size:1.5rem;color:var(--text);margin-bottom:1rem;display:flex;align-items:center;justify-content:center;font-weight:800;border:2px dashed #ffcad4;letter-spacing:.5px}
+    .btn-back {
+      position: fixed;
+      top: 14px;
+      left: 16px;
+      z-index: 100;
+      font-size: 12px;
+      font-weight: 500;
+      color: white;
+      text-decoration: none;
+      padding: 6px 14px;
+      background-color: var(--accent-pink);
+      border-radius: 20px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 10px rgba(255, 183, 197, 0.4);
+    }
+    .btn-back:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 12px rgba(255, 183, 197, 0.5);
+    }
 
-.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem}
-.choice{padding:14px 8px;border-radius:var(--r-md);background:var(--white);font-size:13px;color:var(--text);font-weight:700;box-shadow:0 4px 0 #eee;transition:all .1s;border:2px solid transparent;line-height:1.4}
-.choice:hover{transform:translateY(-2px);box-shadow:0 6px 0 #eee}
-.choice:active{transform:translateY(2px);box-shadow:none}
-.choice.correct{background:#e8fdf5;border-color:var(--mint);color:#2d8a7a;box-shadow:0 4px 0 #c1e9db}
-.choice.wrong{background:#fff0f3;border-color:var(--pink);color:#d64561;box-shadow:0 4px 0 #f9d5dc}
-.choice.shake{animation:shake .3s}
+    #app {
+      width: 100%;
+      max-width: 580px;
+    }
 
-.fb{border-radius:var(--r-md);padding:12px 14px;font-size:13px;margin-bottom:1rem;font-weight:700;display:none;line-height:1.5}
-.fb.show{display:block}
-.fb.ok{background:var(--mint);color:#fff}
-.fb.ng{background:var(--pink);color:#fff}
+    .score-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 1rem;
+      padding: 0 10px;
+    }
+    .score-num { font-size: 26px; font-weight: 700; color: var(--main-color); }
+    .score-label { font-size: 14px; color: var(--text2); font-weight: 500; }
+    .score-right { margin-left: auto; font-size: 14px; color: var(--text2); background: var(--surface); padding: 4px 12px; border-radius: 20px; box-shadow: var(--shadow); }
 
-.next-btn{width:100%;padding:14px;border-radius:var(--r-md);background:var(--text);font-size:15px;color:#fff;font-weight:800;display:none;box-shadow:0 4px 12px rgba(0,0,0,.1);transition:.15s}
-.next-btn.show{display:block}
-.next-btn:hover{opacity:.9}
+    .progress {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      padding: 0 5px;
+    }
+    .pip {
+      height: 10px;
+      flex: 1;
+      min-width: 18px;
+      max-width: 40px;
+      border-radius: 5px;
+      background: var(--border);
+      transition: all 0.3s ease;
+    }
+    .pip.ok  { background: var(--pip-ok); box-shadow: 0 2px 5px rgba(152, 217, 180, 0.4); }
+    .pip.ng  { background: var(--pip-ng); box-shadow: 0 2px 5px rgba(255, 171, 171, 0.4); }
+    .pip.cur { background: var(--accent-pink); transform: scaleY(1.2); box-shadow: 0 2px 5px rgba(255, 183, 197, 0.4); }
 
-/* RESULT */
-.result-wrap{text-align:center;background:var(--white);border-radius:30px;padding:2.5rem 1.5rem;box-shadow:var(--shadow)}
-.rank-circle{width:100px;height:100px;border-radius:50%;margin:0 auto 1.5rem;display:flex;align-items:center;justify-content:center;font-size:3.5rem;background:var(--bg);box-shadow:inset 0 4px 10px rgba(0,0,0,.05)}
-.rank-title{font-weight:800;font-size:1.8rem;color:var(--pink);margin-bottom:.4rem}
-.rank-sub{font-size:13px;color:var(--text-light);font-weight:700;margin-bottom:1.5rem}
-.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem}
-.stat-box{background:var(--bg);border-radius:var(--r-md);padding:1rem}
-.stat-val{font-weight:800;font-size:1.4rem;color:var(--text)}
-.stat-lbl{font-size:11px;color:var(--text-light);font-weight:700}
-.btn-row{display:flex;gap:10px}
-.btn-row .next-btn{display:block}
-.btn-row .next-btn.secondary{background:#eee;color:#888;box-shadow:none}
-.btn-row .next-btn.primary{background:var(--pink)}
+    .q-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--surface);
+      position: relative;
+      overflow: hidden;
+    }
+    @media (prefers-color-scheme: dark) {
+      .q-card { border-color: var(--border); }
+    }
+    .q-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, var(--main-color), var(--accent-pink));
+    }
 
-/* BALANCE */
-.balance-area{background:var(--white);border-radius:var(--r-lg);padding:1.5rem;margin-bottom:1rem;box-shadow:var(--shadow)}
-.balance-row-ui{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:5px;margin-bottom:1rem}
-.coeff-inp{width:50px;height:46px;text-align:center;font-size:20px;font-weight:800;border:2px solid var(--bg);border-radius:12px;background:var(--bg);color:var(--pink);font-family:inherit}
-.coeff-inp:focus{background:#fff;border-color:var(--pink);outline:none}
-.mol-chip{font-weight:800;font-size:1.1rem;margin-right:4px}
-.op-sym{font-size:20px;color:var(--text-light);padding:0 4px;font-weight:700}
-.check-btn{padding:12px 28px;border-radius:30px;background:var(--purple);color:#fff;font-weight:800;box-shadow:0 4px 0 #a491d1;font-family:inherit;font-size:14px;transition:.1s}
-.check-btn:hover{opacity:.9}
-.check-btn:active{transform:translateY(2px);box-shadow:none}
+    .q-num {
+      font-size: 13px;
+      color: var(--text3);
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
 
-/* SKIP */
-.skip-btn{background:transparent;border:2px solid #eee;border-radius:30px;padding:7px 18px;font-size:12px;font-weight:800;color:var(--text-light);transition:.2s;display:block;margin:10px auto 0}
-.skip-btn:hover{border-color:var(--pink);color:var(--pink)}
+    .q-text {
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+    }
+    .q-text span.q-name {
+      color: var(--main-color);
+      position: relative;
+      display: inline-block;
+    }
+    .q-text span.q-name::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0; width: 100%; height: 3px;
+      background: var(--accent-pink);
+      border-radius: 2px;
+      opacity: 0.5;
+    }
 
-/* HINT */
-.hint-btn{background:rgba(194,175,240,.15);border:2px solid var(--purple);border-radius:30px;padding:7px 18px;font-size:12px;font-weight:800;color:var(--purple);transition:.2s;display:block;margin:8px auto 0}
-.hint-btn:hover{background:rgba(194,175,240,.3)}
-.hint-panel{background:rgba(194,175,240,.12);border:2px solid var(--purple);border-radius:var(--r-md);padding:12px 14px;font-size:12px;font-weight:700;color:#6b5ba0;line-height:1.8;white-space:pre-line;margin-top:8px;display:none}
-.hint-panel.show{display:block}
+    .input-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
 
-/* LAP TIME */
-.lap-wrap{background:rgba(255,255,255,.5);border-radius:var(--r-lg);padding:1rem;margin-bottom:1rem}
-.lap-label{font-size:11px;color:var(--text-light);font-weight:800;letter-spacing:.5px;margin-bottom:.4rem}
-.lap-top{display:flex;align-items:baseline;gap:.5rem;margin-bottom:.5rem}
-.lap-display{font-family:'Quicksand',sans-serif;font-size:1.5rem;font-weight:700;color:var(--purple)}
-.lap-sub{font-size:11px;color:var(--text-light);font-weight:700}
-.lap-list{display:flex;flex-direction:column;gap:4px;max-height:160px;overflow-y:auto}
-.lap-item{background:#fff;border-radius:10px;padding:5px 12px;font-size:12px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
-.lap-item.best .lap-item-time{color:#2d8a7a}
-.lap-item.worst .lap-item-time{color:var(--pink)}
-.lap-item-label{color:var(--text-light)}
-.lap-item-time{color:var(--text)}
+    .formula-input {
+      flex: 1;
+      max-width: 200px;
+      font-size: 20px;
+      font-family: "SF Mono", "Fira Code", Courier, monospace;
+      letter-spacing: 0.08em;
+      padding: 12px 16px;
+      background: var(--surface2);
+      border: 2px solid var(--surface2);
+      border-radius: var(--radius);
+      color: var(--text);
+      outline: none;
+      transition: all 0.2s;
+    }
+    .formula-input:focus {
+      background: var(--surface);
+      border-color: var(--accent-pink);
+      box-shadow: 0 0 0 4px rgba(255, 183, 197, 0.2);
+    }
+    .formula-input:disabled { opacity: 0.6; }
+    .formula-input::placeholder { color: var(--text3); font-family: var(--font-family); font-size: 16px; letter-spacing: 0; }
 
-/* CANVAS */
-.draw-wrap{background:var(--surface);border-radius:var(--r-lg);padding:1rem;backdrop-filter:blur(5px)}
-.draw-label{font-size:12px;font-weight:800;color:var(--text-light);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
-.draw-clear{font-size:12px;color:var(--pink);background:transparent;cursor:pointer;font-weight:800;font-family:inherit}
-.draw-canvas{display:block;width:100%;height:220px;background:#fff;border-radius:var(--r-md);border:2px solid #f7e8ec;touch-action:none;cursor:crosshair}
+    .btn {
+      padding: 10px 24px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text2);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      font-family: var(--font-family);
+    }
+    .btn:hover:not(:disabled) {
+      background: var(--border);
+      color: var(--text);
+      transform: translateY(-1px);
+    }
+    .btn:active:not(:disabled) { transform: translateY(1px); }
+    .btn:disabled { opacity: 0.5; cursor: default; }
 
-@media(max-width:440px){
-  .choices{grid-template-columns:1fr}
-  .eq-box{font-size:1.15rem}
-  .title-hero h1{font-size:1.7rem}
-}
-</style>
+    #btn-check {
+      background-color: var(--main-color);
+      color: white;
+      border: none;
+      box-shadow: 0 4px 10px rgba(121, 201, 193, 0.3);
+    }
+    #btn-check:hover:not(:disabled) {
+      background-color: var(--main-color-hover);
+      box-shadow: 0 6px 12px rgba(121, 201, 193, 0.4);
+    }
+
+    .hint-row {
+      margin-top: 10px;
+    }
+    .hint-toggle {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent-pink);
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 5px 0;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-family: var(--font-family);
+    }
+    .hint-toggle:hover { color: var(--text); }
+    .hint-toggle::before { content: '💡'; }
+
+    .hint-box {
+      margin-top: 8px;
+      font-size: 14px;
+      color: var(--text2);
+      display: none;
+      background: var(--surface2);
+      padding: 12px;
+      border-radius: var(--radius);
+      border-left: 4px solid var(--accent-pink);
+    }
+
+    .feedback {
+      margin-top: 15px;
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      font-size: 16px;
+      font-weight: 600;
+      display: none;
+      animation: popIn 0.3s ease;
+    }
+    @keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+    .feedback.ok { background: var(--green-bg); color: var(--green-text); display: block; border: 1px solid rgba(74, 133, 97, 0.2); }
+    .feedback.ng { background: var(--red-bg);   color: var(--red-text);   display: block; border: 1px solid rgba(191, 90, 90, 0.2); }
+
+    .btn-next {
+      margin-top: 15px;
+      width: 100%;
+      padding: 12px;
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, var(--main-color), var(--accent-pink));
+      border: none;
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      display: none;
+      transition: all 0.2s ease;
+      box-shadow: 0 5px 15px rgba(255, 183, 197, 0.4);
+      font-family: var(--font-family);
+    }
+    .btn-next:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(255, 183, 197, 0.5);
+    }
+
+    /* スキップボタン: 常に押せそうな見た目、ただし控えめ */
+    .btn-skip {
+      margin-top: 10px;
+      width: 100%;
+      padding: 10px;
+      border-radius: var(--radius);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text2);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: var(--font-family);
+    }
+    .btn-skip:hover:not(:disabled) {
+      background: var(--border);
+      color: var(--text);
+      transform: translateY(-1px);
+    }
+    .btn-skip:active:not(:disabled) { transform: translateY(1px); }
+    .btn-skip:disabled { opacity: 0.4; cursor: default; }
+
+    .hint-note {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text2);
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 12px;
+      margin-top: 1.5rem;
+      box-shadow: var(--shadow);
+      text-align: center;
+      border: 1px solid var(--surface);
+    }
+    @media (prefers-color-scheme: dark) {
+      .hint-note { border-color: var(--border); }
+    }
+
+    .settings {
+      margin-bottom: 1.5rem;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      background: var(--surface);
+      padding: 12px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--surface);
+    }
+    @media (prefers-color-scheme: dark) {
+      .settings { border-color: var(--border); }
+    }
+    .settings label { font-size: 13px; color: var(--text2); font-weight: 600; margin-right: -4px; }
+    .settings select {
+      font-size: 13px;
+      padding: 6px 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--text);
+      font-family: var(--font-family);
+      cursor: pointer;
+      outline: none;
+    }
+    .settings select:focus { border-color: var(--accent-pink); }
+
+    #btn-restart {
+      padding: 6px 14px;
+      font-size: 12px;
+      border-radius: 20px;
+      background: var(--accent-pink);
+      color: white;
+      border: none;
+      margin-left: auto;
+    }
+
+    .result-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--surface);
+      position: relative;
+    }
+    @media (prefers-color-scheme: dark) {
+      .result-card { border-color: var(--border); }
+    }
+    .result-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 8px;
+      background: linear-gradient(90deg, var(--main-color), var(--accent-pink));
+    }
+    .result-score { font-size: 60px; font-weight: 800; color: var(--main-color); line-height: 1; margin-bottom: 10px; }
+    .result-msg { font-size: 18px; font-weight: 600; color: var(--text); margin: 10px 0 2rem; background: var(--surface2); padding: 8px; border-radius: var(--radius); }
+
+    .wrong-list { margin-top: 2rem; text-align: left; background: var(--surface2); padding: 1.5rem; border-radius: var(--radius); }
+    .wrong-title { font-size: 15px; font-weight: 700; color: var(--red-text); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .wrong-title::before { content: '🖍️'; }
+    .wrong-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 16px;
+    }
+    .wrong-row:last-child { border-bottom: none; }
+    .wrong-name { color: var(--text); font-weight: 500; }
+    .wrong-formula {
+      font-family: "SF Mono", "Fira Code", monospace;
+      color: var(--text2);
+      font-weight: 600;
+      background: var(--surface);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .btn-retry-wrap { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 1rem; }
+
+    #btn-retry-new {
+      background: linear-gradient(135deg, var(--main-color), var(--accent-pink));
+      color: white;
+      border: none;
+      box-shadow: 0 4px 12px rgba(255, 183, 197, 0.4);
+    }
+    #btn-retry-wrong {
+      border: 1px solid var(--red-text);
+      color: var(--red-text);
+      background: var(--red-bg);
+    }
+    #btn-retry-wrong:hover:not(:disabled) { background: #FFDADA; }
+  </style>
 </head>
 <body>
-<div id="app">
-<div class="container">
-  <!-- サイトへ戻るバー -->
-  <div style="text-align:center;margin-bottom:1rem">
-    <a href="https://sun-ed-tech.vercel.app/" style="display:inline-flex;align-items:center;gap:6px;background:var(--white);border-radius:30px;padding:7px 18px;font-size:12px;font-weight:800;color:var(--text-light);box-shadow:var(--shadow);text-decoration:none;transition:.2s" onmouseover="this.style.color='var(--pink)'" onmouseout="this.style.color='var(--text-light)'">← サイトに戻る</a>
-  </div>
-
-  <!-- TITLE -->
-  <div id="s-title" class="screen active">
-    <div class="site-header">
-      <div class="logo">✨ Chemi Lab<span>化学反応式をかわいく攻略！</span></div>
+  <a class="btn-back" href="https://sun-ed-tech.vercel.app/" target="_blank" rel="noopener">← サイトに戻る</a>
+  <header>
+    <div class="header-top">
+      <h1>化学式練習</h1>
+      <p>中学理科・化学式テスト対策</p>
     </div>
-    <div class="title-hero">
-      <h1>反応式を<br>マスターしよう♡</h1>
-      <p>スキマ時間で賢くレベルアップ</p>
-    </div>
-    <div class="mode-grid">
-      <div class="mode-card" onclick="startQuiz()">
-        <div class="mode-icon">⚡</div>
-        <div class="mode-info">
-          <div class="mode-name">クイズバトル</div>
-          <div class="mode-desc">10問に挑戦！めざせ全問正解</div>
-        </div>
-      </div>
-      <div class="mode-card" onclick="showScreen('s-balance')">
-        <div class="mode-icon">⚖️</div>
-        <div class="mode-info">
-          <div class="mode-name">係数合わせ</div>
-          <div class="mode-desc">パズル感覚で数字をあてはめよう</div>
-        </div>
-      </div>
-    </div>
-  </div>
+  </header>
+  <div id="app"></div>
 
-  <!-- QUIZ -->
-  <div id="s-quiz" class="screen">
-    <button class="back-btn" onclick="goHome()">← ホーム</button>
-    <div class="hud">
-      <div class="hud-pill">HP <span class="lives" id="lives">❤️❤️❤️</span></div>
-      <div class="hud-pill">問 <b id="qnum">1</b>/10</div>
-      <div class="combo-badge" id="combo-badge">コンボ x<span id="combo-num">2</span></div>
-      <div class="hud-pill" style="margin-left:auto">XP <b id="xp">0</b></div>
-    </div>
-    <div class="prog-wrap"><div class="prog-fill" id="prog" style="width:10%"></div></div>
-
-    <div class="q-box-main">
-      <div class="q-cat" id="q-cat"></div>
-      <div class="q-text" id="q-text"></div>
-      <div class="eq-box" id="q-eq"></div>
-      <div class="choices" id="choices"></div>
-      <button class="hint-btn" id="hint-btn" onclick="toggleHint()">🔍 ヒントを見る</button>
-      <div class="hint-panel" id="hint-panel"></div>
-      <div class="fb" id="fb"></div>
-      <button class="next-btn" id="next-btn" onclick="nextQ()">次の問題へ →</button>
-      <button class="skip-btn" id="skip-btn" onclick="skipQ()">この問題をスキップ →</button>
-    </div>
-
-    <div class="lap-wrap">
-      <div class="lap-label">⏱ ラップタイム</div>
-      <div class="lap-top">
-        <div class="lap-display" id="quiz-lap-display">0.0s</div>
-        <div class="lap-sub" id="quiz-lap-sub"></div>
-      </div>
-      <div class="lap-list" id="quiz-lap-list"></div>
-    </div>
-
-    <div class="draw-wrap">
-      <div class="draw-label">
-        <span>✏️ メモ帳</span>
-        <button class="draw-clear" onclick="clearCanvas()">全部消す</button>
-      </div>
-      <canvas class="draw-canvas" id="draw-canvas"></canvas>
-    </div>
-  </div>
-
-  <!-- RESULT -->
-  <div id="s-result" class="screen">
-    <div class="result-wrap">
-      <div class="rank-circle" id="rank-icon"></div>
-      <div class="rank-title" id="rank-title"></div>
-      <div class="rank-sub" id="rank-sub"></div>
-      <div class="stats-grid">
-        <div class="stat-box"><div class="stat-val" id="r-correct"></div><div class="stat-lbl">正解数</div></div>
-        <div class="stat-box"><div class="stat-val" id="r-xp"></div><div class="stat-lbl">獲得XP</div></div>
-        <div class="stat-box"><div class="stat-val" id="r-time"></div><div class="stat-lbl">合計タイム</div></div>
-        <div class="stat-box"><div class="stat-val" id="r-best"></div><div class="stat-lbl">ベストラップ</div></div>
-      </div>
-      <div class="btn-row">
-        <button class="next-btn secondary" onclick="goHome()">ホームへ</button>
-        <button class="next-btn primary" id="result-retry-btn">もう一度！</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- BALANCE -->
-  <div id="s-balance" class="screen">
-    <button class="back-btn" onclick="goHome()">← ホーム</button>
-    <div class="hud">
-      <div class="hud-pill">係数パズル</div>
-      <div class="hud-pill" style="margin-left:auto">問 <b id="bal-qnum">1</b>/<b id="bal-qtotal">6</b></div>
-    </div>
-    <div class="prog-wrap"><div class="prog-fill" id="bal-prog" style="width:0%"></div></div>
-
-    <div class="lap-wrap">
-      <div class="lap-label">⏱ ラップタイム</div>
-      <div class="lap-top">
-        <div class="lap-display" id="bal-lap-display">0.0s</div>
-        <div class="lap-sub" id="bal-lap-sub"></div>
-      </div>
-      <div class="lap-list" id="bal-lap-list"></div>
-    </div>
-
-    <div class="balance-area">
-      <div class="q-cat" id="bal-cat"></div>
-      <div id="bal-area"></div>
-      <div class="fb" id="bal-fb"></div>
-      <button class="next-btn" id="bal-next-btn" onclick="nextBal()">次の問題へ →</button>
-      <button class="skip-btn" id="bal-skip-btn" onclick="skipBal()">この問題をスキップ →</button>
-    </div>
-  </div>
-
-</div>
-</div>
-<script>
-const Qs = [
-  {cat:"燃焼",q:"水素が燃焼するときの化学反応式はどれ？",eq:"H<sub>2</sub> + O<sub>2</sub> → ?",
-   cs:["2H<sub>2</sub>+O<sub>2</sub>→2H<sub>2</sub>O","H<sub>2</sub>+O<sub>2</sub>→H<sub>2</sub>O","2H+O→H<sub>2</sub>O","H<sub>2</sub>+2O→H<sub>2</sub>O<sub>2</sub>"],a:0,
-   hint:"水素2分子＋酸素1分子→水2分子。係数は2:1:2。",
-   hint2:"💡 両辺の原子数をそろえよう！\nH：左 2×2=4個 → 右 2×2=4個 ✓\nO：左 1×2=2個 → 右 2×1=2個 ✓\n→ 係数は 2H₂ + O₂ → 2H₂O"},
-  {cat:"燃焼",q:"炭素が完全燃焼するとできるものは？",eq:"C + O<sub>2</sub> → ?",
-   cs:["CO","CO<sub>2</sub>","C<sub>2</sub>O","CO<sub>3</sub>"],a:1,
-   hint:"炭素＋酸素→二酸化炭素。完全燃焼がポイント。",
-   hint2:"💡「完全燃焼」= 酸素が十分にある状態。\nC + O₂ → CO₂（二酸化炭素）\n酸素が不足すると CO（一酸化炭素）になるよ！"},
-  {cat:"燃焼",q:"マグネシウムが燃えるとき正しい反応式は？",eq:"2Mg + O<sub>2</sub> → ?",
-   cs:["MgO","2MgO","Mg<sub>2</sub>O","MgO<sub>2</sub>"],a:1,
-   hint:"2Mg+O₂→2MgO。係数を両辺そろえよう。",
-   hint2:"💡 Mg は必ず Mg²⁺、O は O²⁻ で結びつく（1:1）。\n左辺に Mg が2個あるので、右辺も MgO が2個必要。\n→ 2Mg + O₂ → 2MgO"},
-  {cat:"分解",q:"酸化銀を加熱すると、酸素のほかに何ができる？",eq:"2Ag<sub>2</sub>O → 4Ag + ?",
-   cs:["H<sub>2</sub>O","CO<sub>2</sub>","O<sub>2</sub>","N<sub>2</sub>"],a:2,
-   hint:"酸化銀→銀＋酸素。銀がキラリと光る！",
-   hint2:"💡 酸化銀（Ag₂O）は「銀＋酸素」に分解される。\n式を見ると左辺に O が 2個 → 右辺に O₂ が1個。\n残りは Ag（銀）だけ！ 水や CO₂ は出てこない。"},
-  {cat:"分解",q:"水の電気分解でできるものは？",eq:"2H<sub>2</sub>O → ?",
-   cs:["H<sub>2</sub>+O","2H<sub>2</sub>+O<sub>2</sub>","H<sub>2</sub>+O<sub>2</sub>","4H+2O<sub>2</sub>"],a:1,
-   hint:"水→水素2＋酸素1。電気で分解！",
-   hint2:"💡 水 2分子を分解すると…\nH が 4個 → H₂ が 2個\nO が 2個 → O₂ が 1個\n→ 2H₂O → 2H₂ + O₂（体積比 水素:酸素 = 2:1）"},
-  {cat:"化合",q:"鉄と硫黄が化合してできる物質は？",eq:"Fe + S → ?",
-   cs:["FeS","Fe<sub>2</sub>S","FeS<sub>2</sub>","Fe<sub>2</sub>S<sub>3</sub>"],a:0,
-   hint:"Fe＋S→FeS（硫化鉄Ⅱ）。1:1の化合。",
-   hint2:"💡 Fe（鉄）は2価、S（硫黄）は2価のイオンになる。\n電荷がつり合うのは 1:1 の組み合わせ。\n→ FeS（硫化鉄Ⅱ）。Fe₂S や FeS₂ にはならないよ！"},
-  {cat:"化合",q:"銅が酸素と結びつくとできるものは？",eq:"2Cu + O<sub>2</sub> → ?",
-   cs:["CuO","2CuO","Cu<sub>2</sub>O","CuO<sub>2</sub>"],a:1,
-   hint:"2Cu+O₂→2CuO。銅の表面が黒くなる！",
-   hint2:"💡 Cu は Cu²⁺（2価）、O は O²⁻（2価）で結合。\n1:1 で結びついて CuO（酸化銅Ⅱ）になる。\n左辺 Cu が2個 → 右辺 CuO が 2個必要！"},
-  {cat:"中和",q:"塩酸と水酸化NaOHの中和でできるものは？",eq:"HCl + NaOH → NaCl + ?",
-   cs:["CO<sub>2</sub>","O<sub>2</sub>","H<sub>2</sub>O","H<sub>2</sub>"],a:2,
-   hint:"酸＋塩基→塩＋水。中和の基本！",
-   hint2:"💡 中和反応の公式：酸 ＋ 塩基 → 塩 ＋ 水\nHCl（酸）＋ NaOH（塩基）→ NaCl（食塩）＋ H₂O（水）\nH⁺ と OH⁻ が結びついて水になるよ！"},
-  {cat:"中和",q:"硫酸とBa(OH)₂の中和でできる塩は？",eq:"H<sub>2</sub>SO<sub>4</sub>+Ba(OH)<sub>2</sub>→?+2H<sub>2</sub>O",
-   cs:["BaS","BaSO<sub>3</sub>","BaSO<sub>4</sub>","BaO"],a:2,
-   hint:"硫酸バリウムBaSO₄は白い沈殿ができる！",
-   hint2:"💡 硫酸（H₂SO₄）の酸の部分は SO₄²⁻（硫酸イオン）。\nBa²⁺ ＋ SO₄²⁻ → BaSO₄（硫酸バリウム）\nBaSO₄ は水に溶けない白い沈殿が特徴！"},
-  {cat:"燃焼",q:"メタン燃焼でCO₂のほかにできるものは？",eq:"CH<sub>4</sub>+2O<sub>2</sub>→CO<sub>2</sub>+?",
-   cs:["H<sub>2</sub>","2H<sub>2</sub>O","4H<sub>2</sub>O","O<sub>2</sub>"],a:1,
-   hint:"CH₄+2O₂→CO₂+2H₂O。水素4つ→水2分子。",
-   hint2:"💡 CH₄ には H が4個含まれている。\nH 4個 → H₂O 2個（H₂O 1個に H が2個）\n→ CH₄ + 2O₂ → CO₂ + 2H₂O\n天然ガスを燃やすと水蒸気が出る！"}
-];
-
-const BALS = [
-  {name:"水素の燃焼",    cat:"燃焼",parts:["H₂","O₂","H₂O"],  ans:[2,1,2],ltr:true},
-  {name:"炭素の燃焼",    cat:"燃焼",parts:["C","O₂","CO₂"],   ans:[1,1,1],ltr:true},
-  {name:"マグネシウムの燃焼",cat:"燃焼",parts:["Mg","O₂","MgO"],ans:[2,1,2],ltr:true},
-  {name:"水の電気分解",  cat:"分解",parts:["H₂O","H₂","O₂"],  ans:[2,2,1],ltr:false},
-  {name:"鉄と硫黄の化合",cat:"化合",parts:["Fe","S","FeS"],    ans:[1,1,1],ltr:true},
-  {name:"銅の酸化",      cat:"化合",parts:["Cu","O₂","CuO"],   ans:[2,1,2],ltr:true}
-];
-
-const shuffle = arr => [...arr].sort(()=>Math.random()-.5);
-
-let qIdx=0,lives=3,xp=0,combo=0,maxCombo=0,correct=0,answered=false,shuffledQs=[];
-let quizLapStart=0,quizLapTick=null,quizLaps=[];
-let shuffledBals=[],balIdx=0,balLapStart=0,balLapTick=null,balLaps=[];
-
-/* ROUTING */
-function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  window.scrollTo({top:0,behavior:'smooth'});
-  if(id==='s-balance'){
-    balLaps=[];balIdx=0;
-    shuffledBals=shuffle(BALS);
-    document.getElementById('bal-lap-sub').textContent='';
-    document.getElementById('bal-lap-list').innerHTML='';
-    loadBal();
-  }
-}
-
-function goHome(){ stopQuizLap();stopBalLap();showScreen('s-title'); }
-
-/* QUIZ */
-function startQuiz(){
-  qIdx=0;lives=3;xp=0;combo=0;maxCombo=0;correct=0;answered=false;quizLaps=[];
-  shuffledQs=shuffle(Qs);
-  updateHUD();
-  showScreen('s-quiz');
-  loadQ();
-  setTimeout(initCanvas,50);
-}
-
-function retryGame(){ startQuiz(); }
-
-function updateHUD(){
-  document.getElementById('lives').textContent='❤️'.repeat(lives)+'🤍'.repeat(3-lives);
-  document.getElementById('qnum').textContent=qIdx+1;
-  document.getElementById('xp').textContent=xp;
-  document.getElementById('prog').style.width=Math.round((qIdx/Qs.length)*100)+'%';
-  const cb=document.getElementById('combo-badge');
-  if(combo>=2){cb.classList.add('show');document.getElementById('combo-num').textContent=combo;}
-  else cb.classList.remove('show');
-}
-
-function loadQ(){
-  answered=false;
-  if(qIdx>=shuffledQs.length){endGame();return;}
-  const q=shuffledQs[qIdx];
-  document.getElementById('q-cat').textContent=q.cat;
-  document.getElementById('q-text').textContent=q.q;
-  document.getElementById('q-eq').innerHTML=q.eq;
-  document.getElementById('fb').className='fb';
-  document.getElementById('next-btn').className='next-btn';
-  document.getElementById('skip-btn').style.display='block';
-  document.getElementById('hint-btn').style.display='block';
-  document.getElementById('hint-btn').textContent='🔍 ヒントを見る';
-  document.getElementById('hint-panel').className='hint-panel';
-  document.getElementById('hint-panel').textContent='';
-  const ch=document.getElementById('choices');ch.innerHTML='';
-  shuffle(q.cs.map((c,i)=>({c,i}))).forEach(({c,i})=>{
-    const b=document.createElement('button');
-    b.className='choice';b.innerHTML=c;b.dataset.idx=i;
-    b.onclick=()=>pick(i,b);
-    ch.appendChild(b);
-  });
-  startQuizLap();
-}
-
-function pick(i,btn){
-  if(answered)return;
-  answered=true;
-  const lapTime=stopQuizLap();
-  const q=shuffledQs[qIdx];
-  const fb=document.getElementById('fb');
-  document.querySelectorAll('.choice').forEach(b=>{
-    if(parseInt(b.dataset.idx)===q.a)b.classList.add('correct');
-    else if(b===btn)b.classList.add('wrong');
-  });
-  if(i===q.a){
-    correct++;combo++;if(combo>maxCombo)maxCombo=combo;
-    const bonus=combo>=3?20:combo>=2?10:0;
-    xp+=10+bonus;
-    fb.innerHTML='✨ 正解！'+(combo>=2?` コンボ x${combo} ＋${bonus}XP！`:'')+'<br>'+q.hint;
-    fb.className='fb ok show';
-  } else {
-    combo=0;lives=Math.max(0,lives-1);
-    btn.classList.add('shake');
-    fb.innerHTML='💧 おしい！<br>'+q.hint;
-    fb.className='fb ng show';
-  }
-  recordQuizLap(qIdx+1,lapTime,i===q.a);
-  updateHUD();
-  document.getElementById('skip-btn').style.display='none';
-  document.getElementById('hint-btn').style.display='none';
-  if(lives===0){setTimeout(endGame,1400);return;}
-  document.getElementById('next-btn').className='next-btn show';
-}
-
-function nextQ(){qIdx++;updateHUD();loadQ();}
-
-function skipQ(){
-  if(answered)return;
-  stopQuizLap();
-  combo=0; updateHUD();
-  document.getElementById('skip-btn').style.display='none';
-  document.getElementById('hint-btn').style.display='none';
-  document.getElementById('hint-panel').className='hint-panel';
-  qIdx++;
-  if(qIdx>=shuffledQs.length){endGame();return;}
-  updateHUD();loadQ();
-}
-
-function toggleHint(){
-  const q=shuffledQs[qIdx];
-  const panel=document.getElementById('hint-panel');
-  const btn=document.getElementById('hint-btn');
-  if(panel.classList.contains('show')){
-    panel.classList.remove('show');
-    btn.textContent='🔍 ヒントを見る';
-  } else {
-    panel.textContent=q.hint2||q.hint;
-    panel.classList.add('show');
-    btn.textContent='🙈 ヒントを隠す';
-  }
-}
-
-function endGame(){
-  stopQuizLap();
-  const pct=Math.round(correct/shuffledQs.length*100);
-  const ranks=[
-    {min:90,icon:'👑',title:'化学の天才！',sub:'ほぼパーフェクト！すごい！'},
-    {min:70,icon:'✨',title:'よくできました！',sub:'あと少しでマスター！'},
-    {min:50,icon:'📝',title:'なかなか！',sub:'復習でさらに上達しよう！'},
-    {min:0, icon:'🌱',title:'のびしろたっぷり！',sub:'諦めずもう一度！'}
+  <script>
+  const ALL = [
+    { name: "水素",     formula: "H₂",       category: "単体" },
+    { name: "酸素",     formula: "O₂",       category: "単体" },
+    { name: "窒素",     formula: "N₂",       category: "単体" },
+    { name: "塩素",     formula: "Cl₂",      category: "単体" },
+    { name: "フッ素",   formula: "F₂",       category: "単体" },
+    { name: "ヨウ素",   formula: "I₂",       category: "単体" },
+    { name: "ナトリウム", formula: "Na",      category: "単体" },
+    { name: "マグネシウム", formula: "Mg",   category: "単体" },
+    { name: "アルミニウム", formula: "Al",   category: "単体" },
+    { name: "銅",       formula: "Cu",       category: "単体" },
+    { name: "鉄",       formula: "Fe",       category: "単体" },
+    { name: "銀",       formula: "Ag",       category: "単体" },
+    { name: "炭素",     formula: "C",        category: "単体" },
+    { name: "硫黄",     formula: "S",        category: "単体" },
+    { name: "水",             formula: "H₂O",      category: "化合物" },
+    { name: "二酸化炭素",     formula: "CO₂",      category: "化合物" },
+    { name: "一酸化炭素",     formula: "CO",       category: "化合物" },
+    { name: "アンモニア",     formula: "NH₃",      category: "化合物" },
+    { name: "塩化水素",       formula: "HCl",      category: "化合物" },
+    { name: "二酸化硫黄",     formula: "SO₂",      category: "化合物" },
+    { name: "二酸化窒素",     formula: "NO₂",      category: "化合物" },
+    { name: "塩化ナトリウム", formula: "NaCl",     category: "化合物" },
+    { name: "炭酸水素ナトリウム", formula: "NaHCO₃", category: "化合物" },
+    { name: "炭酸ナトリウム", formula: "Na₂CO₃",  category: "化合物" },
+    { name: "水酸化ナトリウム", formula: "NaOH",   category: "化合物" },
+    { name: "水酸化カルシウム", formula: "Ca(OH)₂", category: "化合物" },
+    { name: "炭酸カルシウム", formula: "CaCO₃",   category: "化合物" },
+    { name: "塩化カルシウム", formula: "CaCl₂",   category: "化合物" },
+    { name: "硫酸",           formula: "H₂SO₄",   category: "化合物" },
+    { name: "硝酸",           formula: "HNO₃",    category: "化合物" },
+    { name: "塩酸（塩化水素水溶液）", formula: "HCl", category: "化合物" },
+    { name: "酸化銅",         formula: "CuO",      category: "酸化物" },
+    { name: "酸化鉄",         formula: "Fe₂O₃",   category: "酸化物" },
+    { name: "酸化マグネシウム", formula: "MgO",   category: "酸化物" },
+    { name: "酸化銀",         formula: "Ag₂O",    category: "酸化物" },
+    { name: "酸化アルミニウム", formula: "Al₂O₃", category: "酸化物" },
+    { name: "酸化カルシウム", formula: "CaO",     category: "酸化物" },
+    { name: "硫化鉄",         formula: "FeS",      category: "硫化物・塩化物" },
+    { name: "硫化銅",         formula: "CuS",      category: "硫化物・塩化物" },
+    { name: "硫化水素",       formula: "H₂S",      category: "硫化物・塩化物" },
+    { name: "塩化銅",         formula: "CuCl₂",   category: "硫化物・塩化物" },
+    { name: "塩化鉄(III)",    formula: "FeCl₃",   category: "硫化物・塩化物" },
+    { name: "塩化アンモニウム", formula: "NH₄Cl", category: "硫化物・塩化物" },
   ];
-  const r=ranks.find(x=>pct>=x.min);
-  document.getElementById('rank-icon').textContent=r.icon;
-  document.getElementById('rank-title').textContent=r.title;
-  document.getElementById('rank-sub').textContent=r.sub;
-  document.getElementById('r-correct').textContent=correct+'/'+shuffledQs.length;
-  document.getElementById('r-xp').textContent=xp;
-  const total=quizLaps.reduce((s,l)=>s+l.time,0);
-  const best=quizLaps.length?Math.min(...quizLaps.map(l=>l.time)):0;
-  document.getElementById('r-time').textContent=fmtTime(total);
-  document.getElementById('r-best').textContent=fmtTime(best);
-  document.getElementById('result-retry-btn').onclick=retryGame;
-  showScreen('s-result');
-}
 
-/* BALANCE */
-function loadBal(){
-  if(balIdx>=shuffledBals.length){endBal();return;}
-  const bd=shuffledBals[balIdx];
-  document.getElementById('bal-qnum').textContent=balIdx+1;
-  document.getElementById('bal-qtotal').textContent=shuffledBals.length;
-  document.getElementById('bal-prog').style.width=Math.round(balIdx/shuffledBals.length*100)+'%';
-  document.getElementById('bal-cat').textContent=bd.cat;
-  document.getElementById('bal-fb').className='fb';
-  document.getElementById('bal-next-btn').className='next-btn';
-  document.getElementById('bal-next-btn').textContent='次の問題へ →';
-  document.getElementById('bal-skip-btn').style.display='block';
-  const inp=i=>`<input class="coeff-inp" id="bi${i}" type="number" min="1" max="9" placeholder="?">`;
-  const chip=i=>`${inp(i)}<span class="mol-chip">${bd.parts[i]}</span>`;
-  let html=`<div style="font-size:13px;color:var(--text-light);font-weight:800;margin-bottom:1rem">${bd.name}</div>`;
-  html+='<div class="balance-row-ui">';
-  if(bd.ltr) html+=chip(0)+'<span class="op-sym">＋</span>'+chip(1)+'<span class="op-sym">→</span>'+chip(2);
-  else        html+=chip(0)+'<span class="op-sym">→</span>'+chip(1)+'<span class="op-sym">＋</span>'+chip(2);
-  html+='</div>';
-  html+=`<button class="check-btn" onclick="checkBal()">答えあわせ</button>`;
-  document.getElementById('bal-area').innerHTML=html;
-  startBalLap();
-}
+  const HINTS = {
+    "H₂": "水素原子2個（二原子分子）", "O₂": "酸素原子2個（二原子分子）",
+    "N₂": "窒素原子2個（二原子分子）", "Cl₂": "塩素原子2個（二原子分子）",
+    "F₂": "フッ素原子2個", "I₂": "ヨウ素原子2個",
+    "Na": "単原子", "Mg": "単原子", "Al": "単原子",
+    "Cu": "単原子", "Fe": "単原子", "Ag": "単原子",
+    "C": "炭素＝カーボン＝C", "S": "単原子",
+    "H₂O": "H×2, O×1", "CO₂": "C×1, O×2", "CO": "C×1, O×1",
+    "NH₃": "N×1, H×3", "HCl": "H×1, Cl×1", "SO₂": "S×1, O×2",
+    "NO₂": "N×1, O×2", "NaCl": "Na×1, Cl×1",
+    "NaHCO₃": "Na×1, H×1, C×1, O×3", "Na₂CO₃": "Na×2, C×1, O×3",
+    "NaOH": "Na×1, O×1, H×1", "Ca(OH)₂": "Ca×1, O×2, H×2",
+    "CaCO₃": "Ca×1, C×1, O×3", "CaCl₂": "Ca×1, Cl×2",
+    "H₂SO₄": "H×2, S×1, O×4", "HNO₃": "H×1, N×1, O×3",
+    "CuO": "Cu×1, O×1", "Fe₂O₃": "Fe×2, O×3", "MgO": "Mg×1, O×1",
+    "Ag₂O": "Ag×2, O×1", "Al₂O₃": "Al×2, O×3", "CaO": "Ca×1, O×1",
+    "FeS": "Fe×1, S×1", "CuS": "Cu×1, S×1", "H₂S": "H×2, S×1",
+    "CuCl₂": "Cu×1, Cl×2", "FeCl₃": "Fe×1, Cl×3", "NH₄Cl": "N×1, H×4, Cl×1",
+  };
 
-function checkBal(){
-  const bd=shuffledBals[balIdx];
-  const vals=bd.parts.map((_,i)=>parseInt(document.getElementById('bi'+i).value)||0);
-  const fb=document.getElementById('bal-fb');
-  const lapTime=stopBalLap();
-  const isCorrect=vals.every((v,i)=>v===bd.ans[i]);
-  if(isCorrect){
-    fb.innerHTML='✨ 正解！バッチリだね！';fb.className='fb ok show';
-  } else {
-    fb.innerHTML='💧 おしい！正解の係数: '+bd.ans.map((v,i)=>bd.parts[i]+'='+v).join('、');
-    fb.className='fb ng show';
+  function toAscii(s) {
+    return s.replace(/[₀-₉]/g, c => String.fromCharCode(c.charCodeAt(0) - 8272));
   }
-  recordBalLap(bd.name,lapTime,isCorrect);
-  const nb=document.getElementById('bal-next-btn');
-  nb.className='next-btn show';
-  document.getElementById('bal-skip-btn').style.display='none';
-  if(balIdx===shuffledBals.length-1) nb.textContent='結果を見る →';
-}
+  function matches(input, formula) {
+    const i = input.trim();
+    const f = formula;
+    return i === f || i === toAscii(f) ||
+           i.toUpperCase() === f.toUpperCase() ||
+           i.toUpperCase() === toAscii(f).toUpperCase();
+  }
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
 
-function nextBal(){
-  balIdx++;
-  if(balIdx>=shuffledBals.length){endBal();return;}
-  loadBal();
-}
+  let questions = [], cur = 0, results = [], answered = false;
+  let qCount = 10, filterCat = "すべて";
 
-function skipBal(){
-  stopBalLap();
-  document.getElementById('bal-skip-btn').style.display='none';
-  balIdx++;
-  if(balIdx>=shuffledBals.length){endBal();return;}
-  loadBal();
-}
+  const CATEGORIES = ["すべて", "単体", "化合物", "酸化物", "硫化物・塩化物"];
 
-function endBal(){
-  stopBalLap();
-  const total=balLaps.reduce((s,l)=>s+l.time,0);
-  const correctCount=balLaps.filter(l=>l.ok).length;
-  const best=balLaps.length?Math.min(...balLaps.map(l=>l.time)):0;
-  const pct=Math.round(correctCount/shuffledBals.length*100);
-  const ranks=[
-    {min:100,icon:'⚖️',title:'完璧！',sub:'全問正解！バランシングマスター！'},
-    {min:67, icon:'✨',title:'よくできました！',sub:'あと少しで完璧！'},
-    {min:34, icon:'📝',title:'なかなか！',sub:'復習でさらに上達しよう！'},
-    {min:0,  icon:'🌱',title:'のびしろたっぷり！',sub:'諦めずもう一度！'}
-  ];
-  const r=ranks.find(x=>pct>=x.min);
-  document.getElementById('rank-icon').textContent=r.icon;
-  document.getElementById('rank-title').textContent=r.title;
-  document.getElementById('rank-sub').textContent=r.sub;
-  document.getElementById('r-correct').textContent=correctCount+'/'+shuffledBals.length;
-  document.getElementById('r-xp').textContent='—';
-  document.getElementById('r-time').textContent=fmtTime(total);
-  document.getElementById('r-best').textContent=fmtTime(best);
-  document.getElementById('result-retry-btn').onclick=()=>showScreen('s-balance');
-  showScreen('s-result');
-}
+  function startQuiz() {
+    const pool = (filterCat === "すべて" ? ALL : ALL.filter(q => q.category === filterCat))
+      .map(q => { const c = {...q}; delete c._skipped; return c; });
+    const n = Math.min(qCount, pool.length);
+    questions = shuffle(pool).slice(0, n);
+    cur = 0; results = []; answered = false;
+    render();
+  }
 
-/* LAP TIME */
-function fmtTime(ms){
-  if(ms<60000)return(ms/1000).toFixed(1)+'s';
-  return Math.floor(ms/60000)+'m'+((ms%60000)/1000).toFixed(0).padStart(2,'0')+'s';
-}
-function startQuizLap(){
-  stopQuizLap();quizLapStart=Date.now();
-  quizLapTick=setInterval(()=>{const el=document.getElementById('quiz-lap-display');if(el)el.textContent=fmtTime(Date.now()-quizLapStart);},100);
-}
-function stopQuizLap(){if(quizLapTick){clearInterval(quizLapTick);quizLapTick=null;}return quizLapStart?Date.now()-quizLapStart:0;}
-function recordQuizLap(qNo,ms,ok){
-  quizLaps.push({q:qNo,time:ms,ok});
-  const list=document.getElementById('quiz-lap-list');if(!list)return;
-  const times=quizLaps.map(l=>l.time);
-  const best=Math.min(...times),worst=Math.max(...times);
-  list.innerHTML=[...quizLaps].reverse().map(l=>{
-    const cls=times.length>1?(l.time===best?' best':l.time===worst?' worst':''):'';
-    return `<div class="lap-item${cls}"><span class="lap-item-label">${l.ok?'✓':'✗'} 問${l.q}</span><span class="lap-item-time">${fmtTime(l.time)}</span></div>`;
-  }).join('');
-  const sub=document.getElementById('quiz-lap-sub');
-  if(sub&&quizLaps.length>1)sub.textContent=`最速 ${fmtTime(best)} / 最遅 ${fmtTime(worst)}`;
-}
-function startBalLap(){
-  stopBalLap();balLapStart=Date.now();
-  balLapTick=setInterval(()=>{const el=document.getElementById('bal-lap-display');if(el)el.textContent=fmtTime(Date.now()-balLapStart);},100);
-}
-function stopBalLap(){if(balLapTick){clearInterval(balLapTick);balLapTick=null;}return balLapStart?Date.now()-balLapStart:0;}
-function recordBalLap(name,ms,ok){
-  balLaps.push({name,time:ms,ok});
-  const list=document.getElementById('bal-lap-list');if(!list)return;
-  const times=balLaps.map(l=>l.time);
-  const best=Math.min(...times),worst=Math.max(...times);
-  list.innerHTML=[...balLaps].reverse().map(l=>{
-    const cls=times.length>1?(l.time===best?' best':l.time===worst?' worst':''):'';
-    return `<div class="lap-item${cls}"><span class="lap-item-label">${l.ok?'✓':'✗'} ${l.name}</span><span class="lap-item-time">${fmtTime(l.time)}</span></div>`;
-  }).join('');
-  const sub=document.getElementById('bal-lap-sub');
-  if(sub&&balLaps.length>1)sub.textContent=`最速 ${fmtTime(best)} / 最遅 ${fmtTime(worst)}`;
-}
+  function render() {
+    const app = document.getElementById('app');
+    if (cur >= questions.length) { renderResult(app); return; }
+    const q = questions[cur];
 
-/* CANVAS */
-let drawing=false,lastX=0,lastY=0,ctx=null;
-function initCanvas(){
-  const canvas=document.getElementById('draw-canvas');if(!canvas)return;
-  canvas.width=canvas.offsetWidth*window.devicePixelRatio;
-  canvas.height=canvas.offsetHeight*window.devicePixelRatio;
-  ctx=canvas.getContext('2d');
-  ctx.scale(window.devicePixelRatio,window.devicePixelRatio);
-  ctx.strokeStyle='#ff85a1';ctx.lineWidth=3;ctx.lineCap='round';ctx.lineJoin='round';
-  const pos=e=>{const r=canvas.getBoundingClientRect();const s=e.touches?e.touches[0]:e;return[s.clientX-r.left,s.clientY-r.top];};
-  const start=e=>{e.preventDefault();drawing=true;[lastX,lastY]=pos(e);};
-  const move=e=>{if(!drawing)return;e.preventDefault();const[x,y]=pos(e);ctx.beginPath();ctx.moveTo(lastX,lastY);ctx.lineTo(x,y);ctx.stroke();[lastX,lastY]=[x,y];};
-  const stop=()=>{drawing=false;};
-  canvas.addEventListener('mousedown',start);
-  canvas.addEventListener('mousemove',move);
-  canvas.addEventListener('mouseup',stop);
-  canvas.addEventListener('mouseleave',stop);
-  canvas.addEventListener('touchstart',start,{passive:false});
-  canvas.addEventListener('touchmove',move,{passive:false});
-  canvas.addEventListener('touchend',stop);
-}
-function clearCanvas(){const canvas=document.getElementById('draw-canvas');if(ctx&&canvas)ctx.clearRect(0,0,canvas.offsetWidth,canvas.offsetHeight);}
-</script>
+    const pips = questions.map((_, i) => {
+      let cls = 'pip';
+      if (i < cur) cls += results[i] ? ' ok' : ' ng';
+      else if (i === cur) cls += ' cur';
+      return `<div class="${cls}"></div>`;
+    }).join('');
+
+    app.innerHTML = `
+      <div class="settings">
+        <label>問題数</label>
+        <select id="sel-count">
+          ${[5,10,15,20].map(n => `<option value="${n}"${n===qCount?' selected':''}>${n}問</option>`).join('')}
+        </select>
+        <label>カテゴリ</label>
+        <select id="sel-cat">
+          ${CATEGORIES.map(c => `<option${c===filterCat?' selected':''}>${c}</option>`).join('')}
+        </select>
+        <button class="btn" id="btn-restart">最初から</button>
+      </div>
+
+      <div class="score-bar">
+        <span class="score-num">${results.filter(Boolean).length}</span>
+        <span class="score-label">/ ${cur} 正解</span>
+        <span class="score-right">${cur + 1} / ${questions.length}問</span>
+      </div>
+      <div class="progress">${pips}</div>
+
+      <div class="q-card">
+        <div class="q-num">問 ${cur + 1}　<span style="color:var(--text3); font-weight:600;">${q.category}</span></div>
+        <div class="q-text">「<span class="q-name">${q.name}</span>」の化学式は？</div>
+        <div class="input-row">
+          <input class="formula-input" id="ans" placeholder="例: H2O, CuCl2" autocomplete="off" spellcheck="false" inputmode="latin" />
+          <button class="btn" id="btn-check">確認</button>
+        </div>
+        <div class="hint-row">
+          <button class="hint-toggle" id="hint-toggle">ヒントを見る</button>
+          <div class="hint-box" id="hint-box">${HINTS[q.formula] || ''}</div>
+        </div>
+        <div class="feedback" id="fb"></div>
+        <button class="btn-next" id="btn-next">${cur + 1 < questions.length ? '次の問題へ　→' : '結果を見る ✨'}</button>
+        <button class="btn-skip" id="btn-skip">この問題をスキップ</button>
+      </div>
+      <p class="hint-note">✏️ 入力例: H2O, CuCl2, Fe2O3, NaHCO3 など<br>(小さい数字は普通の数字でOK)</p>
+    `;
+
+    document.getElementById('sel-count').onchange = e => { qCount = +e.target.value; };
+    document.getElementById('sel-cat').onchange = e => { filterCat = e.target.value; };
+    document.getElementById('btn-restart').onclick = startQuiz;
+
+    const inp = document.getElementById('ans');
+    const chk = document.getElementById('btn-check');
+    const fb  = document.getElementById('fb');
+    const nxt = document.getElementById('btn-next');
+    const skp = document.getElementById('btn-skip');
+    const ht  = document.getElementById('hint-toggle');
+    const hb  = document.getElementById('hint-box');
+
+    ht.onclick = () => {
+      const show = hb.style.display === 'block';
+      hb.style.display = show ? 'none' : 'block';
+      ht.textContent = show ? 'ヒントを見る' : 'ヒントを隠す';
+    };
+
+    function check() {
+      if (answered) return;
+      const ok = matches(inp.value, q.formula);
+      answered = true;
+      results.push(ok);
+      fb.innerHTML = ok ? `<span>⭕</span> 正解！　${q.formula}` : `<span>❌</span> 不正解… 正解は ${q.formula}`;
+      fb.className = 'feedback ' + (ok ? 'ok' : 'ng');
+      nxt.style.display = 'block';
+      chk.disabled = true;
+      inp.disabled = true;
+    }
+
+    chk.onclick = check;
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+    nxt.onclick = () => { cur++; answered = false; render(); };
+
+    skp.onclick = () => {
+      if (answered) {
+        cur++; answered = false; render();
+        return;
+      }
+      const skipped = questions.splice(cur, 1)[0];
+      if (!skipped._skipped) {
+        skipped._skipped = true;
+        questions.push(skipped);
+      } else {
+        results.push(false);
+        cur++;
+      }
+      answered = false;
+      render();
+    };
+
+    inp.focus();
+  }
+
+  function renderResult(app) {
+    const sc = results.filter(Boolean).length;
+    const total = questions.length;
+    const pct = Math.round(sc / total * 100);
+    const msg = sc === total ? '満点！すごすぎます 🎉Perfect!'
+              : pct >= 80 ? 'すばらしいです！🌸'
+              : pct >= 60 ? '合格点！その調子です♪'
+              : '伸びしろいっぱい！次がんばろう💖';
+    const wrong = questions.filter((_, i) => !results[i]);
+    const wrongHtml = wrong.length ? `
+      <div class="wrong-list">
+        <div class="wrong-title">復習しよう（間違えた問題）</div>
+        ${wrong.map(q => `
+          <div class="wrong-row">
+            <span class="wrong-name">${q.name}</span>
+            <span class="wrong-formula">${q.formula}</span>
+          </div>`).join('')}
+      </div>` : '';
+
+    app.innerHTML = `
+      <div class="result-card">
+        <div class="result-score">${sc} / ${total}</div>
+        <div class="result-msg">${msg}</div>
+        <div class="btn-retry-wrap">
+          <button class="btn" id="btn-retry-wrong" ${wrong.length === 0 ? 'disabled' : ''}>
+            間違えた${wrong.length}問だけリトライ
+          </button>
+          <button class="btn" id="btn-retry-new">新しい問題に挑戦 🚀</button>
+        </div>
+        ${wrongHtml}
+      </div>`;
+
+    document.getElementById('btn-retry-new').onclick = startQuiz;
+    document.getElementById('btn-retry-wrong').onclick = () => {
+      if (wrong.length === 0) return;
+      questions = wrong.map(q => { const c = {...q}; delete c._skipped; return c; });
+      cur = 0; results = []; answered = false;
+      render();
+    };
+  }
+
+  startQuiz();
+  </script>
 </body>
 </html>
