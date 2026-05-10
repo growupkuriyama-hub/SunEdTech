@@ -56,18 +56,18 @@ button{font-family:inherit;cursor:pointer}
 .back-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
 /* ===== TITLE SCREEN ===== */
-.title-hero{text-align:center;margin-bottom:2.5rem}
+.title-hero{text-align:center;margin-bottom:2rem}
 .title-hero h1{font-family:'Syne',sans-serif;font-weight:800;font-size:2.4rem;color:var(--text);margin-bottom:.5rem}
 .title-hero p{color:var(--text2);font-size:14px}
-.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem}
-.mode-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:1.25rem;text-align:left;transition:all .2s;color:var(--text);position:relative;overflow:hidden}
+.mode-grid{display:flex;flex-direction:column;gap:8px;margin-bottom:1.5rem;align-items:center}
+.mode-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:.75rem 1.25rem;text-align:left;transition:all .2s;color:var(--text);position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:.75rem}
 .mode-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--teal) 0%,transparent 60%);opacity:0;transition:opacity .2s}
-.mode-card:hover{border-color:var(--teal3);transform:translateY(-2px)}
+.mode-card:hover{border-color:var(--teal3);transform:translateY(-1px)}
 .mode-card:hover::before{opacity:.06}
-.mode-icon{font-size:1.75rem;margin-bottom:.6rem;display:block}
-.mode-name{font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;color:var(--text);margin-bottom:.25rem}
-.mode-desc{font-size:.75rem;color:var(--text2);line-height:1.4}
-.mode-card.full{grid-column:1/-1}
+.mode-icon{font-size:1.4rem;flex-shrink:0}
+.mode-info{display:flex;flex-direction:column;gap:1px}
+.mode-name{font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;color:var(--text)}
+.mode-desc{font-size:.72rem;color:var(--text2);line-height:1.4}
 
 /* ===== HUD ===== */
 .hud{display:flex;align-items:center;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap}
@@ -165,16 +165,28 @@ button{font-family:inherit;cursor:pointer}
 .draw-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:.4rem;display:flex;align-items:center;justify-content:space-between}
 .draw-clear{font-size:11px;color:var(--text3);background:transparent;border:none;cursor:pointer;padding:2px 6px;border-radius:4px;transition:color .15s}
 .draw-clear:hover{color:var(--text2)}
-.draw-canvas{display:block;width:100%;height:140px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);touch-action:none;cursor:crosshair}
+.draw-canvas{display:block;width:100%;height:220px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);touch-action:none;cursor:crosshair}
 
 /* ===== RESPONSIVE ===== */
 @media(max-width:440px){
-  .mode-grid{grid-template-columns:1fr}
-  .mode-card.full{grid-column:auto}
   .choices{grid-template-columns:1fr}
   .eq-box{font-size:1.1rem}
   .title-hero h1{font-size:1.8rem}
 }
+
+/* ===== LAP TIME ===== */
+.lap-wrap{margin-bottom:1rem}
+.lap-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:.4rem}
+.lap-display{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:700;color:var(--teal);letter-spacing:.5px}
+.lap-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.lap-list{display:flex;flex-direction:column;gap:4px;margin-top:.6rem;max-height:160px;overflow-y:auto}
+.lap-item{display:flex;justify-content:space-between;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:12px}
+.lap-item-label{color:var(--text2)}
+.lap-item-time{font-family:'Syne',sans-serif;font-weight:700;color:var(--text)}
+.lap-item.best .lap-item-time{color:var(--teal)}
+.lap-item.worst .lap-item-time{color:var(--red)}
+.lap-stop-btn{font-size:11px;color:var(--text3);background:transparent;border:1px solid var(--border);border-radius:6px;padding:2px 8px;cursor:pointer;transition:all .15s}
+.lap-stop-btn:hover{color:var(--text);border-color:var(--border2)}
 </style>
 </head>
 <body>
@@ -191,20 +203,19 @@ button{font-family:inherit;cursor:pointer}
       <p>3つのモードで楽しく学べる化学ゲーム</p>
     </div>
     <div class="mode-grid">
-      <div class="mode-card" onclick="startQuiz('normal')">
+      <div class="mode-card" onclick="startQuiz()">
         <span class="mode-icon">⚡</span>
-        <div class="mode-name">クイズバトル</div>
-        <div class="mode-desc">10問に挑戦！<br>コンボでXPボーナス</div>
+        <div class="mode-info">
+          <div class="mode-name">クイズバトル</div>
+          <div class="mode-desc">10問に挑戦！コンボでXPボーナス</div>
+        </div>
       </div>
-      <div class="mode-card" onclick="startQuiz('time')">
-        <span class="mode-icon">⏱️</span>
-        <div class="mode-name">タイムアタック</div>
-        <div class="mode-desc">15秒以内に答えろ！<br>時間切れでライフ減少</div>
-      </div>
-      <div class="mode-card full" onclick="showScreen('s-balance')">
+      <div class="mode-card" onclick="showScreen('s-balance')">
         <span class="mode-icon">⚖️</span>
-        <div class="mode-name">係数合わせ</div>
-        <div class="mode-desc">係数を入力してバランシング練習</div>
+        <div class="mode-info">
+          <div class="mode-name">係数合わせ</div>
+          <div class="mode-desc">係数を入力してバランシング練習</div>
+        </div>
       </div>
     </div>
   </div>
@@ -220,17 +231,23 @@ button{font-family:inherit;cursor:pointer}
       <div class="hud-pill">問 <b id="qnum">1</b>/10</div>
       <div class="combo-badge" id="combo-badge">コンボ x<span id="combo-num">2</span></div>
       <div class="hud-pill xp-pill">XP <b id="xp">0</b></div>
-      <svg class="timer-svg" id="timer-svg" viewBox="0 0 42 42" style="display:none" aria-hidden="true">
-        <circle class="timer-arc-bg" cx="21" cy="21" r="17"/>
-        <circle class="timer-arc" id="timer-arc" cx="21" cy="21" r="17"/>
-        <text class="timer-txt" x="21" y="25.5" text-anchor="middle" id="timer-txt">15</text>
-      </svg>
     </div>
     <div class="prog-wrap"><div class="prog-fill" id="prog" style="width:10%"></div></div>
+    <!-- ラップタイム -->
+    <div class="lap-wrap" id="quiz-lap-wrap">
+      <div class="lap-label">⏱ ラップタイム</div>
+      <div style="display:flex;align-items:baseline;gap:.5rem">
+        <div class="lap-display" id="quiz-lap-display">0.0s</div>
+        <div class="lap-sub" id="quiz-lap-sub"></div>
+      </div>
+      <div class="lap-list" id="quiz-lap-list"></div>
+    </div>
     <div class="q-cat" id="q-cat"></div>
     <div class="q-text" id="q-text"></div>
     <div class="eq-box" id="q-eq"></div>
     <div class="choices" id="choices"></div>
+    <div class="fb" id="fb"></div>
+    <button class="next-btn" id="next-btn" onclick="nextQ()">次の問題へ →</button>
     <div class="draw-wrap" id="draw-wrap">
       <div class="draw-label">
         <span>✏️ 計算メモ（ここに書いて考えよう）</span>
@@ -238,8 +255,6 @@ button{font-family:inherit;cursor:pointer}
       </div>
       <canvas class="draw-canvas" id="draw-canvas"></canvas>
     </div>
-    <div class="fb" id="fb"></div>
-    <button class="next-btn" id="next-btn" onclick="nextQ()">次の問題へ →</button>
   </div>
 
   <!-- RESULT SCREEN -->
@@ -252,6 +267,8 @@ button{font-family:inherit;cursor:pointer}
         <div class="stat-box"><div class="stat-val" id="r-correct"></div><div class="stat-lbl">正解数</div></div>
         <div class="stat-box"><div class="stat-val" id="r-xp"></div><div class="stat-lbl">獲得XP</div></div>
         <div class="stat-box"><div class="stat-val" id="r-combo"></div><div class="stat-lbl">最大コンボ</div></div>
+        <div class="stat-box"><div class="stat-val" id="r-time"></div><div class="stat-lbl">合計タイム</div></div>
+        <div class="stat-box"><div class="stat-val" id="r-best"></div><div class="stat-lbl">ベストラップ</div></div>
       </div>
       <div class="btn-row">
         <button class="action-btn" onclick="goHome()">← ホーム</button>
@@ -266,17 +283,23 @@ button{font-family:inherit;cursor:pointer}
       <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
       ホームに戻る
     </button>
-    <div class="section-label">係数合わせ練習</div>
-    <select class="styled-select" id="bal-pick" onchange="loadBal()">
-      <option value="0">水素の燃焼 — H₂ + O₂ → H₂O</option>
-      <option value="1">炭素の燃焼 — C + O₂ → CO₂</option>
-      <option value="2">マグネシウムの燃焼 — Mg + O₂ → MgO</option>
-      <option value="3">水の電気分解 — H₂O → H₂ + O₂</option>
-      <option value="4">鉄と硫黄の化合 — Fe + S → FeS</option>
-      <option value="5">銅の酸化 — Cu + O₂ → CuO</option>
-    </select>
+    <div class="hud">
+      <div class="hud-pill">問 <b id="bal-qnum">1</b>/<b id="bal-qtotal">6</b></div>
+    </div>
+    <div class="prog-wrap"><div class="prog-fill" id="bal-prog" style="width:0%"></div></div>
+    <!-- ラップタイム -->
+    <div class="lap-wrap" id="bal-lap-wrap">
+      <div class="lap-label">⏱ ラップタイム</div>
+      <div style="display:flex;align-items:baseline;gap:.5rem">
+        <div class="lap-display" id="bal-lap-display">0.0s</div>
+        <div class="lap-sub" id="bal-lap-sub"></div>
+      </div>
+      <div class="lap-list" id="bal-lap-list"></div>
+    </div>
+    <div class="q-cat" id="bal-cat"></div>
     <div class="balance-area" id="bal-area"></div>
     <div class="fb" id="bal-fb"></div>
+    <button class="next-btn" id="bal-next-btn" onclick="nextBal()">次の問題へ →</button>
   </div>
 
 
@@ -319,41 +342,67 @@ const Qs = [
 ];
 
 const BALS = [
-  {parts:["H₂","O₂","H₂O"],ans:[2,1,2],ltr:true},
-  {parts:["C","O₂","CO₂"],ans:[1,1,1],ltr:true},
-  {parts:["Mg","O₂","MgO"],ans:[2,1,2],ltr:true},
-  {parts:["H₂O","H₂","O₂"],ans:[2,2,1],ltr:false},
-  {parts:["Fe","S","FeS"],ans:[1,1,1],ltr:true},
-  {parts:["Cu","O₂","CuO"],ans:[2,1,2],ltr:true}
+  {name:"水素の燃焼",    cat:"燃焼", parts:["H₂","O₂","H₂O"],  ans:[2,1,2],ltr:true},
+  {name:"炭素の燃焼",    cat:"燃焼", parts:["C","O₂","CO₂"],   ans:[1,1,1],ltr:true},
+  {name:"マグネシウムの燃焼",cat:"燃焼",parts:["Mg","O₂","MgO"],ans:[2,1,2],ltr:true},
+  {name:"水の電気分解",  cat:"分解", parts:["H₂O","H₂","O₂"],  ans:[2,2,1],ltr:false},
+  {name:"鉄と硫黄の化合",cat:"化合", parts:["Fe","S","FeS"],    ans:[1,1,1],ltr:true},
+  {name:"銅の酸化",      cat:"化合", parts:["Cu","O₂","CuO"],   ans:[2,1,2],ltr:true}
 ];
 
 /* ==================== STATE ==================== */
 let qIdx=0, lives=3, xp=0, combo=0, maxCombo=0, correct=0, answered=false;
-let timerInterval=null, timeLeft=15, gameMode='normal';
+let gameMode='normal';
+
+// ラップタイム（クイズ）
+let quizLapStart=0, quizLapTick=null, quizLaps=[];
+// ラップタイム（係数合わせ）
+let balLapStart=0, balLapTick=null, balLaps=[];
+let shuffledBals=[], balIdx=0;
 
 /* ==================== ROUTING ==================== */
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo({top:0, behavior:'smooth'});
+  if (id === 's-balance') {
+    balLaps = []; balIdx = 0;
+    shuffledBals = shuffle(BALS);
+    const sub = document.getElementById('bal-lap-sub');
+    if (sub) sub.textContent = '';
+    const list = document.getElementById('bal-lap-list');
+    if (list) list.innerHTML = '';
+    loadBal();
+  }
 }
 
 function goHome() {
-  clearTimer();
+  stopQuizLap(); stopBalLap();
   showScreen('s-title');
 }
 
 /* ==================== QUIZ ==================== */
-function startQuiz(mode) {
-  gameMode = mode;
+const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
+let shuffledQs = [];
+
+function startQuiz() {
+  gameMode = 'normal';
   qIdx = 0; lives = 3; xp = 0; combo = 0; maxCombo = 0; correct = 0; answered = false;
-  document.getElementById('timer-svg').style.display = mode === 'time' ? '' : 'none';
+  quizLaps = [];
+  shuffledQs = shuffle(Qs); // ②問題順ランダム
   updateHUD();
   showScreen('s-quiz');
   loadQ();
+  setTimeout(initCanvas, 50);
 }
 
-function retryGame() { startQuiz(gameMode); }
+function retryGame() {
+  // リザルトの「もう一度」ボタンをクイズ用に戻す
+  const btn = document.querySelector('#s-result .action-btn.primary');
+  btn.onclick = retryGame;
+  btn.textContent = 'もう一度！';
+  startQuiz();
+}
 
 function updateHUD() {
   document.getElementById('lives').textContent = '❤️'.repeat(lives) + '🖤'.repeat(3 - lives);
@@ -366,64 +415,36 @@ function updateHUD() {
 }
 
 function loadQ() {
-  answered = false; clearTimer();
-  if (qIdx >= Qs.length) { endGame(); return; }
-  const q = Qs[qIdx];
+  answered = false;
+  if (qIdx >= shuffledQs.length) { endGame(); return; }
+  const q = shuffledQs[qIdx];
   document.getElementById('q-cat').textContent = q.cat;
   document.getElementById('q-text').textContent = q.q;
   document.getElementById('q-eq').innerHTML = q.eq;
   document.getElementById('fb').className = 'fb';
   document.getElementById('next-btn').className = 'next-btn';
   const ch = document.getElementById('choices'); ch.innerHTML = '';
-  q.cs.forEach((c, i) => {
+  // ①選択肢をシャッフル（元インデックスをdata-idxで保持）
+  const shuffled = shuffle(q.cs.map((c, i) => ({c, i})));
+  shuffled.forEach(({c, i}) => {
     const b = document.createElement('button');
     b.className = 'choice'; b.innerHTML = c;
+    b.dataset.idx = i;
     b.onclick = () => pick(i, b);
     ch.appendChild(b);
   });
-  if (gameMode === 'time') startTimer();
-}
-
-function startTimer() {
-  timeLeft = 15; updateTimer();
-  timerInterval = setInterval(() => {
-    timeLeft--;
-    updateTimer();
-    if (timeLeft <= 0) { clearInterval(timerInterval); timerInterval = null; timeUp(); }
-  }, 1000);
-}
-
-function clearTimer() {
-  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
-}
-
-function updateTimer() {
-  document.getElementById('timer-txt').textContent = timeLeft;
-  const offset = Math.round(107 * (1 - timeLeft / 15));
-  document.getElementById('timer-arc').setAttribute('stroke-dashoffset', offset);
-  document.getElementById('timer-arc').style.stroke = timeLeft <= 5 ? '#e84646' : '#1fd4a0';
-}
-
-function timeUp() {
-  if (answered) return;
-  answered = true;
-  const q = Qs[qIdx];
-  document.querySelectorAll('.choice')[q.a].classList.add('correct');
-  const fb = document.getElementById('fb');
-  fb.textContent = '⏱ 時間切れ！ ' + q.hint; fb.className = 'fb ng show';
-  lives = Math.max(0, lives - 1); combo = 0; updateHUD();
-  if (lives === 0) { setTimeout(endGame, 1400); return; }
-  document.getElementById('next-btn').className = 'next-btn show';
+  startQuizLap();
 }
 
 function pick(i, btn) {
   if (answered) return;
-  answered = true; clearTimer();
-  const q = Qs[qIdx];
+  answered = true;
+  const lapTime = stopQuizLap();
+  const q = shuffledQs[qIdx];
   const fb = document.getElementById('fb');
-  document.querySelectorAll('.choice').forEach((b, j) => {
-    if (j === q.a) b.classList.add('correct');
-    else if (j === i) b.classList.add('wrong');
+  document.querySelectorAll('.choice').forEach(b => {
+    if (parseInt(b.dataset.idx) === q.a) b.classList.add('correct');
+    else if (b === btn) b.classList.add('wrong');
   });
   if (i === q.a) {
     correct++; combo++; if (combo > maxCombo) maxCombo = combo;
@@ -436,6 +457,7 @@ function pick(i, btn) {
     btn.classList.add('shake');
     fb.textContent = '✗ 不正解。' + q.hint; fb.className = 'fb ng show';
   }
+  recordQuizLap(qIdx + 1, lapTime, i === q.a);
   updateHUD();
   if (lives === 0) { setTimeout(endGame, 1400); return; }
   document.getElementById('next-btn').className = 'next-btn show';
@@ -444,8 +466,8 @@ function pick(i, btn) {
 function nextQ() { qIdx++; updateHUD(); loadQ(); }
 
 function endGame() {
-  clearTimer();
-  const pct = Math.round(correct / Qs.length * 100);
+  stopQuizLap();
+  const pct = Math.round(correct / shuffledQs.length * 100);
   const ranks = [
     {min:90, icon:'🏆', title:'化学の達人！', sub:'パーフェクトに近い！すごい！'},
     {min:70, icon:'⭐', title:'よくできました！', sub:'あと少しでマスター！'},
@@ -456,40 +478,175 @@ function endGame() {
   document.getElementById('rank-icon').textContent = r.icon;
   document.getElementById('rank-title').textContent = r.title;
   document.getElementById('rank-sub').textContent = r.sub;
-  document.getElementById('r-correct').textContent = correct + '/' + Qs.length;
+  document.getElementById('r-correct').textContent = correct + '/' + shuffledQs.length;
   document.getElementById('r-xp').textContent = xp;
   document.getElementById('r-combo').textContent = 'x' + maxCombo;
+  // タイム集計
+  const total = quizLaps.reduce((s, l) => s + l.time, 0);
+  const best = quizLaps.length ? Math.min(...quizLaps.map(l => l.time)) : 0;
+  document.getElementById('r-time').textContent = fmtTime(total);
+  document.getElementById('r-best').textContent = fmtTime(best);
   showScreen('s-result');
 }
 
 /* ==================== BALANCE ==================== */
 function loadBal() {
-  const idx = +document.getElementById('bal-pick').value;
-  const bd = BALS[idx];
+  if (balIdx >= shuffledBals.length) { endBal(); return; }
+  const bd = shuffledBals[balIdx];
+  // HUD更新
+  document.getElementById('bal-qnum').textContent = balIdx + 1;
+  document.getElementById('bal-qtotal').textContent = shuffledBals.length;
+  document.getElementById('bal-prog').style.width = Math.round(balIdx / shuffledBals.length * 100) + '%';
+  document.getElementById('bal-cat').textContent = bd.cat;
+  document.getElementById('bal-fb').className = 'fb';
+  document.getElementById('bal-next-btn').className = 'next-btn';
   const inp = i => `<input class="coeff-inp" id="bi${i}" type="number" min="1" max="9" placeholder="?">`;
   const chip = i => `${inp(i)}<span class="mol-chip">${bd.parts[i]}</span>`;
-  let html = '<div class="balance-row-ui">';
+  let html = `<div style="font-size:13px;color:var(--text2);margin-bottom:.75rem">${bd.name}</div>`;
+  html += '<div class="balance-row-ui">';
   if (bd.ltr) {
     html += chip(0) + '<span class="op-sym">+</span>' + chip(1) + '<span class="op-sym">→</span>' + chip(2);
   } else {
     html += chip(0) + '<span class="op-sym">→</span>' + chip(1) + '<span class="op-sym">+</span>' + chip(2);
   }
   html += '</div>';
-  html += `<button class="check-btn" onclick="checkBal(${idx})">答え合わせ</button>`;
+  html += `<button class="check-btn" onclick="checkBal()">答え合わせ</button>`;
   document.getElementById('bal-area').innerHTML = html;
-  document.getElementById('bal-fb').className = 'fb';
+  startBalLap();
 }
 
-function checkBal(idx) {
-  const bd = BALS[idx];
+function checkBal() {
+  const bd = shuffledBals[balIdx];
   const vals = bd.parts.map((_, i) => parseInt(document.getElementById('bi' + i).value) || 0);
   const fb = document.getElementById('bal-fb');
-  if (vals.every((v, i) => v === bd.ans[i])) {
+  const lapTime = stopBalLap();
+  const isCorrect = vals.every((v, i) => v === bd.ans[i]);
+  if (isCorrect) {
     fb.textContent = '✓ 正解！完璧にバランスが取れています！'; fb.className = 'fb ok show';
   } else {
     fb.textContent = '✗ もう少し！ 正解の係数: ' + bd.ans.map((v, i) => bd.parts[i] + '=' + v).join('、') + '　両辺の原子数を数えてみよう。';
     fb.className = 'fb ng show';
   }
+  recordBalLap(bd.name, lapTime, isCorrect);
+  if (balIdx < shuffledBals.length - 1) {
+    document.getElementById('bal-next-btn').className = 'next-btn show';
+  } else {
+    document.getElementById('bal-next-btn').className = 'next-btn show';
+    document.getElementById('bal-next-btn').textContent = '結果を見る →';
+  }
+}
+
+function nextBal() {
+  balIdx++;
+  if (balIdx >= shuffledBals.length) { endBal(); return; }
+  document.getElementById('bal-next-btn').textContent = '次の問題へ →';
+  loadBal();
+}
+
+function endBal() {
+  stopBalLap();
+  const total = balLaps.reduce((s, l) => s + l.time, 0);
+  const correctCount = balLaps.filter(l => l.ok).length;
+  const best = balLaps.length ? Math.min(...balLaps.map(l => l.time)) : 0;
+  // リザルト画面を係数合わせ用に表示
+  const pct = Math.round(correctCount / shuffledBals.length * 100);
+  const ranks = [
+    {min:100,icon:'🏆',title:'完璧！',sub:'全問正解！バランシングマスター！'},
+    {min:67, icon:'⭐',title:'よくできました！',sub:'あと少しで完璧！'},
+    {min:34, icon:'🔬',title:'なかなか！',sub:'復習でさらに上達しよう！'},
+    {min:0,  icon:'📚',title:'まだまだこれから！',sub:'諦めずにもう一度挑戦！'}
+  ];
+  const r = ranks.find(x => pct >= x.min);
+  document.getElementById('rank-icon').textContent = r.icon;
+  document.getElementById('rank-title').textContent = r.title;
+  document.getElementById('rank-sub').textContent = r.sub;
+  document.getElementById('r-correct').textContent = correctCount + '/' + shuffledBals.length;
+  document.getElementById('r-xp').textContent = '—';
+  document.getElementById('r-combo').textContent = '—';
+  document.getElementById('r-time').textContent = fmtTime(total);
+  document.getElementById('r-best').textContent = fmtTime(best);
+  // リトライボタンを係数合わせ用に
+  document.querySelector('#s-result .action-btn.primary').onclick = () => showScreen('s-balance');
+  document.querySelector('#s-result .action-btn.primary').textContent = 'もう一度！';
+  showScreen('s-result');
+}
+
+/* ==================== LAP TIME ==================== */
+function fmtTime(ms) {
+  if (ms < 60000) return (ms / 1000).toFixed(1) + 's';
+  return Math.floor(ms / 60000) + 'm' + ((ms % 60000) / 1000).toFixed(0).padStart(2,'0') + 's';
+}
+
+// --- クイズ用 ---
+function startQuizLap() {
+  stopQuizLap();
+  quizLapStart = Date.now();
+  quizLapTick = setInterval(() => {
+    const el = document.getElementById('quiz-lap-display');
+    if (el) el.textContent = fmtTime(Date.now() - quizLapStart);
+  }, 100);
+}
+
+function stopQuizLap() {
+  if (quizLapTick) { clearInterval(quizLapTick); quizLapTick = null; }
+  return quizLapStart ? Date.now() - quizLapStart : 0;
+}
+
+function recordQuizLap(qNo, ms, ok) {
+  quizLaps.push({q: qNo, time: ms, ok});
+  renderQuizLaps();
+}
+
+function renderQuizLaps() {
+  const list = document.getElementById('quiz-lap-list');
+  if (!list) return;
+  const times = quizLaps.map(l => l.time);
+  const best = Math.min(...times), worst = Math.max(...times);
+  list.innerHTML = [...quizLaps].reverse().map(l => {
+    const cls = times.length > 1 ? (l.time === best ? ' best' : l.time === worst ? ' worst' : '') : '';
+    return `<div class="lap-item${cls}">
+      <span class="lap-item-label">${l.ok ? '✓' : '✗'} 問${l.q}</span>
+      <span class="lap-item-time">${fmtTime(l.time)}</span>
+    </div>`;
+  }).join('');
+  const sub = document.getElementById('quiz-lap-sub');
+  if (sub && quizLaps.length > 1) sub.textContent = `最速 ${fmtTime(best)} / 最遅 ${fmtTime(worst)}`;
+}
+
+// --- 係数合わせ用 ---
+function startBalLap() {
+  stopBalLap();
+  balLapStart = Date.now();
+  balLapTick = setInterval(() => {
+    const el = document.getElementById('bal-lap-display');
+    if (el) el.textContent = fmtTime(Date.now() - balLapStart);
+  }, 100);
+}
+
+function stopBalLap() {
+  if (balLapTick) { clearInterval(balLapTick); balLapTick = null; }
+  return balLapStart ? Date.now() - balLapStart : 0;
+}
+
+function recordBalLap(name, ms, ok) {
+  balLaps.push({name, time: ms, ok});
+  renderBalLaps();
+}
+
+function renderBalLaps() {
+  const list = document.getElementById('bal-lap-list');
+  if (!list) return;
+  const times = balLaps.map(l => l.time);
+  const best = Math.min(...times), worst = Math.max(...times);
+  list.innerHTML = [...balLaps].reverse().map(l => {
+    const cls = times.length > 1 ? (l.time === best ? ' best' : l.time === worst ? ' worst' : '') : '';
+    return `<div class="lap-item${cls}">
+      <span class="lap-item-label">${l.ok ? '✓' : '✗'} ${l.name}</span>
+      <span class="lap-item-time">${fmtTime(l.time)}</span>
+    </div>`;
+  }).join('');
+  const sub = document.getElementById('bal-lap-sub');
+  if (sub && balLaps.length > 1) sub.textContent = `最速 ${fmtTime(best)} / 最遅 ${fmtTime(worst)}`;
 }
 
 /* ==================== CANVAS DRAWING ==================== */
@@ -536,9 +693,6 @@ function clearCanvas() {
 }
 
 /* ==================== INIT ==================== */
-loadBal();
-window.addEventListener('load', initCanvas);
-window.addEventListener('resize', initCanvas);
 </script>
 </body>
 </html>
