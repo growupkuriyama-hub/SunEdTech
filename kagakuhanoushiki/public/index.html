@@ -32,6 +32,7 @@
   --r3:24px;
 }
 html,body{height:100%;font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;font-size:15px;overflow-x:hidden}
+
 sub{font-size:.65em;vertical-align:baseline;position:relative;bottom:-.2em}
 button{font-family:inherit;cursor:pointer}
 
@@ -90,7 +91,7 @@ button{font-family:inherit;cursor:pointer}
 /* ===== QUESTION ===== */
 .q-cat{font-size:11px;color:var(--teal);text-transform:uppercase;letter-spacing:.8px;margin-bottom:.6rem;font-weight:500}
 .q-text{font-size:15px;color:var(--text);margin-bottom:.85rem;line-height:1.6}
-.eq-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:1.1rem 1.5rem;text-align:center;font-family:'Syne',sans-serif;font-size:1.4rem;color:var(--text);margin-bottom:1rem;min-height:60px;display:flex;align-items:center;justify-content:center;letter-spacing:.5px}
+.eq-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:1.1rem 1.5rem;text-align:center;font-family:'Noto Sans JP',sans-serif;font-size:1.4rem;color:var(--text);margin-bottom:1rem;min-height:60px;display:flex;align-items:center;justify-content:center;letter-spacing:.5px}
 .choices{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem}
 .choice{padding:11px 8px;border:1px solid var(--border);border-radius:var(--r);background:var(--surface);font-size:13px;color:var(--text);text-align:center;transition:all .15s;line-height:1.4}
 .choice:hover{background:var(--surface2);border-color:var(--border2)}
@@ -131,10 +132,10 @@ button{font-family:inherit;cursor:pointer}
 .styled-select:focus{outline:none;border-color:var(--teal3)}
 .balance-area{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:1.25rem;margin-bottom:1rem}
 .balance-row-ui{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:1rem}
-.coeff-inp{width:46px;height:40px;text-align:center;font-size:18px;font-family:'Syne',sans-serif;font-weight:700;border:1px solid var(--border2);border-radius:var(--r);background:var(--bg3);color:var(--text)}
+.coeff-inp{width:46px;height:40px;text-align:center;font-size:18px;font-family:'Noto Sans JP',sans-serif;font-weight:700;border:1px solid var(--border2);border-radius:var(--r);background:var(--bg3);color:var(--text)}
 .coeff-inp:focus{outline:none;border-color:var(--teal)}
 .mol-chip{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:6px 12px;font-size:14px;color:var(--text)}
-.op-sym{font-size:20px;color:var(--text3);padding:0 2px;font-family:'Syne',sans-serif}
+.op-sym{font-size:20px;color:var(--text3);padding:0 2px;font-family:'Noto Sans JP',sans-serif}
 .check-btn{padding:9px 20px;border:1px solid var(--teal3);border-radius:var(--r);background:transparent;font-size:13px;color:var(--teal);font-family:'Noto Sans JP',sans-serif;transition:all .15s}
 .check-btn:hover{background:rgba(31,212,160,.1)}
 
@@ -159,6 +160,13 @@ button{font-family:inherit;cursor:pointer}
 .ref-name{font-size:12px;color:var(--text2);flex-shrink:0;min-width:90px}
 .ref-eq{font-size:13px;color:var(--text)}
 
+/* ===== CANVAS DRAW AREA ===== */
+.draw-wrap{margin-bottom:1rem}
+.draw-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:.4rem;display:flex;align-items:center;justify-content:space-between}
+.draw-clear{font-size:11px;color:var(--text3);background:transparent;border:none;cursor:pointer;padding:2px 6px;border-radius:4px;transition:color .15s}
+.draw-clear:hover{color:var(--text2)}
+.draw-canvas{display:block;width:100%;height:140px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);touch-action:none;cursor:crosshair}
+
 /* ===== RESPONSIVE ===== */
 @media(max-width:440px){
   .mode-grid{grid-template-columns:1fr}
@@ -180,7 +188,7 @@ button{font-family:inherit;cursor:pointer}
     </div>
     <div class="title-hero">
       <h1>反応式を<br>マスターしよう</h1>
-      <p>4つのモードで楽しく学べる化学ゲーム</p>
+      <p>3つのモードで楽しく学べる化学ゲーム</p>
     </div>
     <div class="mode-grid">
       <div class="mode-card" onclick="startQuiz('normal')">
@@ -193,15 +201,10 @@ button{font-family:inherit;cursor:pointer}
         <div class="mode-name">タイムアタック</div>
         <div class="mode-desc">15秒以内に答えろ！<br>時間切れでライフ減少</div>
       </div>
-      <div class="mode-card" onclick="showScreen('s-balance')">
+      <div class="mode-card full" onclick="showScreen('s-balance')">
         <span class="mode-icon">⚖️</span>
         <div class="mode-name">係数合わせ</div>
         <div class="mode-desc">係数を入力してバランシング練習</div>
-      </div>
-      <div class="mode-card" onclick="showScreen('s-explore');initExplore()">
-        <span class="mode-icon">🔬</span>
-        <div class="mode-name">探索モード</div>
-        <div class="mode-desc">分子ビジュアル＋反応式一覧</div>
       </div>
     </div>
   </div>
@@ -228,6 +231,13 @@ button{font-family:inherit;cursor:pointer}
     <div class="q-text" id="q-text"></div>
     <div class="eq-box" id="q-eq"></div>
     <div class="choices" id="choices"></div>
+    <div class="draw-wrap" id="draw-wrap">
+      <div class="draw-label">
+        <span>✏️ 計算メモ（ここに書いて考えよう）</span>
+        <button class="draw-clear" onclick="clearCanvas()">消す</button>
+      </div>
+      <canvas class="draw-canvas" id="draw-canvas"></canvas>
+    </div>
     <div class="fb" id="fb"></div>
     <button class="next-btn" id="next-btn" onclick="nextQ()">次の問題へ →</button>
   </div>
@@ -269,30 +279,6 @@ button{font-family:inherit;cursor:pointer}
     <div class="fb" id="bal-fb"></div>
   </div>
 
-  <!-- EXPLORE SCREEN -->
-  <div id="s-explore" class="screen">
-    <button class="back-btn" onclick="goHome()">
-      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-      ホームに戻る
-    </button>
-    <div class="tab-bar">
-      <button class="tab on" id="tab-vis-btn" onclick="switchTab('vis')">🔬 分子ビジュアル</button>
-      <button class="tab" id="tab-ref-btn" onclick="switchTab('ref')">📋 反応式一覧</button>
-    </div>
-    <div id="tab-vis">
-      <select class="styled-select" id="vis-pick" onchange="loadVis()">
-        <option value="0">2H₂ + O₂ → 2H₂O（水素の燃焼）</option>
-        <option value="1">C + O₂ → CO₂（炭素の燃焼）</option>
-        <option value="2">2Mg + O₂ → 2MgO（マグネシウムの燃焼）</option>
-        <option value="3">HCl + NaOH → NaCl + H₂O（中和）</option>
-      </select>
-      <div class="vis-container" id="vis-area"></div>
-      <div class="vis-desc" id="vis-desc"></div>
-    </div>
-    <div id="tab-ref" style="display:none">
-      <div class="ref-list" id="ref-list"></div>
-    </div>
-  </div>
 
 </div><!-- /container -->
 </div><!-- /app -->
@@ -300,7 +286,7 @@ button{font-family:inherit;cursor:pointer}
 <script>
 /* ==================== DATA ==================== */
 const Qs = [
-  {cat:"燃焼",q:"水素が燃焼するときの化学反応式はどれ？",eq:"2H<sub>2</sub> + O<sub>2</sub> → 2H<sub>2</sub>O",
+  {cat:"燃焼",q:"水素が燃焼するときの化学反応式はどれ？",eq:"H<sub>2</sub> + O<sub>2</sub> → ?",
    cs:["2H<sub>2</sub>+O<sub>2</sub>→2H<sub>2</sub>O","H<sub>2</sub>+O<sub>2</sub>→H<sub>2</sub>O","2H+O→H<sub>2</sub>O","H<sub>2</sub>+2O→H<sub>2</sub>O<sub>2</sub>"],a:0,
    hint:"水素2分子＋酸素1分子→水2分子。係数は2:1:2。"},
   {cat:"燃焼",q:"炭素が完全燃焼するとできるものは？",eq:"C + O<sub>2</sub> → ?",
@@ -339,34 +325,6 @@ const BALS = [
   {parts:["H₂O","H₂","O₂"],ans:[2,2,1],ltr:false},
   {parts:["Fe","S","FeS"],ans:[1,1,1],ltr:true},
   {parts:["Cu","O₂","CuO"],ans:[2,1,2],ltr:true}
-];
-
-const REFS = [
-  {cat:"燃焼",name:"水素",eq:"2H<sub>2</sub>+O<sub>2</sub>→2H<sub>2</sub>O"},
-  {cat:"燃焼",name:"炭素",eq:"C+O<sub>2</sub>→CO<sub>2</sub>"},
-  {cat:"燃焼",name:"マグネシウム",eq:"2Mg+O<sub>2</sub>→2MgO"},
-  {cat:"燃焼",name:"メタン",eq:"CH<sub>4</sub>+2O<sub>2</sub>→CO<sub>2</sub>+2H<sub>2</sub>O"},
-  {cat:"分解",name:"水（電気分解）",eq:"2H<sub>2</sub>O→2H<sub>2</sub>+O<sub>2</sub>"},
-  {cat:"分解",name:"酸化銀",eq:"2Ag<sub>2</sub>O→4Ag+O<sub>2</sub>"},
-  {cat:"化合",name:"鉄＋硫黄",eq:"Fe+S→FeS"},
-  {cat:"化合",name:"銅の酸化",eq:"2Cu+O<sub>2</sub>→2CuO"},
-  {cat:"中和",name:"HCl＋NaOH",eq:"HCl+NaOH→NaCl+H<sub>2</sub>O"},
-  {cat:"中和",name:"H₂SO₄＋Ba(OH)₂",eq:"H<sub>2</sub>SO<sub>4</sub>+Ba(OH)<sub>2</sub>→BaSO<sub>4</sub>+2H<sub>2</sub>O"}
-];
-
-const VISS = [
-  {left:[[{c:"#378ADD",l:"H"},{c:"#378ADD",l:"H"}],[{c:"#378ADD",l:"H"},{c:"#378ADD",l:"H"}],[{c:"#E24B4A",l:"O"},{c:"#E24B4A",l:"O"}]],
-   right:[[{c:"#378ADD",l:"H"},{c:"#E24B4A",l:"O"},{c:"#378ADD",l:"H"}],[{c:"#378ADD",l:"H"},{c:"#E24B4A",l:"O"},{c:"#378ADD",l:"H"}]],
-   desc:"水素分子2つ（H₂×2）と酸素分子1つ（O₂）が結びついて水分子が2つ（H₂O×2）できます。左右でH=4、O=2 と原子数が一致しています。"},
-  {left:[[{c:"#888780",l:"C"}],[{c:"#E24B4A",l:"O"},{c:"#E24B4A",l:"O"}]],
-   right:[[{c:"#E24B4A",l:"O"},{c:"#888780",l:"C"},{c:"#E24B4A",l:"O"}]],
-   desc:"炭素原子1つが酸素分子1つと反応して二酸化炭素1分子ができます。O=C=O の直線形の分子です。"},
-  {left:[[{c:"#7F77DD",l:"Mg"}],[{c:"#7F77DD",l:"Mg"}],[{c:"#E24B4A",l:"O"},{c:"#E24B4A",l:"O"}]],
-   right:[[{c:"#7F77DD",l:"Mg"},{c:"#E24B4A",l:"O"}],[{c:"#7F77DD",l:"Mg"},{c:"#E24B4A",l:"O"}]],
-   desc:"マグネシウム2原子と酸素2原子が結合して酸化マグネシウム(MgO)が2つできます。白い粉状の物質です。"},
-  {left:[[{c:"#E24B4A",l:"H"},{c:"#639922",l:"Cl"}],[{c:"#BA7517",l:"Na"},{c:"#E24B4A",l:"O"},{c:"#E24B4A",l:"H"}]],
-   right:[[{c:"#BA7517",l:"Na"},{c:"#639922",l:"Cl"}],[{c:"#E24B4A",l:"H"},{c:"#E24B4A",l:"O"},{c:"#E24B4A",l:"H"}]],
-   desc:"塩酸と水酸化ナトリウムが中和して、塩化ナトリウム（食塩）と水ができます。H⁺とOH⁻が結びついてH₂Oになります。"}
 ];
 
 /* ==================== STATE ==================== */
@@ -534,49 +492,53 @@ function checkBal(idx) {
   }
 }
 
-/* ==================== EXPLORE ==================== */
-function initExplore() { loadVis(); }
+/* ==================== CANVAS DRAWING ==================== */
+let drawing = false, lastX = 0, lastY = 0, ctx = null;
 
-function switchTab(t) {
-  document.getElementById('tab-vis').style.display = t === 'vis' ? '' : 'none';
-  document.getElementById('tab-ref').style.display = t === 'ref' ? '' : 'none';
-  document.getElementById('tab-vis-btn').classList.toggle('on', t === 'vis');
-  document.getElementById('tab-ref-btn').classList.toggle('on', t === 'ref');
-  if (t === 'ref') loadRef();
-  else loadVis();
-}
+function initCanvas() {
+  const canvas = document.getElementById('draw-canvas');
+  if (!canvas) return;
+  canvas.width = canvas.offsetWidth * window.devicePixelRatio;
+  canvas.height = canvas.offsetHeight * window.devicePixelRatio;
+  ctx = canvas.getContext('2d');
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  ctx.strokeStyle = '#1fd4a0';
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
 
-function loadVis() {
-  const idx = +document.getElementById('vis-pick').value;
-  const vd = VISS[idx];
-  function molsHtml(mols) {
-    return mols.map(m => {
-      const atoms = m.map(a => `<div class="atom" style="background:${a.c}">${a.l}</div>`).join('');
-      return `<div style="display:flex;gap:4px;align-items:center">${atoms}</div>`;
-    }).join('');
+  function pos(e) {
+    const r = canvas.getBoundingClientRect();
+    const src = e.touches ? e.touches[0] : e;
+    return [src.clientX - r.left, src.clientY - r.top];
   }
-  document.getElementById('vis-area').innerHTML =
-    `<div class="vis-side-label">反応前（左辺）</div>` +
-    `<div class="atom-row">${molsHtml(vd.left)}</div>` +
-    `<div class="vis-arrow">↓</div>` +
-    `<div class="vis-side-label">反応後（右辺）</div>` +
-    `<div class="atom-row">${molsHtml(vd.right)}</div>`;
-  document.getElementById('vis-desc').textContent = vd.desc;
+  function start(e) { e.preventDefault(); drawing = true; [lastX, lastY] = pos(e); }
+  function move(e) {
+    if (!drawing) return; e.preventDefault();
+    const [x, y] = pos(e);
+    ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(x, y); ctx.stroke();
+    [lastX, lastY] = [x, y];
+  }
+  function stop() { drawing = false; }
+
+  canvas.addEventListener('mousedown', start);
+  canvas.addEventListener('mousemove', move);
+  canvas.addEventListener('mouseup', stop);
+  canvas.addEventListener('mouseleave', stop);
+  canvas.addEventListener('touchstart', start, {passive: false});
+  canvas.addEventListener('touchmove', move, {passive: false});
+  canvas.addEventListener('touchend', stop);
 }
 
-function loadRef() {
-  const cats = [...new Set(REFS.map(r => r.cat))];
-  let html = '';
-  cats.forEach(cat => {
-    REFS.filter(r => r.cat === cat).forEach(r => {
-      html += `<div class="ref-item"><span class="ref-cat">${cat}</span><span class="ref-name">${r.name}</span><span class="ref-eq">${r.eq}</span></div>`;
-    });
-  });
-  document.getElementById('ref-list').innerHTML = html;
+function clearCanvas() {
+  const canvas = document.getElementById('draw-canvas');
+  if (ctx && canvas) ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
 }
 
 /* ==================== INIT ==================== */
 loadBal();
+window.addEventListener('load', initCanvas);
+window.addEventListener('resize', initCanvas);
 </script>
 </body>
 </html>
