@@ -569,6 +569,82 @@
     return a;
   }
 
+  // ============================================================
+  // 学習記録：localStorageだけを使う。通信なし・課金なし・Cookieなし。
+  // 正解回数が多い問題ほど出現率を下げ、不正解回数が多い問題ほど出やすくする。
+  // ============================================================
+  const STORAGE_KEY = "sunedtech_chemical_formula_quiz_stats_v1";
+
+  function getQuestionId(q) {
+    return `${q.name}__${toAscii(q.formula)}`;
+  }
+
+  function loadStats() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function saveStats(stats) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(stats));
+    } catch (e) {
+      // 保存できない環境では、普通のランダム出題として動かす。
+    }
+  }
+
+  function recordAnswer(q, ok) {
+    const stats = loadStats();
+    const id = getQuestionId(q);
+    const s = stats[id] || { seen: 0, correct: 0, wrong: 0 };
+    s.seen += 1;
+    if (ok) s.correct += 1;
+    else s.wrong += 1;
+    s.lastAnsweredAt = Date.now();
+    stats[id] = s;
+    saveStats(stats);
+  }
+
+  function getQuestionWeight(q, stats) {
+    const s = stats[getQuestionId(q)] || { correct: 0, wrong: 0 };
+    const correct = s.correct || 0;
+    const wrong = s.wrong || 0;
+
+    // 例：正解3回ならかなり出にくいが、完全には消さない。
+    // 不正解が多い問題は復習優先で出やすくする。
+    const correctPenalty = 1 + correct * 1.7;
+    const wrongBonus = 1 + wrong * 0.9;
+    return Math.max(0.12, wrongBonus / correctPenalty);
+  }
+
+  function weightedSample(arr, n) {
+    const stats = loadStats();
+    const remaining = [...arr];
+    const picked = [];
+
+    while (picked.length < n && remaining.length > 0) {
+      const weights = remaining.map(q => getQuestionWeight(q, stats));
+      const total = weights.reduce((sum, w) => sum + w, 0);
+      let r = Math.random() * total;
+      let idx = 0;
+      for (; idx < remaining.length; idx++) {
+        r -= weights[idx];
+        if (r <= 0) break;
+      }
+      picked.push(remaining.splice(Math.min(idx, remaining.length - 1), 1)[0]);
+    }
+    return picked;
+  }
+
+  function resetLearningStats() {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (e) {}
+  }
+
   let questions = [], cur = 0, results = [], answered = false;
   let qCount = 10, filterCat = "すべて";
 
@@ -578,7 +654,7 @@
     const pool = (filterCat === "すべて" ? ALL : ALL.filter(q => q.category === filterCat))
       .map(q => { const c = {...q}; delete c._skipped; return c; });
     const n = Math.min(qCount, pool.length);
-    questions = shuffle(pool).slice(0, n);
+    questions = weightedSample(pool, n);
     cur = 0; results = []; answered = false;
     render();
   }
@@ -606,6 +682,7 @@
           ${CATEGORIES.map(c => `<option${c===filterCat?' selected':''}>${c}</option>`).join('')}
         </select>
         <button class="btn" id="btn-restart">最初から</button>
+        <button class="btn" id="btn-reset-stats" title="この端末に保存した正解・不正解の記録を消します">記憶リセット</button>
       </div>
 
       <div class="score-bar">
@@ -630,12 +707,18 @@
         <button class="btn-next" id="btn-next">${cur + 1 < questions.length ? '次の問題へ　→' : '結果を見る ✨'}</button>
         <button class="btn-skip" id="btn-skip">この問題をスキップ</button>
       </div>
-      <p class="hint-note">✏️ 入力例: H2O, CuCl2, Fe2O3, NaHCO3 など<br>(小さい数字は普通の数字でOK)</p>
+      <p class="hint-note">✏️ 入力例: H2O, CuCl2, Fe2O3, NaHCO3 など<br>(小さい数字は普通の数字でOK)<br>📌 この端末内に成績を保存し、正解済みの問題は少し出にくくなります。</p>
     `;
 
     document.getElementById('sel-count').onchange = e => { qCount = +e.target.value; };
     document.getElementById('sel-cat').onchange = e => { filterCat = e.target.value; };
     document.getElementById('btn-restart').onclick = startQuiz;
+    document.getElementById('btn-reset-stats').onclick = () => {
+      if (confirm('この端末に保存した正解・不正解の記録をリセットしますか？')) {
+        resetLearningStats();
+        startQuiz();
+      }
+    };
 
     const inp = document.getElementById('ans');
     const chk = document.getElementById('btn-check');
@@ -656,6 +739,7 @@
       const ok = matches(inp.value, q.formula);
       answered = true;
       results.push(ok);
+      recordAnswer(q, ok);
       fb.innerHTML = ok ? `<span>⭕</span> 正解！　${q.formula}` : `<span>❌</span> 不正解… 正解は ${q.formula}`;
       fb.className = 'feedback ' + (ok ? 'ok' : 'ng');
       nxt.style.display = 'block';
