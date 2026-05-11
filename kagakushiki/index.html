@@ -162,6 +162,7 @@
       transition: all 0.3s ease;
     }
     .pip.ok  { background: var(--pip-ok); box-shadow: 0 2px 5px rgba(152, 217, 180, 0.4); }
+    .pip.partial { background: #FFD76A; box-shadow: 0 2px 5px rgba(255, 215, 106, 0.4); }
     .pip.ng  { background: var(--pip-ng); box-shadow: 0 2px 5px rgba(255, 171, 171, 0.4); }
     .pip.cur { background: var(--accent-pink); transform: scaleY(1.2); box-shadow: 0 2px 5px rgba(255, 183, 197, 0.4); }
 
@@ -315,6 +316,7 @@
     @keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
     .feedback.ok { background: var(--green-bg); color: var(--green-text); display: block; border: 1px solid rgba(74, 133, 97, 0.2); }
+    .feedback.partial { background: #FFF8D7; color: #9A6A00; display: block; border: 1px solid rgba(154, 106, 0, 0.22); }
     .feedback.ng { background: var(--red-bg);   color: var(--red-text);   display: block; border: 1px solid rgba(191, 90, 90, 0.2); }
 
     .btn-next {
@@ -553,12 +555,33 @@
   function toAscii(s) {
     return s.replace(/[₀-₉]/g, c => String.fromCharCode(c.charCodeAt(0) - 8272));
   }
-  function matches(input, formula) {
-    const i = input.trim();
-    const f = formula;
-    return i === f || i === toAscii(f) ||
-           i.toUpperCase() === f.toUpperCase() ||
-           i.toUpperCase() === toAscii(f).toUpperCase();
+
+  function toHalfWidth(s) {
+    return s
+      .replace(/[！-～]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0))
+      .replace(/　/g, ' ');
+  }
+
+  function normalizeFormulaInput(s) {
+    return toAscii(toHalfWidth(s))
+      .replace(/[（）]/g, c => c === '（' ? '(' : ')')
+      .replace(/[·・\s]/g, '')
+      .trim();
+  }
+
+  function judgeAnswer(input, formula) {
+    const answer = normalizeFormulaInput(input);
+    const correct = normalizeFormulaInput(formula);
+
+    if (answer === correct) {
+      return { status: 'ok', correct };
+    }
+
+    if (answer.length > 0 && answer.toUpperCase() === correct.toUpperCase()) {
+      return { status: 'partial', correct };
+    }
+
+    return { status: 'ng', correct };
   }
   function shuffle(arr) {
     const a = [...arr];
@@ -596,13 +619,18 @@
     }
   }
 
-  function recordAnswer(q, ok) {
+  function recordAnswer(q, status) {
     const stats = loadStats();
     const id = getQuestionId(q);
-    const s = stats[id] || { seen: 0, correct: 0, wrong: 0 };
+    const s = stats[id] || { seen: 0, correct: 0, wrong: 0, partial: 0 };
     s.seen += 1;
-    if (ok) s.correct += 1;
-    else s.wrong += 1;
+    if (status === 'ok') s.correct += 1;
+    else if (status === 'partial') {
+      s.partial = (s.partial || 0) + 1;
+      s.wrong += 1;
+    } else {
+      s.wrong += 1;
+    }
     s.lastAnsweredAt = Date.now();
     stats[id] = s;
     saveStats(stats);
@@ -666,7 +694,7 @@
 
     const pips = questions.map((_, i) => {
       let cls = 'pip';
-      if (i < cur) cls += results[i] ? ' ok' : ' ng';
+      if (i < cur) cls += results[i] === 'ok' ? ' ok' : (results[i] === 'partial' ? ' partial' : ' ng');
       else if (i === cur) cls += ' cur';
       return `<div class="${cls}"></div>`;
     }).join('');
@@ -686,7 +714,7 @@
       </div>
 
       <div class="score-bar">
-        <span class="score-num">${results.filter(Boolean).length}</span>
+        <span class="score-num">${results.filter(r => r === 'ok').length}</span>
         <span class="score-label">/ ${cur} 正解</span>
         <span class="score-right">${cur + 1} / ${questions.length}問</span>
       </div>
@@ -707,7 +735,7 @@
         <button class="btn-next" id="btn-next">${cur + 1 < questions.length ? '次の問題へ　→' : '結果を見る ✨'}</button>
         <button class="btn-skip" id="btn-skip">この問題をスキップ</button>
       </div>
-      <p class="hint-note">✏️ 入力例: H2O, CuCl2, Fe2O3, NaHCO3 など<br>(小さい数字は普通の数字でOK)<br>📌 この端末内に成績を保存し、正解済みの問題は少し出にくくなります。</p>
+      <p class="hint-note">✏️ 入力例: H2O, CuCl2, Fe2O3, NaHCO3 など<br>小さい数字は普通の数字でOK。半角・全角どちらでもOK。<br>⚠️ 元素記号の大文字小文字が違うと「△」になります。<br>📌 この端末内に成績を保存し、正解済みの問題は少し出にくくなります。</p>
     `;
 
     document.getElementById('sel-count').onchange = e => { qCount = +e.target.value; };
@@ -736,12 +764,20 @@
 
     function check() {
       if (answered) return;
-      const ok = matches(inp.value, q.formula);
+      const judgment = judgeAnswer(inp.value, q.formula);
       answered = true;
-      results.push(ok);
-      recordAnswer(q, ok);
-      fb.innerHTML = ok ? `<span>⭕</span> 正解！　${q.formula}` : `<span>❌</span> 不正解… 正解は ${q.formula}`;
-      fb.className = 'feedback ' + (ok ? 'ok' : 'ng');
+      results.push(judgment.status);
+      recordAnswer(q, judgment.status);
+
+      if (judgment.status === 'ok') {
+        fb.innerHTML = `<span>⭕</span> 正解！　${q.formula}`;
+      } else if (judgment.status === 'partial') {
+        fb.innerHTML = `<span>△</span> おしい！元素記号は大文字・小文字を区別します。正しくは ${q.formula}`;
+      } else {
+        fb.innerHTML = `<span>❌</span> 不正解… 正解は ${q.formula}`;
+      }
+
+      fb.className = 'feedback ' + judgment.status;
       nxt.style.display = 'block';
       chk.disabled = true;
       inp.disabled = true;
@@ -772,14 +808,14 @@
   }
 
   function renderResult(app) {
-    const sc = results.filter(Boolean).length;
+    const sc = results.filter(r => r === 'ok').length;
     const total = questions.length;
     const pct = Math.round(sc / total * 100);
     const msg = sc === total ? '満点！すごすぎます 🎉Perfect!'
               : pct >= 80 ? 'すばらしいです！🌸'
               : pct >= 60 ? '合格点！その調子です♪'
               : '伸びしろいっぱい！次がんばろう💖';
-    const wrong = questions.filter((_, i) => !results[i]);
+    const wrong = questions.filter((_, i) => results[i] !== 'ok');
     const wrongHtml = wrong.length ? `
       <div class="wrong-list">
         <div class="wrong-title">復習しよう（間違えた問題）</div>
