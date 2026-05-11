@@ -63,7 +63,7 @@
 
     .header {
       text-align: center;
-      margin-bottom: 0.65rem;
+      margin-bottom: 0.15rem;
     }
 
     .header h1 {
@@ -126,24 +126,36 @@
 
     .controls {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 0.65rem;
-    }
-
-    .ctrl {
+      grid-template-columns: 1fr;
+      gap: 6px;
+      width: min(360px, 100%);
+      margin: 0 auto 0.55rem;
       background: var(--card-bg);
-      padding: 0.55rem;
-      border-radius: 14px;
       border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 0.55rem;
       box-shadow: 0 4px 6px -1px rgba(0,0,0,0.025);
     }
 
+    .ctrl {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      padding: 0;
+      border-radius: 0;
+      border: none;
+      box-shadow: none;
+    }
+
     .ctrl-label {
-      font-size: 12px;
-      font-weight: 800;
+      width: 44px;
+      flex: 0 0 44px;
+      font-size: 13px;
+      font-weight: 900;
       color: var(--text-muted);
-      margin-bottom: 5px;
+      margin-bottom: 0;
+      text-align: right;
     }
 
     .ctrl-row {
@@ -151,21 +163,23 @@
       align-items: center;
       background: #f1f5f9;
       border-radius: 12px;
-      padding: 4px;
+      padding: 3px;
+      flex: 1;
+      min-width: 0;
     }
 
     .num-display {
       flex: 1;
       text-align: center;
-      font-size: 19px;
-      font-weight: 800;
+      font-size: 18px;
+      font-weight: 900;
       color: var(--text-main);
-      min-width: 32px;
+      min-width: 28px;
     }
 
     .stepper {
-      width: 32px;
-      height: 32px;
+      width: 30px;
+      height: 30px;
       border-radius: 8px;
       border: none;
       background: var(--card-bg);
@@ -192,10 +206,10 @@
 
     .ctrl-unit {
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 800;
       color: var(--text-muted);
-      margin-left: 8px;
-      min-width: 1.5em;
+      margin-left: 5px;
+      min-width: 1.4em;
     }
 
     .diagram-wrap {
@@ -361,12 +375,17 @@
 
     @media (max-width: 480px) {
       body { padding: 0.5rem 0.55rem 0.7rem; }
+      .header { margin-bottom: 0.05rem; }
       .header h1 { font-size: 22px; }
       .problem-card, .diagram-wrap { padding: 0.7rem; }
       .problem-card { font-size: 14px; }
-      .top-link { width: 100%; margin-bottom: 0.45rem; }
+      .top-link { width: 100%; margin-bottom: 0.35rem; }
       .btn-main { margin-bottom: 0.4rem; }
       .score-bar { gap: 9px; }
+      .controls { width: min(310px, 100%); padding: 0.45rem; gap: 5px; }
+      .ctrl-label { width: 38px; flex-basis: 38px; font-size: 12px; }
+      .stepper { width: 28px; height: 28px; }
+      .num-display { font-size: 17px; }
     }
   </style>
 </head>
@@ -446,7 +465,7 @@ const TYPES = [
 ];
 
 const PAIRS_BY_LEVEL = {
-  easy: [[0,1]]
+  easy: [[0,1], [2,3], [4,5], [6,7]]
 };
 
 let currentLevel = 'easy';
@@ -630,8 +649,7 @@ function loadProblem() {
   hintStep = 0;
 
   document.getElementById('prob-text').innerHTML =
-    `<div style="font-size:0.9em; color:#64748b; margin-bottom:4px;">Problem:</div>` +
-    `${ta.emoji}${ta.name}と${tb.emoji}${tb.name}が合わせて <b>${p.total}</b> ${unitForTotal(ta, tb)} います。<br>` +
+    `${ta.emoji}${ta.name}と${tb.emoji}${tb.name}が合わせて <b>${p.total}</b> います。<br>` +
     `あしの合計は <b>${p.legs}本</b> です。それぞれ何${unitForAnswer(ta, tb)}ですか？`;
 
   document.getElementById('lbl-a').textContent = `${ta.name}`;
