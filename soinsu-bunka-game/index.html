@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>そすうDEぶんかいゲーム - ぷにっとパズル</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -27,6 +27,10 @@
       --inner-shadow: inset 0 2px 4px rgba(0,0,0,0.03);
     }
 
+    html, body {
+      height: 100%;
+    }
+
     body {
       font-family: 'Nunito', 'Helvetica Neue', sans-serif;
       background-color: var(--bg);
@@ -35,18 +39,48 @@
         radial-gradient(circle at 90% 80%, rgba(129,212,250,0.05) 0%, transparent 20%);
       min-height: 100vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 1.5rem;
+      justify-content: flex-start;
+      padding: 1rem 1rem 3rem;
       color: var(--text);
+      /* スマホでの引っ張り防止 */
+      overscroll-behavior: none;
     }
 
+    /* ───── サイトに戻るボタン ───── */
+    .back-bar {
+      width: 100%;
+      max-width: 500px;
+      margin-bottom: 0.75rem;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 50px;
+      background: #FFF;
+      border: 2px solid #FFD0CC;
+      color: var(--primary);
+      font-weight: 800;
+      font-size: 13px;
+      text-decoration: none;
+      box-shadow: 0 2px 8px rgba(255,138,128,0.12);
+      transition: background 0.15s, transform 0.1s;
+    }
+    .back-link:hover { background: #FFF0EF; transform: translateY(-1px); }
+    .back-link:active { transform: translateY(1px); }
+    .back-arrow { font-size: 15px; }
+
+    /* ───── ゲーム本体 ───── */
     #game {
       width: 100%;
       max-width: 500px;
       background: var(--card);
       border-radius: var(--radius-card);
-      padding: 2rem;
+      /* スマホでカードが小さく見えないよう padding を clamp で柔軟に */
+      padding: clamp(1.2rem, 4vw, 2rem);
       box-shadow: var(--shadow);
       position: relative;
       overflow: hidden;
@@ -55,116 +89,170 @@
 
     .title {
       font-family: 'Fredoka One', cursive;
-      font-size: 28px;
+      /* clamp: 最小22px、推奨5.5vw、最大28px */
+      font-size: clamp(22px, 5.5vw, 28px);
       text-align: center;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.2rem;
       color: var(--primary);
       text-shadow: 2px 2px 0px rgba(255,138,128,0.1);
       letter-spacing: 1px;
     }
 
-    .diff-row { display: flex; gap: 8px; justify-content: center; margin-bottom: 1.5rem; }
+    /* ───── 難易度 ───── */
+    .diff-row { display: flex; gap: 8px; justify-content: center; margin-bottom: 1.2rem; }
     .diff-btn {
-      padding: 8px 18px; border-radius: var(--radius-round); border: 2px solid transparent;
-      font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 13px;
-      cursor: pointer; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      background: #F5F0EE; color: var(--text-light);
+      padding: 8px 16px;
+      border-radius: var(--radius-round);
+      border: 2px solid transparent;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: clamp(12px, 3vw, 14px);
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      background: #F5F0EE;
+      color: var(--text-light);
+      /* タップ領域を十分に確保 */
+      min-height: 40px;
     }
-    .diff-btn.active { transform: scale(1.1); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .diff-btn.active { transform: scale(1.08); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
     .diff-btn.easy.active  { background: var(--success); color: white; }
     .diff-btn.normal.active{ background: var(--secondary); color: white; }
     .diff-btn.hard.active  { background: var(--primary); color: white; }
 
-    .top-row { display: flex; gap: 12px; margin-bottom: 1.2rem; }
+    /* ───── 上部ステータス ───── */
+    .top-row { display: flex; gap: 8px; margin-bottom: 1rem; }
     .stat-box {
-      flex: 1; padding: 10px; border-radius: 18px; text-align: center;
+      flex: 1; padding: 8px 6px; border-radius: 16px; text-align: center;
       background: #FFFAF8; border: 2px solid #FDF2EE;
     }
-    .stat-label { font-size: 10px; font-weight: 900; color: var(--text-light); text-transform: uppercase; margin-bottom: 2px; }
-    .stat-val { font-family: 'Fredoka One', cursive; font-size: 22px; color: var(--text); }
+    .stat-label { font-size: clamp(9px, 2.2vw, 11px); font-weight: 900; color: var(--text-light); text-transform: uppercase; margin-bottom: 2px; }
+    .stat-val   { font-family: 'Fredoka One', cursive; font-size: clamp(18px, 4.5vw, 22px); color: var(--text); line-height: 1.2; }
     .lives-box { background: #FFF0EF; border-color: #FFE5E3; }
     .sw-box    { background: #F0F9FF; border-color: #E0F2FE; }
 
+    /* ───── 問題表示 ───── */
     .target-container {
-      background: #F8F9FA; border-radius: 20px; padding: 1.5rem;
-      text-align: center; margin-bottom: 1rem; position: relative;
+      background: #F8F9FA; border-radius: 18px; padding: 1.2rem 1rem;
+      text-align: center; margin-bottom: 0.8rem;
       box-shadow: var(--inner-shadow);
     }
-    .target-label { font-weight: 900; font-size: 11px; color: var(--text-light); letter-spacing: 2px; margin-bottom: 8px; }
-    .equation-line { font-family: 'Fredoka One', cursive; line-height: 1.2; color: var(--text); }
-    .eq-original  { font-size: 52px; color: var(--text); }
-    .eq-factor    { color: var(--primary); font-size: 30px; }
-    .eq-sep       { color: #DDD; font-size: 24px; margin: 0 4px; }
-    .eq-remaining { color: var(--success); font-size: 30px; }
+    .target-label { font-weight: 900; font-size: 11px; color: var(--text-light); letter-spacing: 2px; margin-bottom: 6px; }
+    .equation-line { font-family: 'Fredoka One', cursive; line-height: 1.2; color: var(--text); word-break: break-all; }
+    /* 数字は画面幅に合わせて縮む */
+    .eq-original  { font-size: clamp(36px, 10vw, 52px); color: var(--text); }
+    .eq-factor    { color: var(--primary); font-size: clamp(22px, 6vw, 30px); }
+    .eq-sep       { color: #DDD; font-size: clamp(18px, 5vw, 24px); margin: 0 3px; }
+    .eq-remaining { color: var(--success); font-size: clamp(22px, 6vw, 30px); }
 
-    .remaining-display { text-align: center; margin-bottom: 1.2rem; }
-    .remaining-num { font-family: 'Fredoka One', cursive; font-size: 70px; color: var(--success); line-height: 1; }
+    /* ───── 残りの値（大） ───── */
+    .remaining-display { text-align: center; margin-bottom: 1rem; }
+    .remaining-num { font-family: 'Fredoka One', cursive; font-size: clamp(52px, 15vw, 70px); color: var(--success); line-height: 1; }
 
-    .prime-grid-label { font-size: 11px; font-weight: 900; color: var(--text-light); text-align: center; margin-bottom: 10px; letter-spacing: 1.5px; }
-    .prime-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 1.2rem; }
+    /* ───── 素数ボタン ───── */
+    .prime-grid-label { font-size: 11px; font-weight: 900; color: var(--text-light); text-align: center; margin-bottom: 8px; letter-spacing: 1.5px; }
+    .prime-grid {
+      display: flex; flex-wrap: wrap; gap: clamp(6px, 2vw, 10px);
+      justify-content: center; margin-bottom: 1rem;
+    }
     .prime-btn {
-      width: 65px; height: 65px; border-radius: 20px; border: none;
-      background: #FFF; box-shadow: 0 4px 0 #EBE0DC, 0 6px 15px rgba(0,0,0,0.05);
-      font-family: 'Fredoka One', cursive; font-size: 24px; color: var(--text);
+      /* clamp で最小54px、最大65px。8ボタン並ぶ幅を確保 */
+      width: clamp(52px, 13vw, 65px);
+      height: clamp(52px, 13vw, 65px);
+      border-radius: 18px; border: none;
+      background: #FFF;
+      box-shadow: 0 4px 0 #EBE0DC, 0 6px 15px rgba(0,0,0,0.05);
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(18px, 5vw, 24px);
+      color: var(--text);
       cursor: pointer; transition: all 0.1s; position: relative;
       display: flex; align-items: center; justify-content: center;
+      /* タップ時のハイライト除去 */
+      -webkit-tap-highlight-color: transparent;
     }
-    .prime-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 0 #EBE0DC, 0 8px 20px rgba(0,0,0,0.08); }
-    .prime-btn:active:not(:disabled){ transform: translateY(4px); box-shadow: 0 0 0 #EBE0DC; }
+    .prime-btn:hover:not(:disabled)  { transform: translateY(-2px); box-shadow: 0 6px 0 #EBE0DC, 0 8px 20px rgba(0,0,0,0.08); }
+    .prime-btn:active:not(:disabled) { transform: translateY(4px);  box-shadow: 0 0 0 #EBE0DC; }
     .prime-btn:disabled { opacity: 0.3; cursor: not-allowed; filter: grayscale(1); }
     .prime-btn .badge {
-      position: absolute; top: -5px; right: -5px; background: var(--accent);
-      color: #7D6310; font-size: 11px; font-weight: 900; width: 22px; height: 22px;
-      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      position: absolute; top: -5px; right: -5px;
+      background: var(--accent); color: #7D6310;
+      font-size: 11px; font-weight: 900;
+      width: 22px; height: 22px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
       border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
-    .action-row { display: flex; gap: 10px; margin-bottom: 1rem; }
+    /* ───── アクション行 ───── */
+    .action-row { display: flex; gap: 8px; margin-bottom: 0.8rem; }
     .skip-btn {
-      flex: 1; padding: 12px; border-radius: 15px; border: none;
-      background: #FFF9C4; color: #827717; font-family: 'Nunito', sans-serif;
-      font-weight: 800; cursor: pointer; transition: all 0.2s; font-size: 13px;
+      flex: 1; padding: 12px 8px; border-radius: 14px; border: none;
+      background: #FFF9C4; color: #827717;
+      font-family: 'Nunito', sans-serif; font-weight: 800;
+      cursor: pointer; transition: all 0.2s;
+      font-size: clamp(11px, 3vw, 13px);
+      min-height: 46px;
+      -webkit-tap-highlight-color: transparent;
     }
     .skip-btn:hover:not(:disabled) { background: #FFF176; }
     .skip-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
     .hint-btn {
-      flex: 2; padding: 12px; border-radius: 15px; border: none;
-      background: #F3E5F5; color: #7B1FA2; font-family: 'Nunito', sans-serif;
-      font-weight: 800; cursor: pointer; transition: all 0.2s; font-size: 13px;
+      flex: 2; padding: 12px 8px; border-radius: 14px; border: none;
+      background: #F3E5F5; color: #7B1FA2;
+      font-family: 'Nunito', sans-serif; font-weight: 800;
+      cursor: pointer; transition: all 0.2s;
+      font-size: clamp(11px, 3vw, 13px);
+      min-height: 46px;
+      -webkit-tap-highlight-color: transparent;
     }
     .hint-btn:hover:not(:disabled) { background: #E1BEE7; }
     .hint-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
+    /* ───── 正解ポップ ───── */
     .result-pop {
-      display: none; text-align: center; padding: 1rem; background: #E8F5E9;
-      border-radius: 20px; margin-bottom: 1rem;
+      display: none; text-align: center; padding: 1rem;
+      background: #E8F5E9; border-radius: 20px; margin-bottom: 0.8rem;
       animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
     .result-pop.show { display: block; }
-    .result-emoji { font-size: 40px; }
-    .result-title { font-family: 'Fredoka One', cursive; color: #2E7D32; font-size: 24px; }
+    .result-emoji { font-size: 36px; }
+    .result-title { font-family: 'Fredoka One', cursive; color: #2E7D32; font-size: clamp(20px, 5vw, 24px); }
     .next-btn {
-      margin-top: 10px; width: 100%; padding: 15px; border-radius: 18px; border: none;
-      background: var(--primary); color: white; font-family: 'Fredoka One', cursive; font-size: 20px;
+      margin-top: 10px; width: 100%; padding: 14px; border-radius: 18px; border: none;
+      background: var(--primary); color: white;
+      font-family: 'Fredoka One', cursive; font-size: clamp(17px, 4.5vw, 20px);
       cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); transition: all 0.1s;
+      -webkit-tap-highlight-color: transparent;
     }
     .next-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--primary-dark); }
 
+    /* ───── オーバーレイ ───── */
     .overlay {
-      display: none; position: absolute; inset: 0; background: white; z-index: 10;
-      padding: 2rem; flex-direction: column; align-items: center; justify-content: center;
-      text-align: center; animation: fadeIn 0.3s ease; border-radius: var(--radius-card);
+      display: none; position: absolute; inset: 0;
+      background: white; z-index: 10;
+      padding: 1.5rem; border-radius: var(--radius-card);
+      flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; animation: fadeIn 0.3s ease;
+      overflow-y: auto;
     }
     .overlay.show { display: flex; }
-    .over-title { font-family: 'Fredoka One', cursive; font-size: 32px; color: var(--primary); margin-bottom: 10px; }
-    .over-time  { font-family: 'Fredoka One', cursive; font-size: 48px; color: var(--success); }
+    .over-title { font-family: 'Fredoka One', cursive; font-size: clamp(24px, 6vw, 32px); color: var(--primary); margin-bottom: 8px; }
+    .over-time  { font-family: 'Fredoka One', cursive; font-size: clamp(36px, 10vw, 48px); color: var(--success); }
 
-    .lap-list { width: 100%; max-height: 180px; overflow-y: auto; margin: 1rem 0; border-radius: 15px; background: #FAFAFA; padding: 10px; }
-    .lap-item { display: flex; justify-content: space-between; padding: 6px 12px; font-size: 13px; border-bottom: 1px solid #EEE; font-weight: 700; }
+    .lap-list {
+      width: 100%; max-height: 200px; overflow-y: auto;
+      margin: 0.8rem 0; border-radius: 14px;
+      background: #FAFAFA; padding: 8px;
+    }
+    .lap-item {
+      display: flex; justify-content: space-between;
+      padding: 6px 10px; font-size: clamp(12px, 3vw, 13px);
+      border-bottom: 1px solid #EEE; font-weight: 700;
+    }
     .lap-item:last-child { border: none; }
-    .lap-item.best { color: #2E7D32; }
+    .lap-item.best    { color: #2E7D32; }
     .lap-item.skipped { color: var(--text-light); }
 
+    /* ───── アニメーション ───── */
     @keyframes bounceIn {
       0%   { transform: scale(0.3); opacity: 0; }
       50%  { transform: scale(1.05); opacity: 1; }
@@ -179,88 +267,91 @@
     }
     .wrong { animation: shake 0.3s ease; }
 
-    .message-area { height: 20px; font-size: 12px; font-weight: 800; text-align: center; margin-top: 5px; }
+    .message-area { min-height: 20px; font-size: clamp(11px, 3vw, 13px); font-weight: 800; text-align: center; margin-top: 4px; }
     .msg-error { color: var(--primary); }
     .msg-ok    { color: var(--success); }
-
-    @media (max-width: 400px) {
-      #game { padding: 1.2rem; }
-      .prime-btn { width: 56px; height: 56px; font-size: 20px; }
-      .eq-original { font-size: 40px; }
-      .remaining-num { font-size: 56px; }
-    }
   </style>
 </head>
 <body>
-<div id="game">
-  <h1 class="title">そすうDEぶんかいゲーム ✨</h1>
 
-  <div class="diff-row">
-    <button class="diff-btn easy active" onclick="setDiff('easy')">やさしい</button>
-    <button class="diff-btn normal" onclick="setDiff('normal')">ふつう</button>
-    <button class="diff-btn hard" onclick="setDiff('hard')">むずい</button>
+  <!-- サイトに戻るボタン -->
+  <div class="back-bar">
+    <a class="back-link" href="https://sunedtech-hp.pages.dev/">
+      <span class="back-arrow">←</span> サイトに戻る
+    </a>
   </div>
 
-  <div class="top-row">
-    <div class="stat-box lives-box">
-      <div class="stat-label">ライフ</div>
-      <div class="stat-val" id="lives-hearts">❤️❤️❤️</div>
+  <div id="game">
+    <h1 class="title">そすうDEぶんかいゲーム ✨</h1>
+
+    <div class="diff-row">
+      <button class="diff-btn easy active" onclick="setDiff('easy')">やさしい</button>
+      <button class="diff-btn normal" onclick="setDiff('normal')">ふつう</button>
+      <button class="diff-btn hard" onclick="setDiff('hard')">むずい</button>
     </div>
-    <div class="stat-box">
-      <div class="stat-label">のこり</div>
-      <div class="stat-val" id="remaining-q">10<span style="font-size:13px;font-family:'Nunito',sans-serif;color:var(--text-light)">もん</span></div>
+
+    <div class="top-row">
+      <div class="stat-box lives-box">
+        <div class="stat-label">ライフ</div>
+        <div class="stat-val" id="lives-hearts">❤️❤️❤️</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">のこり</div>
+        <div class="stat-val" id="remaining-q">10<span style="font-size:11px;font-family:'Nunito',sans-serif;color:var(--text-light)">もん</span></div>
+      </div>
+      <div class="stat-box sw-box">
+        <div class="stat-label">タイム</div>
+        <div class="stat-val" id="sw-value">0:00.0</div>
+      </div>
     </div>
-    <div class="stat-box sw-box">
-      <div class="stat-label">タイム</div>
-      <div class="stat-val" id="sw-value">0:00.0</div>
+
+    <div id="play-area">
+      <div class="target-container">
+        <div class="target-label">ターゲット</div>
+        <div class="equation-line" id="equation-line">—</div>
+      </div>
+
+      <div class="remaining-display">
+        <div class="remaining-num" id="remaining">—</div>
+      </div>
+
+      <div class="prime-grid-label">▼ わる素数をえらんで！</div>
+      <div class="prime-grid" id="prime-grid"></div>
+
+      <div class="action-row">
+        <button class="skip-btn" id="skip-btn" onclick="skipProblem()">スキップ ⏭</button>
+        <button class="hint-btn" id="hint-btn" onclick="useHint()">💡 ヒント（のこり <span id="hint-count">3</span>）</button>
+      </div>
+    </div>
+
+    <div class="result-pop" id="result-inline">
+      <div class="result-emoji" id="ri-emoji">✨</div>
+      <div class="result-title" id="ri-title">せいかい！</div>
+      <div id="ri-answer" style="font-weight:800;color:var(--text-light);margin:4px 0;"></div>
+      <div id="ri-lap" style="font-size:13px;font-weight:800;color:#81C784;margin-bottom:4px;"></div>
+      <button class="next-btn" id="next-big-btn" onclick="nextFromBtn()">つぎへ 🚀</button>
+    </div>
+
+    <div class="message-area" id="message"></div>
+
+    <!-- フィニッシュ画面 -->
+    <div class="overlay" id="finish-overlay">
+      <div class="result-emoji">🏆</div>
+      <div class="over-title">クリア！おめでとう！</div>
+      <div class="over-time" id="finish-time">0:00.0</div>
+      <div id="finish-sub" style="margin-bottom:8px;font-weight:800;color:var(--text-light);font-size:14px;"></div>
+      <div class="lap-list" id="lap-list"></div>
+      <button class="next-btn" onclick="restartGame()">もういっかい！</button>
+    </div>
+
+    <!-- ゲームオーバー画面 -->
+    <div class="overlay" id="gameover-overlay">
+      <div class="result-emoji">😢</div>
+      <div class="over-title">ざんねん…！</div>
+      <div id="gameover-score" style="margin-bottom:20px;font-weight:800;color:var(--text-light);font-size:14px;"></div>
+      <button class="next-btn" onclick="restartGame()">リベンジする！</button>
     </div>
   </div>
-
-  <div id="play-area">
-    <div class="target-container">
-      <div class="target-label">ターゲット</div>
-      <div class="equation-line" id="equation-line">—</div>
-    </div>
-
-    <div class="remaining-display">
-      <div class="remaining-num" id="remaining">—</div>
-    </div>
-
-    <div class="prime-grid-label">▼ わる素数をえらんで！</div>
-    <div class="prime-grid" id="prime-grid"></div>
-
-    <div class="action-row">
-      <button class="skip-btn" id="skip-btn" onclick="skipProblem()">スキップ ⏭</button>
-      <button class="hint-btn" id="hint-btn" onclick="useHint()">💡 ヒント（のこり <span id="hint-count">3</span>）</button>
-    </div>
-  </div>
-
-  <div class="result-pop" id="result-inline">
-    <div class="result-emoji" id="ri-emoji">✨</div>
-    <div class="result-title" id="ri-title">せいかい！</div>
-    <div id="ri-answer" style="font-weight:800;color:var(--text-light);margin:4px 0;"></div>
-    <div id="ri-lap" style="font-size:13px;font-weight:800;color:#81C784;margin-bottom:4px;"></div>
-    <button class="next-btn" id="next-big-btn" onclick="nextFromBtn()">つぎへ 🚀</button>
-  </div>
-
-  <div class="message-area" id="message"></div>
-
-  <div class="overlay" id="finish-overlay">
-    <div class="result-emoji">🏆</div>
-    <div class="over-title">クリア！おめでとう！</div>
-    <div class="over-time" id="finish-time">0:00.0</div>
-    <div id="finish-sub" style="margin-bottom:10px;font-weight:800;color:var(--text-light);"></div>
-    <div class="lap-list" id="lap-list"></div>
-    <button class="next-btn" onclick="restartGame()">もういっかい！</button>
-  </div>
-
-  <div class="overlay" id="gameover-overlay">
-    <div class="result-emoji">😢</div>
-    <div class="over-title">ざんねん…！</div>
-    <div id="gameover-score" style="margin-bottom:20px;font-weight:800;color:var(--text-light);"></div>
-    <button class="next-btn" onclick="restartGame()">リベンジする！</button>
-  </div>
-</div>
 
 <script>
 const ALL_PRIMES = [2,3,5,7,11,13,17,19];
@@ -415,7 +506,7 @@ function loadQuestion(){
   document.getElementById('hint-btn').disabled=false;
   document.getElementById('skip-btn').disabled=false;
   const left=TOTAL_Q-state.qIndex;
-  document.getElementById('remaining-q').innerHTML=left+'<span style="font-size:13px;font-family:\'Nunito\',sans-serif;color:var(--text-light)">もん</span>';
+  document.getElementById('remaining-q').innerHTML=left+'<span style="font-size:11px;font-family:\'Nunito\',sans-serif;color:var(--text-light)">もん</span>';
   renderEquation(); updatePrimeButtons(); setMessage('');
 }
 
@@ -429,9 +520,9 @@ function showFinish(){
   const lapList=document.getElementById('lap-list'); lapList.innerHTML='';
   state.results.forEach((r,i)=>{
     const item=document.createElement('div');
-    item.className='lap-item'+(r.skipped?' skipped':(!r.skipped&&r.lap===bestLap?' best':''));
-    const medal=(!r.skipped&&r.lap===bestLap)?'🏅 ':'';
-    item.innerHTML=`<span>${medal}#${i+1}（${r.q}）</span><span>${r.skipped?'SKIP':fmtTime(r.lap)}</span>`;
+    const isBest=!r.skipped&&r.lap===bestLap;
+    item.className='lap-item'+(r.skipped?' skipped':(isBest?' best':''));
+    item.innerHTML=`<span>${isBest?'🏅 ':''}#${i+1}（${r.q}）</span><span>${r.skipped?'SKIP':fmtTime(r.lap)}</span>`;
     lapList.appendChild(item);
   });
   document.getElementById('finish-overlay').classList.add('show');
