@@ -93,7 +93,7 @@ body {
 /* ヘッダー */
 .header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 .header h1 {
   font-size: 24px;
@@ -193,12 +193,7 @@ body {
   top: 0; left: 0; width: 100%; height: 8px;
   background: var(--main-color);
 }
-.problem-cat {
-  font-size: 12px;
-  color: var(--main-color);
-  font-weight: 700;
-  margin-bottom: 12px;
-}
+.problem-cat { display: none; }
 .problem-text {
   font-size: 17px;
   font-weight: 500;
@@ -244,6 +239,40 @@ body {
 .answer-input.correct{border-color:var(--text-success)!important;background:var(--bg-success)!important;color:var(--text-success)!important;}
 .answer-input.wrong{border-color:var(--text-danger)!important;background:var(--bg-danger)!important;color:var(--text-danger)!important;}
 .answer-unit { font-size: 13px; color: var(--text-secondary); min-width: 44px; font-weight: 700; }
+
+/* テンキー */
+.numpad-wrap {
+  display: block;
+  background: var(--bg-primary);
+  border: 2px solid var(--border-md);
+  border-radius: var(--radius-md);
+  padding: 7px;
+  margin-top: 10px;
+  box-shadow: 0 4px 0 var(--border);
+}
+.numpad-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+}
+.nk-btn {
+  padding: 9px 4px;
+  border-radius: 9px;
+  border: 2px solid var(--border-md);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 16px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.1s;
+  text-align: center;
+  line-height: 1;
+}
+.nk-btn:active { transform: translateY(2px); background: var(--border); }
+.nk-btn.nk-dot { font-size: 16px; }
+.nk-btn.nk-del { font-size: 13px; background: #fff0f4; color: var(--text-danger); border-color: #fcc; }
+.nk-btn.nk-slash { font-size: 14px; background: #f0f8ff; color: var(--text-info); border-color: #c0dcf8; }
 
 /* ボタン */
 .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -304,6 +333,15 @@ body {
   margin-bottom: 12px;
 }
 .scratchpad-title { color: var(--text-secondary); font-weight: 700; display:flex; align-items:center; gap:6px; }
+.stats-inline {
+  display: flex;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+.stats-inline strong { color: var(--text-primary); font-weight: 700; }
+.stats-inline strong.good { color: var(--main-color); }
 .scratchpad-note { color: var(--text-tertiary); font-size: 12px; margin-top: 4px; line-height: 1.5; }
 .scratch-canvas {
   width: 100%;
@@ -355,20 +393,10 @@ body {
 
   <div class="header">
     <h1><i class="ti ti-math" aria-hidden="true"></i>キラキラ算数ドリル｜小5文章題</h1>
-    <span class="badge">小学5年生</span>
-  </div>
-
-  <div class="stats">
-    <div class="stat"><div class="stat-label">問題数</div><div class="stat-val" id="s-total">0</div></div>
-    <div class="stat"><div class="stat-label">正解</div><div class="stat-val good" id="s-correct">0</div></div>
-    <div class="stat"><div class="stat-label">正答率</div><div class="stat-val" id="s-rate">—</div></div>
+    
   </div>
 
   <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
-
-  <div class="category-bar" id="catBar">
-    ${Object.entries(k).map(([t,e])=>`<button class="cat-btn${t==="all"?" active":""}" data-cat="${t}">${e.label}</button>`).join("")}
-  </div>
 
   <div class="problem-card" id="problemCard">
     <div class="loading" id="loadingMsg">問題を選んでいます…</div>
@@ -376,6 +404,25 @@ body {
       <div class="problem-cat" id="problemCat"></div>
       <div class="problem-text" id="problemText"></div>
       <div class="answer-area" id="answerArea"></div>
+    </div>
+  </div>
+
+  <div class="numpad-wrap" id="numpadWrap">
+    <div class="numpad-grid">
+      <button class="nk-btn" data-val="7" type="button">7</button>
+      <button class="nk-btn" data-val="8" type="button">8</button>
+      <button class="nk-btn" data-val="9" type="button">9</button>
+      <button class="nk-btn nk-del" data-val="del" type="button">⌫</button>
+      <button class="nk-btn" data-val="4" type="button">4</button>
+      <button class="nk-btn" data-val="5" type="button">5</button>
+      <button class="nk-btn" data-val="6" type="button">6</button>
+      <button class="nk-btn nk-slash" data-val="/" type="button">／</button>
+      <button class="nk-btn" data-val="1" type="button">1</button>
+      <button class="nk-btn" data-val="2" type="button">2</button>
+      <button class="nk-btn" data-val="3" type="button">3</button>
+      <button class="nk-btn nk-dot" data-val="." type="button">・</button>
+      <button class="nk-btn" data-val="0" type="button" style="grid-column:span 2">0</button>
+      <button class="nk-btn" data-val="clear" type="button" style="grid-column:span 2;background:#fff0f4;color:var(--text-danger);border-color:#fcc;font-size:13px;">全消し</button>
     </div>
   </div>
 
@@ -396,18 +443,31 @@ body {
         <div class="scratchpad-title"><i class="ti ti-pencil" aria-hidden="true"></i>計算スペース</div>
         <div class="scratchpad-note">スマホ・タブレット・タッチペン・マウスで自由に書けます。</div>
       </div>
-      <button class="btn btn-small" id="clearScratchBtn" type="button">
-        <i class="ti ti-eraser" aria-hidden="true"></i>消す
-      </button>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+        <div class="stats-inline" id="statsInline">
+          <span>問題数 <strong id="s-total">0</strong></span>
+          <span>正解 <strong class="good" id="s-correct">0</strong></span>
+          <span>正答率 <strong id="s-rate">—</strong></span>
+        </div>
+        <button class="btn btn-small" id="clearScratchBtn" type="button">
+          <i class="ti ti-eraser" aria-hidden="true"></i>消す
+        </button>
+      </div>
     </div>
     <canvas id="scratchCanvas" class="scratch-canvas"></canvas>
   </div>
-`;document.getElementById("catBar").addEventListener("click",t=>{const e=t.target.closest("[data-cat]");e&&(document.querySelectorAll(".cat-btn").forEach(a=>a.classList.remove("active")),e.classList.add("active"),f=e.dataset.cat,d=[],h())});document.getElementById("checkBtn").addEventListener("click",E);document.getElementById("nextBtn").addEventListener("click",h);document.getElementById("clearScratchBtn").addEventListener("click",q);N();function B(){return f==="all"?w:w.filter(t=>t.category===f)}function I(t){const e=[...t];for(let a=e.length-1;a>0;a--){const i=Math.floor(Math.random()*(a+1));[e[a],e[i]]=[e[i],e[a]]}return e}function C(){const t=B();if(t.length===0)return null;d.length===0&&(d=I(t),d.length>1&&d[0].id===b&&d.push(d.shift()));const e=d.shift();return b=e.id,M(e)}function M(t){return typeof structuredClone=="function"?structuredClone(t):JSON.parse(JSON.stringify(t))}function h(){if(v=!1,q(),document.getElementById("feedback").style.display="none",document.getElementById("checkBtn").style.display="none",document.getElementById("problemContent").style.display="none",document.getElementById("loadingMsg").textContent="問題を選んでいます…",document.getElementById("loadingMsg").style.display="block",c=C(),!c){document.getElementById("loadingMsg").innerHTML='<span class="error-msg"><i class="ti ti-alert-circle" aria-hidden="true"></i> このカテゴリにはまだ問題がありません。</span>';return}P()}function P(){document.getElementById("loadingMsg").style.display="none",document.getElementById("problemContent").style.display="block",document.getElementById("problemCat").textContent=c.cat,document.getElementById("problemText").innerHTML=p(c.text).replace(/\n/g,"<br>");const t=document.getElementById("answerArea");t.innerHTML="";const e=["❶","❷"];c.parts.forEach((a,i)=>{const n=document.createElement("div");n.className="answer-row",n.innerHTML=`
+`;document.getElementById("checkBtn").addEventListener("click",E);document.getElementById("nextBtn").addEventListener("click",h);document.getElementById("clearScratchBtn").addEventListener("click",q);
+// テンキー制御
+let activeInput=null;
+document.addEventListener("focusin",t=>{if(t.target.classList.contains("answer-input"))activeInput=t.target;});
+document.getElementById("numpadWrap").addEventListener("mousedown",t=>t.preventDefault());
+document.getElementById("numpadWrap").addEventListener("click",t=>{const btn=t.target.closest(".nk-btn");if(!btn)return;const inp=activeInput||document.querySelector(".answer-input");if(!inp)return;const val=btn.dataset.val;if(val==="del"){inp.value=inp.value.slice(0,-1);}else if(val==="clear"){inp.value="";}else{inp.value+=val;}inp.dispatchEvent(new Event("input"));});
+N();function B(){return f==="all"?w:w.filter(t=>t.category===f)}function I(t){const e=[...t];for(let a=e.length-1;a>0;a--){const i=Math.floor(Math.random()*(a+1));[e[a],e[i]]=[e[i],e[a]]}return e}function C(){const t=B();if(t.length===0)return null;d.length===0&&(d=I(t),d.length>1&&d[0].id===b&&d.push(d.shift()));const e=d.shift();return b=e.id,M(e)}function M(t){return typeof structuredClone=="function"?structuredClone(t):JSON.parse(JSON.stringify(t))}function h(){if(v=!1,q(),document.getElementById("numpadWrap").classList.remove("visible"),document.getElementById("feedback").style.display="none",document.getElementById("checkBtn").style.display="none",document.getElementById("problemContent").style.display="none",document.getElementById("loadingMsg").textContent="問題を選んでいます…",document.getElementById("loadingMsg").style.display="block",c=C(),!c){document.getElementById("loadingMsg").innerHTML='<span class="error-msg"><i class="ti ti-alert-circle" aria-hidden="true"></i> このカテゴリにはまだ問題がありません。</span>';return}P()}function P(){document.getElementById("loadingMsg").style.display="none",document.getElementById("problemContent").style.display="block",document.getElementById("problemCat").textContent=c.cat,document.getElementById("problemText").innerHTML='<span style="color:var(--main-color);font-weight:700;font-size:13px;margin-right:8px;">'+p(c.cat)+'</span>'+p(c.text).replace(/\n/g,"<br>");const t=document.getElementById("answerArea");t.innerHTML="";const e=["❶","❷"];c.parts.forEach((a,i)=>{const n=document.createElement("div");n.className="answer-row",n.innerHTML=`
       <span class="answer-label">${c.parts.length>1?e[i]+" ":""}答え</span>
       <input class="answer-input" type="text" id="ans${i}"
              placeholder="${p(a.question)}" aria-label="答え${i+1}" />
       <span class="answer-unit">${p(a.unit)}</span>
-    `,t.appendChild(n),n.querySelector(`#ans${i}`).addEventListener("keydown",r=>{r.key==="Enter"&&E()})}),document.getElementById("checkBtn").style.display="inline-flex",document.getElementById("ans0").focus()}function p(t){return String(t).replace(/[&<>'"]/g,e=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"})[e])}function N(){const t=document.getElementById("scratchCanvas"),e=t.getContext("2d");let a=!1,i=null;function n(){const o=t.getBoundingClientRect(),s=window.devicePixelRatio||1,g=t.width&&t.height?e.getImageData(0,0,t.width,t.height):null;if(t.width=Math.max(1,Math.round(o.width*s)),t.height=Math.max(1,Math.round(o.height*s)),e.setTransform(1,0,0,1,0,0),e.scale(s,s),e.lineCap="round",e.lineJoin="round",e.lineWidth=3,e.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue("--text-primary").trim()||"#1a1a18",g){const y=document.createElement("canvas");y.width=g.width,y.height=g.height,y.getContext("2d").putImageData(g,0,0),e.drawImage(y,0,0,o.width,o.height)}}function r(o){const s=t.getBoundingClientRect();return{x:o.clientX-s.left,y:o.clientY-s.top}}function l(o){var s;o.preventDefault(),a=!0,i=r(o),(s=t.setPointerCapture)==null||s.call(t,o.pointerId)}function x(o){if(!a||!i)return;o.preventDefault();const s=r(o);e.beginPath(),e.moveTo(i.x,i.y),e.lineTo(s.x,s.y),e.stroke(),i=s}function m(o){var s;a&&(a=!1,i=null,(o==null?void 0:o.pointerId)!==void 0&&((s=t.releasePointerCapture)==null||s.call(t,o.pointerId)))}window.addEventListener("resize",n),t.addEventListener("pointerdown",l),t.addEventListener("pointermove",x),t.addEventListener("pointerup",m),t.addEventListener("pointercancel",m),t.addEventListener("pointerleave",m),requestAnimationFrame(n)}function q(){const t=document.getElementById("scratchCanvas");if(!t)return;t.getContext("2d").clearRect(0,0,t.width,t.height)}function L(t){if(t=String(t).trim(),t==="")return NaN;if(t=t.replace(/[０-９]/g,e=>String.fromCharCode(e.charCodeAt(0)-65248)).replace(/[．]/g,".").replace(/[，]/g,",").replace(/[／]/g,"/").replace(/[％]/g,"%").replace(/%/g,"").replace(/円|人|分|秒|時間|km|mL|cm³|cm2|cm²|m²|cm|m|L|kg|g|ページ/g,"").trim(),t.includes("/")){const[e,a]=t.split("/").map(Number);return!Number.isFinite(e)||!Number.isFinite(a)||a===0?NaN:e/a}return parseFloat(t.replace(/,/g,""))}function E(){if(!c||v)return;v=!0;let t=!0;const e=[];c.parts.forEach((i,n)=>{const r=document.getElementById(`ans${n}`),l=L(r.value),x=L(i.answer),m=!Number.isNaN(l)&&Math.abs(l-x)<.01;m||(t=!1),r.classList.add(m?"correct":"wrong"),e.push(`${c.parts.length>1?["❶","❷"][n]+" ":""}<strong>${p(i.answer)} ${p(i.unit)}</strong>`)}),u.total++,t&&u.correct++,S();const a=document.getElementById("feedback");a.className="feedback "+(t?"correct":"wrong"),a.innerHTML=(t?"✓ <strong>正解！</strong>　":"✗ <strong>不正解</strong>　")+"答え："+e.join("　")+"<br><br>"+p(c.explanation),a.style.display="block",document.getElementById("checkBtn").style.display="none"}function S(){document.getElementById("s-total").textContent=u.total,document.getElementById("s-correct").textContent=u.correct;const t=u.total>0?Math.round(u.correct/u.total*100)+"%":"—";document.getElementById("s-rate").textContent=t,document.getElementById("progress").style.width=Math.min(u.total*10,100)+"%"}h();
+    `,t.appendChild(n),n.querySelector(`#ans${i}`).addEventListener("keydown",r=>{r.key==="Enter"&&E()})}),document.getElementById("checkBtn").style.display="inline-flex",document.getElementById("ans0").focus()}function p(t){return String(t).replace(/[&<>'"]/g,e=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"})[e])}function N(){const t=document.getElementById("scratchCanvas"),e=t.getContext("2d");let a=!1,i=null;function n(){const o=t.getBoundingClientRect(),s=window.devicePixelRatio||1,g=t.width&&t.height?e.getImageData(0,0,t.width,t.height):null;if(t.width=Math.max(1,Math.round(o.width*s)),t.height=Math.max(1,Math.round(o.height*s)),e.setTransform(1,0,0,1,0,0),e.scale(s,s),e.lineCap="round",e.lineJoin="round",e.lineWidth=3,e.strokeStyle="#000000",g){const y=document.createElement("canvas");y.width=g.width,y.height=g.height,y.getContext("2d").putImageData(g,0,0),e.drawImage(y,0,0,o.width,o.height)}}function r(o){const s=t.getBoundingClientRect();return{x:o.clientX-s.left,y:o.clientY-s.top}}function l(o){var s;o.preventDefault(),a=!0,i=r(o),(s=t.setPointerCapture)==null||s.call(t,o.pointerId)}function x(o){if(!a||!i)return;o.preventDefault();const s=r(o);e.beginPath(),e.moveTo(i.x,i.y),e.lineTo(s.x,s.y),e.stroke(),i=s}function m(o){var s;a&&(a=!1,i=null,(o==null?void 0:o.pointerId)!==void 0&&((s=t.releasePointerCapture)==null||s.call(t,o.pointerId)))}window.addEventListener("resize",n),t.addEventListener("pointerdown",l),t.addEventListener("pointermove",x),t.addEventListener("pointerup",m),t.addEventListener("pointercancel",m),t.addEventListener("pointerleave",m),requestAnimationFrame(n)}function q(){const t=document.getElementById("scratchCanvas");if(!t)return;t.getContext("2d").clearRect(0,0,t.width,t.height)}function L(t){if(t=String(t).trim(),t==="")return NaN;if(t=t.replace(/[０-９]/g,e=>String.fromCharCode(e.charCodeAt(0)-65248)).replace(/[．]/g,".").replace(/[，]/g,",").replace(/[／]/g,"/").replace(/[％]/g,"%").replace(/%/g,"").replace(/円|人|分|秒|時間|km|mL|cm³|cm2|cm²|m²|cm|m|L|kg|g|ページ/g,"").trim(),t.includes("/")){const[e,a]=t.split("/").map(Number);return!Number.isFinite(e)||!Number.isFinite(a)||a===0?NaN:e/a}return parseFloat(t.replace(/,/g,""))}function E(){if(!c||v)return;v=!0;let t=!0;const e=[];c.parts.forEach((i,n)=>{const r=document.getElementById(`ans${n}`),l=L(r.value),x=L(i.answer),m=!Number.isNaN(l)&&Math.abs(l-x)<.01;m||(t=!1),r.classList.add(m?"correct":"wrong"),e.push(`${c.parts.length>1?["❶","❷"][n]+" ":""}<strong>${p(i.answer)} ${p(i.unit)}</strong>`)}),u.total++,t&&u.correct++,S();const a=document.getElementById("feedback");a.className="feedback "+(t?"correct":"wrong"),a.innerHTML=(t?"✓ <strong>正解！</strong>　":"✗ <strong>不正解</strong>　")+"答え："+e.join("　")+"<br><br>"+p(c.explanation),a.style.display="block",document.getElementById("checkBtn").style.display="none";activeInput=null;}function S(){document.getElementById("s-total").textContent=u.total,document.getElementById("s-correct").textContent=u.correct;const t=u.total>0?Math.round(u.correct/u.total*100)+"%":"—";document.getElementById("s-rate").textContent=t,document.getElementById("progress").style.width=Math.min(u.total*10,100)+"%"}h();
 
   </script>
 </body>
