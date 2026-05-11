@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>つるかめ算マスター！｜面積図で学ぶ</title>
+  <style>
+    :root {
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --primary: #4f46e5;
+      --primary-dark: #4338ca;
+      --secondary: #10b981;
+      --secondary-dark: #059669;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --accent-blue: #60a5fa;
+      --accent-amber: #fbbf24;
+      --border-color: #e2e8f0;
+      --danger: #ef4444;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+        'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(96,165,250,0.18), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(16,185,129,0.12), transparent 34%),
+        var(--bg-color);
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 1.25rem 1rem 2rem;
+    }
+
+    .app {
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .top-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      color: #fff;
+      background: #0f172a;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: 800;
+      box-shadow: 0 8px 20px rgba(15,23,42,0.18);
+      margin-bottom: 1.25rem;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      background: linear-gradient(135deg, var(--primary), var(--accent-blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      font-size: 15px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .progress-bar-bg {
+      background: #f1f5f9;
+      border-radius: 99px;
+      height: 8px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--primary), var(--accent-blue));
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .level-wrap {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 1.5rem;
+    }
+
+    .level-btn {
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-muted);
+      border-radius: 999px;
+      padding: 10px 8px;
+      cursor: pointer;
+      font-weight: 800;
+      transition: all 0.2s;
+    }
+
+    .level-btn.active {
+      color: #fff;
+      background: linear-gradient(135deg, var(--primary), var(--accent-blue));
+      border-color: transparent;
+      box-shadow: 0 4px 14px rgba(79,70,229,0.28);
+    }
+
+    .problem-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      font-size: 17px;
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.04);
+    }
+
+    .problem-card b {
+      color: var(--primary);
+      font-weight: 800;
+      font-size: 1.1em;
+    }
+
+    .problem-card small {
+      display: block;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--border-color);
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 1.5rem;
+    }
+
+    .ctrl {
+      background: var(--card-bg);
+      padding: 1rem;
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.035);
+    }
+
+    .ctrl-label {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .ctrl-row {
+      display: flex;
+      align-items: center;
+      background: #f1f5f9;
+      border-radius: 12px;
+      padding: 4px;
+    }
+
+    .num-display {
+      flex: 1;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-main);
+      min-width: 42px;
+    }
+
+    .stepper {
+      width: 38px;
+      height: 38px;
+      border-radius: 9px;
+      border: none;
+      background: var(--card-bg);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      color: var(--text-main);
+      font-size: 20px;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      line-height: 1;
+    }
+
+    .stepper:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    .stepper:active {
+      transform: scale(0.9);
+    }
+
+    .ctrl-unit {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-left: 8px;
+      min-width: 1.5em;
+    }
+
+    .diagram-wrap {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+      overflow-x: auto;
+    }
+
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .legend-box {
+      width: 12px;
+      height: 12px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-right: 6px;
+      vertical-align: -1px;
+    }
+
+    .legs-label {
+      text-align: center;
+      font-size: 15px;
+      margin-bottom: 16px;
+      padding: 8px;
+      background: #f8fafc;
+      border-radius: 10px;
+    }
+
+    .hint-card {
+      display: none;
+      background: #fffbeb;
+      color: #92400e;
+      border: 1px solid #fbbf24;
+      border-radius: 14px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      font-size: 15px;
+      text-align: left;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    .hint-card b {
+      color: #78350f;
+    }
+
+    .feedback {
+      border-radius: 12px;
+      padding: 1rem;
+      font-size: 15px;
+      margin-bottom: 1.5rem;
+      display: none;
+      text-align: center;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .feedback.correct {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #10b981;
+    }
+
+    .feedback.wrong {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #ef4444;
+    }
+
+    .feedback.finish {
+      background: #eef2ff;
+      color: #3730a3;
+      border: 1px solid #4f46e5;
+      font-weight: 800;
+    }
+
+    .btn-main {
+      margin-bottom: 1rem;
+    }
+
+    .btn-check {
+      width: 100%;
+      padding: 16px;
+      border-radius: 14px;
+      border: none;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff;
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 14px 0 rgba(79, 70, 229, 0.39);
+      transition: all 0.3s;
+    }
+
+    .btn-check:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(79, 70, 229, 0.45);
+    }
+
+    .btn-check:active {
+      transform: translateY(0);
+    }
+
+    .btn-secondary {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-main);
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 10px;
+    }
+
+    .btn-secondary:hover {
+      background: #f1f5f9;
+      border-color: var(--text-muted);
+    }
+
+    .score-bar {
+      display: flex;
+      gap: 24px;
+      font-size: 14px;
+      font-weight: 700;
+      justify-content: center;
+      margin-top: 1rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+
+    .score-val {
+      color: var(--text-main);
+      font-weight: 900;
+      font-size: 16px;
+    }
+
+    #sc-ok { color: var(--secondary); }
+    #sc-ng { color: var(--danger); }
+
+    .footer-note {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 12px;
+      margin-top: 1.5rem;
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 1rem 0.75rem 2rem; }
+      .controls { grid-template-columns: 1fr; }
+      .header h1 { font-size: 24px; }
+      .level-wrap { grid-template-columns: 1fr; }
+      .problem-card, .diagram-wrap { padding: 1.15rem; }
+      .top-link { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <a class="top-link" href="https://sunedtech-hp.pages.dev/">← サイトに戻る</a>
+
+  <div class="header">
+    <h1>つるかめ算マスター！</h1>
+  </div>
+
+  <div class="level-wrap" aria-label="レベル選択">
+    <button class="level-btn active" data-level="easy">やさしい</button>
+    <button class="level-btn" data-level="normal">ふつう</button>
+    <button class="level-btn" data-level="hard">チャレンジ</button>
+  </div>
+
+  <div class="problem-card" id="prob-text"></div>
+
+  <div class="controls">
+    <div class="ctrl">
+      <div class="ctrl-label" id="lbl-a"></div>
+      <div class="ctrl-row">
+        <button class="stepper" type="button" onclick="step('a',-1)">−</button>
+        <div class="num-display" id="disp-a">0</div>
+        <button class="stepper" type="button" onclick="step('a',1)">＋</button>
+        <span class="ctrl-unit" id="unit-a"></span>
+      </div>
+    </div>
+    <div class="ctrl">
+      <div class="ctrl-label" id="lbl-b"></div>
+      <div class="ctrl-row">
+        <button class="stepper" type="button" onclick="step('b',-1)">−</button>
+        <div class="num-display" id="disp-b">0</div>
+        <button class="stepper" type="button" onclick="step('b',1)">＋</button>
+        <span class="ctrl-unit" id="unit-b"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="diagram-wrap">
+    <div class="legend">
+      <span><span class="legend-box" style="background:#818cf8;"></span><span id="leg-a"></span></span>
+      <span><span class="legend-box" style="background:#fbbf24;"></span><span id="leg-b"></span></span>
+    </div>
+    <div class="legs-label" id="legs-label"></div>
+    <svg id="diagram" xmlns="http://www.w3.org/2000/svg" style="display:block; margin:0 auto;"></svg>
+  </div>
+
+  <div class="hint-card" id="hint-card"></div>
+  <div class="feedback" id="feedback"></div>
+
+  <div class="btn-main">
+    <button class="btn-check" id="check-btn" type="button" onclick="checkAnswer()">こたえあわせ</button>
+    <button class="btn-secondary" id="hint-btn" type="button" onclick="showHint()">ヒントを見る</button>
+    <button class="btn-secondary" id="next-btn" type="button" onclick="nextProblem()" style="display:none;">つぎの問題に進む →</button>
+    <button class="btn-secondary" id="restart-btn" type="button" onclick="restartGame()" style="display:none;">もう一度はじめから</button>
+  </div>
+
+  <div class="score-bar">
+    <span>問題: <span class="score-val" id="prog-label">Question 1 / 10</span></span>
+    <span>正解: <span class="score-val" id="sc-ok">0</span></span>
+    <span>まちがい: <span class="score-val" id="sc-ng">0</span></span>
+  </div>
+  <div class="progress-bar-bg"><div class="progress-bar" id="prog-bar"></div></div>
+</div>
+
+<script>
+const CELL = 28;
+const BLUE_FILL = '#818cf8', BLUE_STROKE = '#4f46e5', BLUE_TEXT = '#3730a3';
+const AMBER_FILL = '#fbbf24', AMBER_STROKE = '#d97706', AMBER_TEXT = '#92400e';
+const GRID_LINE = '#e2e8f0', GRAY_TEXT = '#94a3b8';
+const PAD_L = 52, PAD_R = 12, PAD_T = 12, PAD_B = 40;
+const TOTAL_Q = 10;
+const STORAGE_KEY = 'tsurukame_area_master_v2';
+
+const TYPES = [
+  { emoji:'🐦', name:'ツル',       unit:'羽', legs:2 },
+  { emoji:'🐢', name:'カメ',       unit:'匹', legs:4 },
+  { emoji:'🪲', name:'カブトムシ', unit:'匹', legs:6 },
+  { emoji:'🕷️', name:'クモ',       unit:'匹', legs:8 },
+  { emoji:'🐙', name:'タコ',       unit:'匹', legs:8 },
+  { emoji:'🦑', name:'イカ',       unit:'匹', legs:10 },
+  { emoji:'🧍', name:'人',         unit:'人', legs:2 },
+  { emoji:'🐕', name:'犬',         unit:'匹', legs:4 },
+];
+
+const PAIRS_BY_LEVEL = {
+  easy: [[0,1]],
+  normal: [[0,1], [6,7]],
+  hard: [[0,1], [2,3], [4,5], [6,7]]
+};
+
+let currentLevel = loadLevel();
+let queue = [];
+let pidx = 0;
+let score = 0;
+let wrongCount = 0;
+let answered = false;
+let valA = 0;
+let valB = 0;
+let hintStep = 0;
+
+const cp = () => queue[pidx];
+const tA = p => TYPES[p.pair[0]];
+const tB = p => TYPES[p.pair[1]];
+
+function loadLevel() {
+  try {
+    return localStorage.getItem(STORAGE_KEY + '_level') || 'easy';
+  } catch (_) {
+    return 'easy';
+  }
+}
+
+function saveLevel() {
+  try {
+    localStorage.setItem(STORAGE_KEY + '_level', currentLevel);
+  } catch (_) {}
+}
+
+function shuffle(a) {
+  const b = [...a];
+  for (let i = b.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [b[i], b[j]] = [b[j], b[i]];
+  }
+  return b;
+}
+
+function genProblems(pair) {
+  const ta = TYPES[pair[0]], tb = TYPES[pair[1]];
+  const lA = ta.legs, lB = tb.legs;
+  const out = [];
+  const maxN = currentLevel === 'easy' ? 9 : currentLevel === 'normal' ? 12 : 16;
+  const maxTotal = currentLevel === 'easy' ? 12 : currentLevel === 'normal' ? 18 : 24;
+
+  for (let nA = 2; nA <= maxN; nA++) {
+    for (let nB = 2; nB <= maxN; nB++) {
+      const total = nA + nB;
+      const legs = nA * lA + nB * lB;
+      if (total >= 5 && total <= maxTotal && legs >= 10 && legs <= 180) {
+        out.push({ pair, total, legs, nA, nB });
+      }
+    }
+  }
+  return out;
+}
+
+function buildQueue() {
+  const pairs = shuffle(PAIRS_BY_LEVEL[currentLevel]);
+  let pool = [];
+  pairs.forEach(pair => {
+    pool = pool.concat(shuffle(genProblems(pair)).slice(0, 8));
+  });
+  return shuffle(pool).slice(0, TOTAL_Q);
+}
+
+function updateLevelButtons() {
+  document.querySelectorAll('.level-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.level === currentLevel);
+  });
+}
+
+function setLevel(level) {
+  currentLevel = level;
+  saveLevel();
+  updateLevelButtons();
+  restartGame();
+}
+
+function updateProgress() {
+  const label = document.getElementById('prog-label');
+  const bar = document.getElementById('prog-bar');
+
+  if (pidx >= TOTAL_Q) {
+    bar.style.width = '100%';
+    label.textContent = 'All Goals Cleared!';
+    return;
+  }
+
+  bar.style.width = Math.round(pidx / TOTAL_Q * 100) + '%';
+  label.textContent = `Question ${pidx + 1} / ${TOTAL_Q}`;
+}
+
+function step(which, delta) {
+  if (answered) return;
+  const total = cp().total;
+
+  if (which === 'a') {
+    valA = Math.max(0, Math.min(total, valA + delta));
+    valB = total - valA;
+  } else {
+    valB = Math.max(0, Math.min(total, valB + delta));
+    valA = total - valB;
+  }
+
+  document.getElementById('disp-a').textContent = valA;
+  document.getElementById('disp-b').textContent = valB;
+  drawDiagram(valA, valB);
+  document.getElementById('feedback').style.display = 'none';
+}
+
+function drawDiagram(na, nb) {
+  const p = cp();
+  const ta = tA(p), tb = tB(p);
+  const hA = ta.legs, hB = tb.legs;
+  const localMax = Math.max(hA, hB);
+  const cols = Math.max(na + nb, 1);
+  const W = cols * CELL, H = localMax * CELL;
+  const svgW = W + PAD_L + PAD_R, svgH = H + PAD_T + PAD_B;
+  const ox = PAD_L, oy = PAD_T;
+  const svg = document.getElementById('diagram');
+
+  svg.setAttribute('width', svgW);
+  svg.setAttribute('height', svgH);
+  svg.setAttribute('viewBox', `0 0 ${svgW} ${svgH}`);
+
+  let s = '';
+
+  for (let r = 0; r < localMax; r++) {
+    for (let c = 0; c < cols; c++) {
+      s += `<rect x="${ox + c * CELL}" y="${oy + r * CELL}" width="${CELL}" height="${CELL}" fill="none" stroke="${GRID_LINE}" stroke-width="0.5"/>`;
+    }
+  }
+
+  const aTop = oy + (localMax - hA) * CELL;
+  if (na > 0) {
+    s += `<rect x="${ox}" y="${aTop}" width="${na * CELL}" height="${hA * CELL}" fill="${BLUE_FILL}" stroke="${BLUE_STROKE}" stroke-width="1.5" rx="4"/>`;
+    if (na >= 2) {
+      s += `<text x="${ox + na * CELL / 2}" y="${aTop + hA * CELL / 2 + 5}" text-anchor="middle" font-size="12" fill="${BLUE_TEXT}" font-weight="800">${ta.name}</text>`;
+    }
+  }
+
+  const bLeft = ox + na * CELL;
+  if (nb > 0) {
+    s += `<rect x="${bLeft}" y="${oy}" width="${nb * CELL}" height="${hB * CELL}" fill="${AMBER_FILL}" stroke="${AMBER_STROKE}" stroke-width="1.5" rx="4"/>`;
+    if (nb >= 2) {
+      s += `<text x="${bLeft + nb * CELL / 2}" y="${oy + hB * CELL / 2 + 5}" text-anchor="middle" font-size="12" fill="${AMBER_TEXT}" font-weight="800">${tb.name}</text>`;
+    }
+  }
+
+  for (let r = 0; r <= localMax; r++) {
+    const y = oy + r * CELL;
+    s += `<text x="${ox - 12}" y="${y + 4}" text-anchor="end" font-size="11" fill="${GRAY_TEXT}" font-weight="700">${localMax - r}</text>`;
+  }
+
+  for (let c = 0; c <= cols; c++) {
+    const x = ox + c * CELL;
+    if (c > 0) {
+      s += `<text x="${x - CELL / 2}" y="${oy + H + 18}" text-anchor="middle" font-size="11" fill="${GRAY_TEXT}" font-weight="700">${c}</text>`;
+    }
+  }
+
+  s += `<text x="${ox - 38}" y="${oy + H / 2}" text-anchor="middle" font-size="10" fill="${GRAY_TEXT}" transform="rotate(-90,${ox - 38},${oy + H / 2})" font-weight="800">あし</text>`;
+  s += `<text x="${ox + W / 2}" y="${oy + H + 35}" text-anchor="middle" font-size="10" fill="${GRAY_TEXT}" font-weight="800">数</text>`;
+
+  svg.innerHTML = s;
+
+  const legCount = na * hA + nb * hB;
+  const ok = legCount === p.legs;
+  const color = ok ? '#059669' : '#1e293b';
+  const diff = p.legs - legCount;
+  const diffText = diff === 0 ? 'ぴったり！' : diff > 0 ? `あと${diff}本` : `${Math.abs(diff)}本多い`;
+
+  document.getElementById('legs-label').innerHTML =
+    `<span style="color:${color};font-weight:900;">いまの合計：${legCount}本</span> ／ 目標：${p.legs}本<br><span style="font-size:13px;color:#64748b;">${diffText}</span>`;
+}
+
+function loadProblem() {
+  const p = cp(), ta = tA(p), tb = tB(p);
+  hintStep = 0;
+
+  document.getElementById('prob-text').innerHTML =
+    `<div style="font-size:0.9em; color:#64748b; margin-bottom:4px;">Problem:</div>` +
+    `${ta.emoji}${ta.name}と${tb.emoji}${tb.name}が合わせて <b>${p.total}</b> ${unitForTotal(ta, tb)} います。<br>` +
+    `あしの合計は <b>${p.legs}本</b> です。それぞれ何${unitForAnswer(ta, tb)}ですか？` +
+    `<small>※${ta.name}＝${ta.legs}本、${tb.name}＝${tb.legs}本。横が数、高さが足の本数です。</small>`;
+
+  document.getElementById('lbl-a').textContent = `${ta.name}`;
+  document.getElementById('unit-a').textContent = ta.unit;
+  document.getElementById('lbl-b').textContent = `${tb.name}`;
+  document.getElementById('unit-b').textContent = tb.unit;
+  document.getElementById('leg-a').textContent = `${ta.name}(${ta.legs}本)`;
+  document.getElementById('leg-b').textContent = `${tb.name}(${tb.legs}本)`;
+
+  valA = p.total;
+  valB = 0;
+  document.getElementById('disp-a').textContent = valA;
+  document.getElementById('disp-b').textContent = valB;
+
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('hint-card').style.display = 'none';
+  document.getElementById('next-btn').style.display = 'none';
+  document.getElementById('restart-btn').style.display = 'none';
+  document.getElementById('check-btn').style.display = 'block';
+  document.getElementById('hint-btn').style.display = 'block';
+
+  answered = false;
+  updateProgress();
+  drawDiagram(valA, valB);
+}
+
+function unitForTotal(ta, tb) {
+  if (ta.unit === tb.unit) return ta.unit;
+  return '合わせて';
+}
+
+function unitForAnswer(ta, tb) {
+  if (ta.unit === tb.unit) return ta.unit;
+  return 'ずつ';
+}
+
+function showHint() {
+  if (answered) return;
+  const p = cp(), ta = tA(p), tb = tB(p);
+  const hA = ta.legs, hB = tb.legs;
+  const baseLegs = p.total * hA;
+  const diff = p.legs - baseLegs;
+  const perChange = hB - hA;
+  hintStep = Math.min(3, hintStep + 1);
+
+  const hints = [
+    `ヒント1：まず、全部 <b>${ta.name}</b> だったと考えます。すると足は <b>${p.total}×${hA}=${baseLegs}本</b> です。`,
+    `ヒント2：実際は <b>${p.legs}本</b> なので、差は <b>${p.legs}-${baseLegs}=${diff}本</b> です。`,
+    `ヒント3：${ta.name}を${tb.name}に1つ変えると、足は <b>${perChange}本</b> 増えます。だから${tb.name}は <b>${diff}÷${perChange}</b> です。`
+  ];
+
+  const box = document.getElementById('hint-card');
+  box.innerHTML = hints.slice(0, hintStep).join('<br>');
+  box.style.display = 'block';
+}
+
+function checkAnswer() {
+  if (answered) return;
+
+  const p = cp(), ta = tA(p), tb = tB(p);
+  const fb = document.getElementById('feedback');
+
+  if (valA === p.nA && valB === p.nB) {
+    score++;
+    document.getElementById('sc-ok').textContent = score;
+    fb.className = 'feedback correct';
+    fb.innerHTML = `✨ <b>正解です！</b><br>${ta.name} ${p.nA}${ta.unit}、${tb.name} ${p.nB}${tb.unit} でぴったり！` +
+      `<br><span style="font-size:13px;">面積図の合計は ${p.nA}×${ta.legs}+${p.nB}×${tb.legs}=${p.legs}本 です。</span>`;
+    answered = true;
+    document.getElementById('check-btn').style.display = 'none';
+    document.getElementById('hint-btn').style.display = 'none';
+
+    if (pidx + 1 < TOTAL_Q) {
+      document.getElementById('next-btn').style.display = 'block';
+    } else {
+      showFinish();
+    }
+  } else {
+    wrongCount++;
+    document.getElementById('sc-ng').textContent = wrongCount;
+    fb.className = 'feedback wrong';
+    const legNow = valA * ta.legs + valB * tb.legs;
+    const diff = p.legs - legNow;
+    const diffMsg = diff > 0 ? `あと${diff}本です。` : diff < 0 ? `${Math.abs(diff)}本多いです。` : '足の数は合っています。数の組み合わせをもう一度見てみよう。';
+    fb.innerHTML = `<b>おっと！</b><br>いまは${legNow}本です。${diffMsg}<br>図を動かして調整してみよう。`;
+  }
+
+  fb.style.display = 'block';
+}
+
+function showFinish() {
+  updateProgress();
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback finish';
+  fb.innerHTML = `🏆 <b>全問クリア！お疲れさまでした！</b><br>正解: ${score} / まちがい: ${wrongCount}`;
+  fb.style.display = 'block';
+  document.getElementById('check-btn').style.display = 'none';
+  document.getElementById('hint-btn').style.display = 'none';
+  document.getElementById('next-btn').style.display = 'none';
+  document.getElementById('restart-btn').style.display = 'block';
+}
+
+function nextProblem() {
+  pidx++;
+  loadProblem();
+}
+
+function restartGame() {
+  queue = buildQueue();
+  pidx = 0;
+  score = 0;
+  wrongCount = 0;
+  answered = false;
+  document.getElementById('sc-ok').textContent = '0';
+  document.getElementById('sc-ng').textContent = '0';
+  loadProblem();
+}
+
+document.querySelectorAll('.level-btn').forEach(btn => {
+  btn.addEventListener('click', () => setLevel(btn.dataset.level));
+});
+
+updateLevelButtons();
+restartGame();
+</script>
+</body>
+</html>
