@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>そすうDEぶんかいゲーム - ぷにっとパズル</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #FFF9F2;
+      --card: #FFFFFF;
+      --text: #5D4D4A;
+      --text-light: #9E8E8B;
+      --primary: #FF8A80;
+      --primary-dark: #E57373;
+      --secondary: #81D4FA;
+      --accent: #FFD54F;
+      --success: #81C784;
+      --danger: #FFAB91;
+      --radius-round: 30px;
+      --radius-card: 24px;
+      --shadow: 0 8px 20px rgba(93, 77, 74, 0.08);
+      --inner-shadow: inset 0 2px 4px rgba(0,0,0,0.03);
+    }
+
+    body {
+      font-family: 'Nunito', 'Helvetica Neue', sans-serif;
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(circle at 10% 20%, rgba(255,138,128,0.05) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(129,212,250,0.05) 0%, transparent 20%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      color: var(--text);
+    }
+
+    #game {
+      width: 100%;
+      max-width: 500px;
+      background: var(--card);
+      border-radius: var(--radius-card);
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      border: 6px solid #FFF;
+    }
+
+    .title {
+      font-family: 'Fredoka One', cursive;
+      font-size: 28px;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: var(--primary);
+      text-shadow: 2px 2px 0px rgba(255,138,128,0.1);
+      letter-spacing: 1px;
+    }
+
+    .diff-row { display: flex; gap: 8px; justify-content: center; margin-bottom: 1.5rem; }
+    .diff-btn {
+      padding: 8px 18px; border-radius: var(--radius-round); border: 2px solid transparent;
+      font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 13px;
+      cursor: pointer; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      background: #F5F0EE; color: var(--text-light);
+    }
+    .diff-btn.active { transform: scale(1.1); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .diff-btn.easy.active  { background: var(--success); color: white; }
+    .diff-btn.normal.active{ background: var(--secondary); color: white; }
+    .diff-btn.hard.active  { background: var(--primary); color: white; }
+
+    .top-row { display: flex; gap: 12px; margin-bottom: 1.2rem; }
+    .stat-box {
+      flex: 1; padding: 10px; border-radius: 18px; text-align: center;
+      background: #FFFAF8; border: 2px solid #FDF2EE;
+    }
+    .stat-label { font-size: 10px; font-weight: 900; color: var(--text-light); text-transform: uppercase; margin-bottom: 2px; }
+    .stat-val { font-family: 'Fredoka One', cursive; font-size: 22px; color: var(--text); }
+    .lives-box { background: #FFF0EF; border-color: #FFE5E3; }
+    .sw-box    { background: #F0F9FF; border-color: #E0F2FE; }
+
+    .target-container {
+      background: #F8F9FA; border-radius: 20px; padding: 1.5rem;
+      text-align: center; margin-bottom: 1rem; position: relative;
+      box-shadow: var(--inner-shadow);
+    }
+    .target-label { font-weight: 900; font-size: 11px; color: var(--text-light); letter-spacing: 2px; margin-bottom: 8px; }
+    .equation-line { font-family: 'Fredoka One', cursive; line-height: 1.2; color: var(--text); }
+    .eq-original  { font-size: 52px; color: var(--text); }
+    .eq-factor    { color: var(--primary); font-size: 30px; }
+    .eq-sep       { color: #DDD; font-size: 24px; margin: 0 4px; }
+    .eq-remaining { color: var(--success); font-size: 30px; }
+
+    .remaining-display { text-align: center; margin-bottom: 1.2rem; }
+    .remaining-num { font-family: 'Fredoka One', cursive; font-size: 70px; color: var(--success); line-height: 1; }
+
+    .prime-grid-label { font-size: 11px; font-weight: 900; color: var(--text-light); text-align: center; margin-bottom: 10px; letter-spacing: 1.5px; }
+    .prime-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 1.2rem; }
+    .prime-btn {
+      width: 65px; height: 65px; border-radius: 20px; border: none;
+      background: #FFF; box-shadow: 0 4px 0 #EBE0DC, 0 6px 15px rgba(0,0,0,0.05);
+      font-family: 'Fredoka One', cursive; font-size: 24px; color: var(--text);
+      cursor: pointer; transition: all 0.1s; position: relative;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .prime-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 0 #EBE0DC, 0 8px 20px rgba(0,0,0,0.08); }
+    .prime-btn:active:not(:disabled){ transform: translateY(4px); box-shadow: 0 0 0 #EBE0DC; }
+    .prime-btn:disabled { opacity: 0.3; cursor: not-allowed; filter: grayscale(1); }
+    .prime-btn .badge {
+      position: absolute; top: -5px; right: -5px; background: var(--accent);
+      color: #7D6310; font-size: 11px; font-weight: 900; width: 22px; height: 22px;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .action-row { display: flex; gap: 10px; margin-bottom: 1rem; }
+    .skip-btn {
+      flex: 1; padding: 12px; border-radius: 15px; border: none;
+      background: #FFF9C4; color: #827717; font-family: 'Nunito', sans-serif;
+      font-weight: 800; cursor: pointer; transition: all 0.2s; font-size: 13px;
+    }
+    .skip-btn:hover:not(:disabled) { background: #FFF176; }
+    .skip-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .hint-btn {
+      flex: 2; padding: 12px; border-radius: 15px; border: none;
+      background: #F3E5F5; color: #7B1FA2; font-family: 'Nunito', sans-serif;
+      font-weight: 800; cursor: pointer; transition: all 0.2s; font-size: 13px;
+    }
+    .hint-btn:hover:not(:disabled) { background: #E1BEE7; }
+    .hint-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .result-pop {
+      display: none; text-align: center; padding: 1rem; background: #E8F5E9;
+      border-radius: 20px; margin-bottom: 1rem;
+      animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .result-pop.show { display: block; }
+    .result-emoji { font-size: 40px; }
+    .result-title { font-family: 'Fredoka One', cursive; color: #2E7D32; font-size: 24px; }
+    .next-btn {
+      margin-top: 10px; width: 100%; padding: 15px; border-radius: 18px; border: none;
+      background: var(--primary); color: white; font-family: 'Fredoka One', cursive; font-size: 20px;
+      cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); transition: all 0.1s;
+    }
+    .next-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--primary-dark); }
+
+    .overlay {
+      display: none; position: absolute; inset: 0; background: white; z-index: 10;
+      padding: 2rem; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; animation: fadeIn 0.3s ease; border-radius: var(--radius-card);
+    }
+    .overlay.show { display: flex; }
+    .over-title { font-family: 'Fredoka One', cursive; font-size: 32px; color: var(--primary); margin-bottom: 10px; }
+    .over-time  { font-family: 'Fredoka One', cursive; font-size: 48px; color: var(--success); }
+
+    .lap-list { width: 100%; max-height: 180px; overflow-y: auto; margin: 1rem 0; border-radius: 15px; background: #FAFAFA; padding: 10px; }
+    .lap-item { display: flex; justify-content: space-between; padding: 6px 12px; font-size: 13px; border-bottom: 1px solid #EEE; font-weight: 700; }
+    .lap-item:last-child { border: none; }
+    .lap-item.best { color: #2E7D32; }
+    .lap-item.skipped { color: var(--text-light); }
+
+    @keyframes bounceIn {
+      0%   { transform: scale(0.3); opacity: 0; }
+      50%  { transform: scale(1.05); opacity: 1; }
+      70%  { transform: scale(0.9); }
+      100% { transform: scale(1); }
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25%     { transform: translateX(-5px); }
+      75%     { transform: translateX(5px); }
+    }
+    .wrong { animation: shake 0.3s ease; }
+
+    .message-area { height: 20px; font-size: 12px; font-weight: 800; text-align: center; margin-top: 5px; }
+    .msg-error { color: var(--primary); }
+    .msg-ok    { color: var(--success); }
+
+    @media (max-width: 400px) {
+      #game { padding: 1.2rem; }
+      .prime-btn { width: 56px; height: 56px; font-size: 20px; }
+      .eq-original { font-size: 40px; }
+      .remaining-num { font-size: 56px; }
+    }
+  </style>
+</head>
+<body>
+<div id="game">
+  <h1 class="title">そすうDEぶんかいゲーム ✨</h1>
+
+  <div class="diff-row">
+    <button class="diff-btn easy active" onclick="setDiff('easy')">やさしい</button>
+    <button class="diff-btn normal" onclick="setDiff('normal')">ふつう</button>
+    <button class="diff-btn hard" onclick="setDiff('hard')">むずい</button>
+  </div>
+
+  <div class="top-row">
+    <div class="stat-box lives-box">
+      <div class="stat-label">ライフ</div>
+      <div class="stat-val" id="lives-hearts">❤️❤️❤️</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">のこり</div>
+      <div class="stat-val" id="remaining-q">10<span style="font-size:13px;font-family:'Nunito',sans-serif;color:var(--text-light)">もん</span></div>
+    </div>
+    <div class="stat-box sw-box">
+      <div class="stat-label">タイム</div>
+      <div class="stat-val" id="sw-value">0:00.0</div>
+    </div>
+  </div>
+
+  <div id="play-area">
+    <div class="target-container">
+      <div class="target-label">ターゲット</div>
+      <div class="equation-line" id="equation-line">—</div>
+    </div>
+
+    <div class="remaining-display">
+      <div class="remaining-num" id="remaining">—</div>
+    </div>
+
+    <div class="prime-grid-label">▼ わる素数をえらんで！</div>
+    <div class="prime-grid" id="prime-grid"></div>
+
+    <div class="action-row">
+      <button class="skip-btn" id="skip-btn" onclick="skipProblem()">スキップ ⏭</button>
+      <button class="hint-btn" id="hint-btn" onclick="useHint()">💡 ヒント（のこり <span id="hint-count">3</span>）</button>
+    </div>
+  </div>
+
+  <div class="result-pop" id="result-inline">
+    <div class="result-emoji" id="ri-emoji">✨</div>
+    <div class="result-title" id="ri-title">せいかい！</div>
+    <div id="ri-answer" style="font-weight:800;color:var(--text-light);margin:4px 0;"></div>
+    <div id="ri-lap" style="font-size:13px;font-weight:800;color:#81C784;margin-bottom:4px;"></div>
+    <button class="next-btn" id="next-big-btn" onclick="nextFromBtn()">つぎへ 🚀</button>
+  </div>
+
+  <div class="message-area" id="message"></div>
+
+  <div class="overlay" id="finish-overlay">
+    <div class="result-emoji">🏆</div>
+    <div class="over-title">クリア！おめでとう！</div>
+    <div class="over-time" id="finish-time">0:00.0</div>
+    <div id="finish-sub" style="margin-bottom:10px;font-weight:800;color:var(--text-light);"></div>
+    <div class="lap-list" id="lap-list"></div>
+    <button class="next-btn" onclick="restartGame()">もういっかい！</button>
+  </div>
+
+  <div class="overlay" id="gameover-overlay">
+    <div class="result-emoji">😢</div>
+    <div class="over-title">ざんねん…！</div>
+    <div id="gameover-score" style="margin-bottom:20px;font-weight:800;color:var(--text-light);"></div>
+    <button class="next-btn" onclick="restartGame()">リベンジする！</button>
+  </div>
+</div>
+
+<script>
+const ALL_PRIMES = [2,3,5,7,11,13,17,19];
+const DIFF_PRIMES = { easy:[2,3,5], normal:[2,3,5,7,11], hard:[2,3,5,7,11,13,17,19] };
+const MAX_LIVES = 3, TOTAL_Q = 10;
+
+let state = {
+  target:0, remaining:0, factors:[],
+  lives:MAX_LIVES, hintsLeft:3, solved:false, diff:'easy',
+  qIndex:0, lapStart:0,
+  swStart:0, swElapsed:0, swRunning:false, swRaf:null,
+  results:[]
+};
+
+function isPrime(n){ if(n<2)return false; for(let i=2;i<=Math.sqrt(n);i++) if(n%i===0)return false; return true; }
+function primeFactors(n){ const f=[]; for(let d=2;d*d<=n;d++) while(n%d===0){f.push(d);n/=d;} if(n>1)f.push(n); return f; }
+
+function generateNumber(diff){
+  const pool = DIFF_PRIMES[diff];
+  const count = diff==='easy' ? 2+Math.floor(Math.random()*2) : diff==='hard' ? 3+Math.floor(Math.random()*3) : 2+Math.floor(Math.random()*3);
+  let num, tries=0;
+  do {
+    num=1;
+    for(let i=0;i<count;i++) num *= pool[Math.floor(Math.random()*pool.length)];
+    tries++;
+  } while((num<4||num>9999||(state.results.length>0&&num===state.target)||isPrime(num))&&tries<100);
+  return num;
+}
+
+function fmtTime(ms){
+  const s=Math.floor(ms/1000), ds=Math.floor((ms%1000)/100);
+  const m=Math.floor(s/60), ss=s%60;
+  return `${m}:${String(ss).padStart(2,'0')}.${ds}`;
+}
+
+function swTick(){ if(!state.swRunning)return; state.swElapsed=performance.now()-state.swStart; document.getElementById('sw-value').textContent=fmtTime(state.swElapsed); state.swRaf=requestAnimationFrame(swTick); }
+function swStart(){ state.swStart=performance.now()-state.swElapsed; state.swRunning=true; state.swRaf=requestAnimationFrame(swTick); }
+function swStop(){ state.swRunning=false; cancelAnimationFrame(state.swRaf); }
+function swReset(){ swStop(); state.swElapsed=0; document.getElementById('sw-value').textContent='0:00.0'; }
+function lapNow(){ return state.swElapsed; }
+
+function setDiff(d){
+  state.diff=d;
+  document.querySelectorAll('.diff-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.diff-btn.'+d).classList.add('active');
+  restartGame();
+}
+
+function renderLives(){ document.getElementById('lives-hearts').textContent='❤️'.repeat(Math.max(0,state.lives))+'🖤'.repeat(Math.max(0,MAX_LIVES-state.lives)); }
+
+function buildPrimeGrid(){
+  const grid=document.getElementById('prime-grid'); grid.innerHTML='';
+  ALL_PRIMES.forEach(p=>{
+    const btn=document.createElement('button'); btn.id='pbtn-'+p; btn.className='prime-btn';
+    btn.innerHTML=`<span>${p}</span>`;
+    btn.onclick=()=>selectPrime(p); grid.appendChild(btn);
+  });
+}
+
+function updatePrimeButtons(){
+  const pool=DIFF_PRIMES[state.diff];
+  const usageMap={};
+  state.factors.forEach(f=>usageMap[f]=(usageMap[f]||0)+1);
+  ALL_PRIMES.forEach(p=>{
+    const btn=document.getElementById('pbtn-'+p); if(!btn)return;
+    const badge=btn.querySelector('.badge'); if(badge)badge.remove();
+    btn.style.display=pool.includes(p)?'flex':'none';
+    btn.disabled=state.solved||state.lives<=0||state.remaining===1;
+    const cnt=usageMap[p]||0;
+    if(cnt>0){ const b=document.createElement('span'); b.className='badge'; b.textContent=cnt; btn.appendChild(b); }
+  });
+}
+
+function renderEquation(){
+  const el=document.getElementById('equation-line');
+  if(state.factors.length===0){
+    el.innerHTML=`<span class="eq-original">${state.target}</span>`;
+  } else {
+    const fh=state.factors.map((f,i)=>i===0?`<span class="eq-factor">${f}</span>`:`<span class="eq-sep">×</span><span class="eq-factor">${f}</span>`).join('');
+    const rem=state.remaining===1?'':`<span class="eq-sep">×</span><span class="eq-remaining">${state.remaining}</span>`;
+    el.innerHTML=`<span class="eq-original">${state.target}</span><span class="eq-sep">=</span>${fh}${rem}`;
+  }
+  document.getElementById('remaining').textContent=state.remaining;
+}
+
+function setMessage(msg,type=''){
+  const el=document.getElementById('message'); el.textContent=msg;
+  el.className='message-area '+(type==='error'?'msg-error':'msg-ok');
+}
+
+function selectPrime(p){
+  if(state.solved||state.lives<=0||state.remaining===1)return;
+  if(state.remaining%p!==0){
+    state.lives--; renderLives();
+    const btn=document.getElementById('pbtn-'+p);
+    if(btn){ btn.classList.add('wrong'); setTimeout(()=>btn.classList.remove('wrong'),300); }
+    if(state.lives<=0){ swStop(); setTimeout(showGameOver,500); }
+    else setMessage(`ざんねん！ ${p} ではわれないよ`,'error');
+    return;
+  }
+  state.factors.push(p); state.remaining/=p;
+  renderEquation(); updatePrimeButtons();
+  if(state.remaining===1) celebrate(false);
+  else setMessage(`${p} でわったよ！`,'ok');
+}
+
+function useHint(){
+  if(state.solved||state.hintsLeft<=0||state.lives<=0)return;
+  const factors=primeFactors(state.remaining); if(!factors.length)return;
+  const hint=factors[0]; state.hintsLeft--;
+  document.getElementById('hint-count').textContent=state.hintsLeft;
+  if(state.hintsLeft===0) document.getElementById('hint-btn').disabled=true;
+  const btn=document.getElementById('pbtn-'+hint);
+  if(btn){
+    btn.style.boxShadow='0 0 0 4px #FFD54F, 0 6px 0 #EBE0DC';
+    setTimeout(()=>{ btn.style.boxShadow=''; },1800);
+  }
+  setMessage('ピカピカしてるボタンにちゅうもく！','ok');
+}
+
+function celebrate(skipped){
+  state.solved=true;
+  const lap=lapNow()-state.lapStart;
+  state.results.push({q:state.target, lap, skipped:!!skipped, factors:[...state.factors]});
+  const answer=primeFactors(state.target).join(' × ');
+  const emojis=['🎉','🌟','✨','🏆','🎊','🌈'];
+  document.getElementById('ri-emoji').textContent=skipped?'⏭':emojis[Math.floor(Math.random()*emojis.length)];
+  document.getElementById('ri-title').textContent=skipped?'スキップしたよ':'せいかい！';
+  document.getElementById('ri-answer').textContent=`${state.target} = ${answer}`;
+  document.getElementById('ri-lap').textContent=`ラップ: ${fmtTime(lap)}`;
+  document.getElementById('result-inline').classList.add('show');
+  document.getElementById('play-area').style.display='none';
+  document.getElementById('next-big-btn').textContent=state.qIndex>=TOTAL_Q-1?'けっかをみる 🏁':'つぎのもんだいへ 🚀';
+  setMessage(''); swStop();
+}
+
+function nextFromBtn(){
+  state.qIndex++;
+  if(state.qIndex>=TOTAL_Q){ showFinish(); return; }
+  loadQuestion(); swStart();
+}
+
+function skipProblem(){ if(state.solved||state.lives<=0)return; celebrate(true); }
+
+function loadQuestion(){
+  state.solved=false; state.factors=[]; state.hintsLeft=3;
+  state.target=generateNumber(state.diff); state.remaining=state.target;
+  state.lapStart=lapNow();
+  document.getElementById('result-inline').classList.remove('show');
+  document.getElementById('play-area').style.display='block';
+  document.getElementById('hint-count').textContent=3;
+  document.getElementById('hint-btn').disabled=false;
+  document.getElementById('skip-btn').disabled=false;
+  const left=TOTAL_Q-state.qIndex;
+  document.getElementById('remaining-q').innerHTML=left+'<span style="font-size:13px;font-family:\'Nunito\',sans-serif;color:var(--text-light)">もん</span>';
+  renderEquation(); updatePrimeButtons(); setMessage('');
+}
+
+function showFinish(){
+  swStop();
+  document.getElementById('finish-time').textContent=fmtTime(state.swElapsed);
+  const skips=state.results.filter(r=>r.skipped).length;
+  document.getElementById('finish-sub').textContent=`ぜんぶで ${TOTAL_Q-skips}問 せいかい！`;
+  const validLaps=state.results.filter(r=>!r.skipped).map(r=>r.lap);
+  const bestLap=validLaps.length?Math.min(...validLaps):Infinity;
+  const lapList=document.getElementById('lap-list'); lapList.innerHTML='';
+  state.results.forEach((r,i)=>{
+    const item=document.createElement('div');
+    item.className='lap-item'+(r.skipped?' skipped':(!r.skipped&&r.lap===bestLap?' best':''));
+    const medal=(!r.skipped&&r.lap===bestLap)?'🏅 ':'';
+    item.innerHTML=`<span>${medal}#${i+1}（${r.q}）</span><span>${r.skipped?'SKIP':fmtTime(r.lap)}</span>`;
+    lapList.appendChild(item);
+  });
+  document.getElementById('finish-overlay').classList.add('show');
+}
+
+function showGameOver(){
+  document.getElementById('gameover-score').textContent=`${state.qIndex}問クリアできたよ！`;
+  document.getElementById('gameover-overlay').classList.add('show');
+}
+
+function restartGame(){
+  swReset();
+  state.lives=MAX_LIVES; state.qIndex=0; state.results=[]; state.lapStart=0; state.solved=false;
+  document.getElementById('gameover-overlay').classList.remove('show');
+  document.getElementById('finish-overlay').classList.remove('show');
+  renderLives(); loadQuestion(); swStart();
+}
+
+buildPrimeGrid(); renderLives(); loadQuestion(); swStart();
+</script>
+</body>
+</html>
