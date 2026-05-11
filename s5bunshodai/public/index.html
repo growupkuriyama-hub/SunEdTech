@@ -231,6 +231,9 @@ body {
   font-weight: 700;
   font-family: inherit;
   background: var(--bg-primary);
+  cursor: pointer;
+  caret-color: transparent;
+  user-select: none;
 }
 .answer-input:focus {
   border-color: var(--main-color);
@@ -333,15 +336,23 @@ body {
   margin-bottom: 12px;
 }
 .scratchpad-title { color: var(--text-secondary); font-weight: 700; display:flex; align-items:center; gap:6px; }
-.stats-inline {
+.progress-status {
   display: flex;
-  gap: 10px;
-  font-size: 12px;
+  justify-content: center;
+  gap: 20px;
+  font-size: 17px;
+  font-weight: 600;
   color: var(--text-secondary);
-  font-weight: 500;
+  background: var(--bg-primary);
+  border-radius: var(--radius-md);
+  padding: 14px 20px;
+  margin: 1.2rem 0;
+  box-shadow: 0 4px 0 var(--border);
+  text-align: center;
 }
-.stats-inline strong { color: var(--text-primary); font-weight: 700; }
-.stats-inline strong.good { color: var(--main-color); }
+.progress-status .ps-item { display: flex; align-items: center; gap: 4px; }
+.progress-status .ps-val { font-size: 22px; font-weight: 700; color: var(--text-primary); }
+.progress-status .ps-val.good { color: var(--main-color); }
 .scratchpad-note { color: var(--text-tertiary); font-size: 12px; margin-top: 4px; line-height: 1.5; }
 .scratch-canvas {
   width: 100%;
@@ -437,6 +448,12 @@ body {
     </button>
   </div>
 
+  <div class="progress-status" id="progressStatus">
+    <span class="ps-item">全部で <span class="ps-val">10</span> 問</span>
+    <span class="ps-item">のこり <span class="ps-val" id="ps-remain">10</span> 問</span>
+    <span class="ps-item">正答率 <span class="ps-val good" id="ps-rate">—</span></span>
+  </div>
+
   <div class="scratchpad" aria-label="計算スペース">
     <div class="scratchpad-header">
       <div>
@@ -444,11 +461,7 @@ body {
         <div class="scratchpad-note">スマホ・タブレット・タッチペン・マウスで自由に書けます。</div>
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
-        <div class="stats-inline" id="statsInline">
-          <span>問題数 <strong id="s-total">0</strong></span>
-          <span>正解 <strong class="good" id="s-correct">0</strong></span>
-          <span>正答率 <strong id="s-rate">—</strong></span>
-        </div>
+
         <button class="btn btn-small" id="clearScratchBtn" type="button">
           <i class="ti ti-eraser" aria-hidden="true"></i>消す
         </button>
@@ -465,9 +478,9 @@ document.getElementById("numpadWrap").addEventListener("click",t=>{const btn=t.t
 N();function B(){return f==="all"?w:w.filter(t=>t.category===f)}function I(t){const e=[...t];for(let a=e.length-1;a>0;a--){const i=Math.floor(Math.random()*(a+1));[e[a],e[i]]=[e[i],e[a]]}return e}function C(){const t=B();if(t.length===0)return null;d.length===0&&(d=I(t),d.length>1&&d[0].id===b&&d.push(d.shift()));const e=d.shift();return b=e.id,M(e)}function M(t){return typeof structuredClone=="function"?structuredClone(t):JSON.parse(JSON.stringify(t))}function h(){if(v=!1,q(),document.getElementById("numpadWrap").classList.remove("visible"),document.getElementById("feedback").style.display="none",document.getElementById("checkBtn").style.display="none",document.getElementById("problemContent").style.display="none",document.getElementById("loadingMsg").textContent="問題を選んでいます…",document.getElementById("loadingMsg").style.display="block",c=C(),!c){document.getElementById("loadingMsg").innerHTML='<span class="error-msg"><i class="ti ti-alert-circle" aria-hidden="true"></i> このカテゴリにはまだ問題がありません。</span>';return}P()}function P(){document.getElementById("loadingMsg").style.display="none",document.getElementById("problemContent").style.display="block",document.getElementById("problemCat").textContent=c.cat,document.getElementById("problemText").innerHTML='<span style="color:var(--main-color);font-weight:700;font-size:13px;margin-right:8px;">'+p(c.cat)+'</span>'+p(c.text).replace(/\n/g,"<br>");const t=document.getElementById("answerArea");t.innerHTML="";const e=["❶","❷"];c.parts.forEach((a,i)=>{const n=document.createElement("div");n.className="answer-row",n.innerHTML=`
       <span class="answer-label">${c.parts.length>1?e[i]+" ":""}答え</span>
       <input class="answer-input" type="text" id="ans${i}"
-             placeholder="${p(a.question)}" aria-label="答え${i+1}" />
+             placeholder="${p(a.question)}" aria-label="答え${i+1}" readonly inputmode="none" />
       <span class="answer-unit">${p(a.unit)}</span>
-    `,t.appendChild(n),n.querySelector(`#ans${i}`).addEventListener("keydown",r=>{r.key==="Enter"&&E()})}),document.getElementById("checkBtn").style.display="inline-flex",document.getElementById("ans0").focus()}function p(t){return String(t).replace(/[&<>'"]/g,e=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"})[e])}function N(){const t=document.getElementById("scratchCanvas"),e=t.getContext("2d");let a=!1,i=null;function n(){const o=t.getBoundingClientRect(),s=window.devicePixelRatio||1,g=t.width&&t.height?e.getImageData(0,0,t.width,t.height):null;if(t.width=Math.max(1,Math.round(o.width*s)),t.height=Math.max(1,Math.round(o.height*s)),e.setTransform(1,0,0,1,0,0),e.scale(s,s),e.lineCap="round",e.lineJoin="round",e.lineWidth=3,e.strokeStyle="#000000",g){const y=document.createElement("canvas");y.width=g.width,y.height=g.height,y.getContext("2d").putImageData(g,0,0),e.drawImage(y,0,0,o.width,o.height)}}function r(o){const s=t.getBoundingClientRect();return{x:o.clientX-s.left,y:o.clientY-s.top}}function l(o){var s;o.preventDefault(),a=!0,i=r(o),(s=t.setPointerCapture)==null||s.call(t,o.pointerId)}function x(o){if(!a||!i)return;o.preventDefault();const s=r(o);e.beginPath(),e.moveTo(i.x,i.y),e.lineTo(s.x,s.y),e.stroke(),i=s}function m(o){var s;a&&(a=!1,i=null,(o==null?void 0:o.pointerId)!==void 0&&((s=t.releasePointerCapture)==null||s.call(t,o.pointerId)))}window.addEventListener("resize",n),t.addEventListener("pointerdown",l),t.addEventListener("pointermove",x),t.addEventListener("pointerup",m),t.addEventListener("pointercancel",m),t.addEventListener("pointerleave",m),requestAnimationFrame(n)}function q(){const t=document.getElementById("scratchCanvas");if(!t)return;t.getContext("2d").clearRect(0,0,t.width,t.height)}function L(t){if(t=String(t).trim(),t==="")return NaN;if(t=t.replace(/[０-９]/g,e=>String.fromCharCode(e.charCodeAt(0)-65248)).replace(/[．]/g,".").replace(/[，]/g,",").replace(/[／]/g,"/").replace(/[％]/g,"%").replace(/%/g,"").replace(/円|人|分|秒|時間|km|mL|cm³|cm2|cm²|m²|cm|m|L|kg|g|ページ/g,"").trim(),t.includes("/")){const[e,a]=t.split("/").map(Number);return!Number.isFinite(e)||!Number.isFinite(a)||a===0?NaN:e/a}return parseFloat(t.replace(/,/g,""))}function E(){if(!c||v)return;v=!0;let t=!0;const e=[];c.parts.forEach((i,n)=>{const r=document.getElementById(`ans${n}`),l=L(r.value),x=L(i.answer),m=!Number.isNaN(l)&&Math.abs(l-x)<.01;m||(t=!1),r.classList.add(m?"correct":"wrong"),e.push(`${c.parts.length>1?["❶","❷"][n]+" ":""}<strong>${p(i.answer)} ${p(i.unit)}</strong>`)}),u.total++,t&&u.correct++,S();const a=document.getElementById("feedback");a.className="feedback "+(t?"correct":"wrong"),a.innerHTML=(t?"✓ <strong>正解！</strong>　":"✗ <strong>不正解</strong>　")+"答え："+e.join("　")+"<br><br>"+p(c.explanation),a.style.display="block",document.getElementById("checkBtn").style.display="none";activeInput=null;}function S(){document.getElementById("s-total").textContent=u.total,document.getElementById("s-correct").textContent=u.correct;const t=u.total>0?Math.round(u.correct/u.total*100)+"%":"—";document.getElementById("s-rate").textContent=t,document.getElementById("progress").style.width=Math.min(u.total*10,100)+"%"}h();
+    `,t.appendChild(n),n.querySelector(`#ans${i}`).addEventListener("keydown",r=>{r.key==="Enter"&&E()})}),document.getElementById("checkBtn").style.display="inline-flex",document.getElementById("ans0").focus()}function p(t){return String(t).replace(/[&<>'"]/g,e=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"})[e])}function N(){const t=document.getElementById("scratchCanvas"),e=t.getContext("2d");let a=!1,i=null;function n(){const o=t.getBoundingClientRect(),s=window.devicePixelRatio||1,g=t.width&&t.height?e.getImageData(0,0,t.width,t.height):null;if(t.width=Math.max(1,Math.round(o.width*s)),t.height=Math.max(1,Math.round(o.height*s)),e.setTransform(1,0,0,1,0,0),e.scale(s,s),e.lineCap="round",e.lineJoin="round",e.lineWidth=3,e.strokeStyle="#000000",g){const y=document.createElement("canvas");y.width=g.width,y.height=g.height,y.getContext("2d").putImageData(g,0,0),e.drawImage(y,0,0,o.width,o.height)}}function r(o){const s=t.getBoundingClientRect();return{x:o.clientX-s.left,y:o.clientY-s.top}}function l(o){var s;o.preventDefault(),a=!0,i=r(o),(s=t.setPointerCapture)==null||s.call(t,o.pointerId)}function x(o){if(!a||!i)return;o.preventDefault();const s=r(o);e.beginPath(),e.moveTo(i.x,i.y),e.lineTo(s.x,s.y),e.stroke(),i=s}function m(o){var s;a&&(a=!1,i=null,(o==null?void 0:o.pointerId)!==void 0&&((s=t.releasePointerCapture)==null||s.call(t,o.pointerId)))}window.addEventListener("resize",n),t.addEventListener("pointerdown",l),t.addEventListener("pointermove",x),t.addEventListener("pointerup",m),t.addEventListener("pointercancel",m),t.addEventListener("pointerleave",m),requestAnimationFrame(n)}function q(){const t=document.getElementById("scratchCanvas");if(!t)return;t.getContext("2d").clearRect(0,0,t.width,t.height)}function L(t){if(t=String(t).trim(),t==="")return NaN;if(t=t.replace(/[０-９]/g,e=>String.fromCharCode(e.charCodeAt(0)-65248)).replace(/[．]/g,".").replace(/[，]/g,",").replace(/[／]/g,"/").replace(/[％]/g,"%").replace(/%/g,"").replace(/円|人|分|秒|時間|km|mL|cm³|cm2|cm²|m²|cm|m|L|kg|g|ページ/g,"").trim(),t.includes("/")){const[e,a]=t.split("/").map(Number);return!Number.isFinite(e)||!Number.isFinite(a)||a===0?NaN:e/a}return parseFloat(t.replace(/,/g,""))}function E(){if(!c||v)return;v=!0;let t=!0;const e=[];c.parts.forEach((i,n)=>{const r=document.getElementById(`ans${n}`),l=L(r.value),x=L(i.answer),m=!Number.isNaN(l)&&Math.abs(l-x)<.01;m||(t=!1),r.classList.add(m?"correct":"wrong"),e.push(`${c.parts.length>1?["❶","❷"][n]+" ":""}<strong>${p(i.answer)} ${p(i.unit)}</strong>`)}),u.total++,t&&u.correct++,S();const a=document.getElementById("feedback");a.className="feedback "+(t?"correct":"wrong"),a.innerHTML=(t?"✓ <strong>正解！</strong>　":"✗ <strong>不正解</strong>　")+"答え："+e.join("　")+"<br><br>"+p(c.explanation),a.style.display="block",document.getElementById("checkBtn").style.display="none";activeInput=null;}function S(){const remain=10-u.total;document.getElementById("ps-remain").textContent=remain>0?remain:0;const t=u.total>0?Math.round(u.correct/u.total*100)+"%":"—";document.getElementById("ps-rate").textContent=t;document.getElementById("progress").style.width=Math.min(u.total*10,100)+"%"}h();
 
   </script>
 </body>
