@@ -12,19 +12,19 @@ export const APP_LIST = [
     bgColor: "#EFF6FF",
     icon: "🔬",
   },
-{
-  id: "eiken-vocab-quiz",
-  paid: false,
-  name: "Eiken Vocabulary Quiz",
-  nameJa: "英検単語マスター！準2級・2級・準1級",
-  description: "英検準2級・2級・準1級レベルの1667語を4択クイズで出題。SRS（間違い優先出題）・コンボ・ライフ制で楽しく単語力を鍛えられます。",
-  target: "中3～高3 ／ 英検準2級～準1級",
-  tags: ["英検", "英語", "英単語", "英検", "語彙"],
-  url: "https://sunedtech.pages.dev/",
-  color: "#EC4899",
-  bgColor: "#FDF2F8",
-  icon: "📗",
-},
+  {
+    id: "eiken-vocab-quiz",
+    paid: false,
+    name: "Eiken Vocabulary Quiz",
+    nameJa: "英検単語マスター！準2級・2級・準1級",
+    description: "英検準2級・2級・準1級レベルの1667語を4択クイズで出題。SRS（間違い優先出題）・コンボ・ライフ制で楽しく単語力を鍛えられます。",
+    target: "中3～高3 ／ 英検準2級～準1級",
+    tags: ["英検", "英語", "英単語", "英検", "語彙"],
+    url: "https://sunedtech.pages.dev/",
+    color: "#EC4899",
+    bgColor: "#FDF2F8",
+    icon: "📗",
+  },
   {
     id: "english-vocab-quiz",
     paid: false,
@@ -38,7 +38,7 @@ export const APP_LIST = [
     bgColor: "#FFFBEB",
     icon: "📚",
   },
-   {
+  {
     id: "math-practice",
     paid: false,
     name: "Math Word Problem Practice",
@@ -77,7 +77,7 @@ export const APP_LIST = [
     bgColor: "#ECFDF5",
     icon: "⚗️",
   },
- {
+  {
     id: "romaji-renshuu",
     paid: false,
     name: "Romaji Practice",
@@ -103,5 +103,17 @@ export const APP_LIST = [
     bgColor: "#F5F3FF",
     icon: "➗",
   },
-
+  {
+    id: "sosu-de-bunkai",
+    paid: false,
+    name: "Prime Factorization Game",
+    nameJa: "そすうDEぶんかいゲーム",
+    description: "数を素数の掛け算に分解するゲーム型アプリ。やさしい・ふつう・むずいの3段階、ライフ制・ストップウォッチ・ラップタイムで楽しく素因数分解を身につけられます。",
+    target: "小2～小6 ／ 素因数分解の導入～定着",
+    tags: ["算数", "数学", "素数", "素因数分解"],
+    url: "https://soinsu-bunka-game.pages.dev/",
+    color: "#FF8A80",
+    bgColor: "#FFF9F2",
+    icon: "🔢",
+  },
 ];
