@@ -97,31 +97,6 @@
       transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .level-wrap {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-bottom: 1.5rem;
-    }
-
-    .level-btn {
-      border: 1px solid var(--border-color);
-      background: var(--card-bg);
-      color: var(--text-muted);
-      border-radius: 999px;
-      padding: 10px 8px;
-      cursor: pointer;
-      font-weight: 800;
-      transition: all 0.2s;
-    }
-
-    .level-btn.active {
-      color: #fff;
-      background: linear-gradient(135deg, var(--primary), var(--accent-blue));
-      border-color: transparent;
-      box-shadow: 0 4px 14px rgba(79,70,229,0.28);
-    }
-
     .problem-card {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
@@ -386,7 +361,6 @@
       body { padding: 1rem 0.75rem 2rem; }
       .controls { grid-template-columns: 1fr; }
       .header h1 { font-size: 24px; }
-      .level-wrap { grid-template-columns: 1fr; }
       .problem-card, .diagram-wrap { padding: 1.15rem; }
       .top-link { width: 100%; }
     }
@@ -400,11 +374,6 @@
     <h1>つるかめ算マスター！</h1>
   </div>
 
-  <div class="level-wrap" aria-label="レベル選択">
-    <button class="level-btn active" data-level="easy">やさしい</button>
-    <button class="level-btn" data-level="normal">ふつう</button>
-    <button class="level-btn" data-level="hard">チャレンジ</button>
-  </div>
 
   <div class="problem-card" id="prob-text"></div>
 
@@ -430,10 +399,6 @@
   </div>
 
   <div class="diagram-wrap">
-    <div class="legend">
-      <span><span class="legend-box" style="background:#818cf8;"></span><span id="leg-a"></span></span>
-      <span><span class="legend-box" style="background:#fbbf24;"></span><span id="leg-b"></span></span>
-    </div>
     <div class="legs-label" id="legs-label"></div>
     <svg id="diagram" xmlns="http://www.w3.org/2000/svg" style="display:block; margin:0 auto;"></svg>
   </div>
@@ -477,12 +442,10 @@ const TYPES = [
 ];
 
 const PAIRS_BY_LEVEL = {
-  easy: [[0,1]],
-  normal: [[0,1], [6,7]],
-  hard: [[0,1], [2,3], [4,5], [6,7]]
+  easy: [[0,1]]
 };
 
-let currentLevel = loadLevel();
+let currentLevel = 'easy';
 let queue = [];
 let pidx = 0;
 let score = 0;
@@ -665,15 +628,12 @@ function loadProblem() {
   document.getElementById('prob-text').innerHTML =
     `<div style="font-size:0.9em; color:#64748b; margin-bottom:4px;">Problem:</div>` +
     `${ta.emoji}${ta.name}と${tb.emoji}${tb.name}が合わせて <b>${p.total}</b> ${unitForTotal(ta, tb)} います。<br>` +
-    `あしの合計は <b>${p.legs}本</b> です。それぞれ何${unitForAnswer(ta, tb)}ですか？` +
-    `<small>※${ta.name}＝${ta.legs}本、${tb.name}＝${tb.legs}本。横が数、高さが足の本数です。</small>`;
+    `あしの合計は <b>${p.legs}本</b> です。それぞれ何${unitForAnswer(ta, tb)}ですか？`;
 
   document.getElementById('lbl-a').textContent = `${ta.name}`;
   document.getElementById('unit-a').textContent = ta.unit;
   document.getElementById('lbl-b').textContent = `${tb.name}`;
   document.getElementById('unit-b').textContent = tb.unit;
-  document.getElementById('leg-a').textContent = `${ta.name}(${ta.legs}本)`;
-  document.getElementById('leg-b').textContent = `${tb.name}(${tb.legs}本)`;
 
   valA = p.total;
   valB = 0;
