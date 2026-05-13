@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>食育・教材クロスワード制作｜サン教育開発システム</title>
+  <meta name="description" content="サン教育開発システムは、食育・小学生向け教材・地域イベント向けのクロスワードパズルを制作します。問題・解答・印刷用データまで対応。東京都練馬区。" />
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --paper: #ffffff;
+      --ink: #102033;
+      --muted: #64748b;
+      --line: #dbe4ef;
+      --blue: #2563eb;
+      --blue2: #1d4ed8;
+      --green: #0f766e;
+      --green2: #14b8a6;
+      --soft-blue: #eff6ff;
+      --soft-green: #ecfdf5;
+      --shadow: 0 18px 45px rgba(15, 23, 42, .10);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(20,184,166,.20), transparent 330px),
+        linear-gradient(180deg, #eff6ff 0%, var(--bg) 520px);
+    }
+
+    a { color: inherit; }
+    .container { width: min(1120px, calc(100% - 32px)); margin: 0 auto; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(14px);
+      background: rgba(255,255,255,.78);
+      border-bottom: 1px solid rgba(203,213,225,.75);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 14px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 900;
+      letter-spacing: .02em;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--blue), var(--green2));
+      color: white;
+      box-shadow: 0 8px 18px rgba(37,99,235,.25);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      font-size: 14px;
+      color: #334155;
+    }
+
+    .nav-links a { text-decoration: none; font-weight: 700; }
+    .nav-links a:hover { color: var(--blue); }
+
+    .nav-cta {
+      color: white !important;
+      background: var(--blue);
+      padding: 9px 14px;
+      border-radius: 999px;
+      box-shadow: 0 8px 20px rgba(37,99,235,.20);
+    }
+
+    @media (max-width: 760px) {
+      .nav { align-items: flex-start; }
+      .nav-links { display: none; }
+    }
+
+    .hero { padding: 72px 0 44px; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.08fr .92fr;
+      gap: 34px;
+      align-items: center;
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero { padding-top: 46px; }
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.85);
+      border: 1px solid var(--line);
+      color: var(--green);
+      font-weight: 900;
+      font-size: 13px;
+    }
+
+    h1 {
+      margin: 18px 0 14px;
+      font-size: clamp(34px, 6vw, 62px);
+      line-height: 1.08;
+      letter-spacing: -.04em;
+    }
+
+    .hero-copy {
+      margin: 0 0 24px;
+      color: #475569;
+      font-size: clamp(16px, 2.2vw, 20px);
+      line-height: 1.85;
+      max-width: 720px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-top: 24px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 13px 18px;
+      text-decoration: none;
+      font-weight: 900;
+      border: 1px solid transparent;
+      transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary { background: var(--blue); color: white; box-shadow: 0 14px 28px rgba(37,99,235,.22); }
+    .btn-primary:hover { background: var(--blue2); }
+    .btn-secondary { background: white; color: var(--ink); border-color: var(--line); }
+
+    .note { color: var(--muted); font-size: 13px; line-height: 1.6; margin-top: 14px; }
+
+    .sample-card {
+      background: rgba(255,255,255,.88);
+      border: 1px solid rgba(203,213,225,.85);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sample-card::before {
+      content: "";
+      position: absolute;
+      right: -56px;
+      top: -56px;
+      width: 150px;
+      height: 150px;
+      background: radial-gradient(circle, rgba(250,204,21,.42), transparent 70%);
+      pointer-events: none;
+    }
+
+    .sample-title { margin: 0 0 12px; font-weight: 900; font-size: 18px; }
+
+    .sample-photo {
+      width: 100%;
+      display: block;
+      border-radius: 18px;
+      border: 1px solid rgba(203,213,225,.85);
+      box-shadow: 0 10px 24px rgba(15,23,42,.10);
+      background: white;
+    }
+
+    .section { padding: 48px 0; }
+    .section-head { text-align: center; max-width: 760px; margin: 0 auto 26px; }
+    .section-head h2 { margin: 0 0 10px; font-size: clamp(28px, 4vw, 42px); letter-spacing: -.03em; }
+    .section-head p { margin: 0; color: var(--muted); line-height: 1.8; }
+
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    @media (max-width: 860px) { .cards { grid-template-columns: 1fr; } }
+
+    .info-card, .panel, .price-card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 26px rgba(15, 23, 42, .06);
+    }
+
+    .info-card { padding: 22px; }
+    .info-card .icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: var(--soft-blue);
+      margin-bottom: 12px;
+      font-size: 24px;
+    }
+
+    .info-card h3 { margin: 0 0 8px; font-size: 20px; }
+    .info-card p { margin: 0; color: var(--muted); line-height: 1.75; }
+
+    .split { display: grid; grid-template-columns: .9fr 1.1fr; gap: 22px; align-items: start; }
+    @media (max-width: 860px) { .split { grid-template-columns: 1fr; } }
+
+    .panel { padding: 24px; }
+    .panel h2, .panel h3 { margin-top: 0; }
+
+    .list { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+    .list li { display: flex; gap: 10px; color: #475569; line-height: 1.7; }
+    .list li::before {
+      content: "✓";
+      flex: 0 0 24px;
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: var(--soft-green);
+      color: var(--green);
+      font-weight: 900;
+      margin-top: 2px;
+    }
+
+    .price-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    @media (max-width: 1000px) { .price-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 650px) { .price-grid { grid-template-columns: 1fr; } }
+
+    .price-card { padding: 24px; position: relative; overflow: hidden; }
+    .price-card.featured { border-color: rgba(37,99,235,.45); box-shadow: 0 18px 44px rgba(37,99,235,.13); }
+
+    .badge {
+      display: inline-flex;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--soft-blue);
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+
+    .price-card h3 { margin: 0 0 8px; font-size: 21px; }
+    .price { font-size: 28px; font-weight: 950; letter-spacing: -.03em; margin: 10px 0; }
+    .price small { font-size: 13px; color: var(--muted); font-weight: 700; }
+    .price-card p, .price-card li { color: var(--muted); line-height: 1.75; }
+    .price-card ul { padding-left: 1.1em; margin: 12px 0 0; }
+
+    .flow { counter-reset: step; display: grid; gap: 14px; }
+    .flow-item {
+      counter-increment: step;
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 14px;
+      align-items: start;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: white;
+    }
+
+    .flow-item::before {
+      content: counter(step);
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--blue), var(--green2));
+      color: white;
+      font-weight: 950;
+    }
+
+    .flow-item h3 { margin: 0 0 4px; font-size: 18px; }
+    .flow-item p { margin: 0; color: var(--muted); line-height: 1.7; }
+
+    .cta { padding: 54px 0 70px; }
+    .cta-box {
+      background: linear-gradient(135deg, #1d4ed8, #0f766e);
+      color: white;
+      border-radius: 30px;
+      padding: clamp(28px, 5vw, 48px);
+      box-shadow: 0 24px 60px rgba(15,23,42,.18);
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 22px;
+      align-items: center;
+    }
+
+    @media (max-width: 780px) { .cta-box { grid-template-columns: 1fr; } }
+    .cta-box h2 { margin: 0 0 10px; font-size: clamp(28px, 4vw, 42px); letter-spacing: -.03em; }
+    .cta-box p { margin: 0; color: rgba(255,255,255,.86); line-height: 1.8; }
+
+    .contact-card {
+      background: rgba(255,255,255,.14);
+      border: 1px solid rgba(255,255,255,.28);
+      border-radius: 22px;
+      padding: 20px;
+    }
+
+    .contact-card a {
+      display: inline-flex;
+      margin-top: 12px;
+      background: white;
+      color: #0f172a;
+      text-decoration: none;
+      border-radius: 999px;
+      padding: 12px 16px;
+      font-weight: 950;
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      background: white;
+      padding: 28px 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .footer-grid { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; line-height: 1.8; }
+    .small { font-size: 12px; color: var(--muted); line-height: 1.7; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="container nav">
+      <div class="brand">
+        <div class="brand-mark">✎</div>
+        <div>サン教育開発システム</div>
+      </div>
+      <nav class="nav-links" aria-label="メニュー">
+        <a href="#service">できること</a>
+        <a href="#price">料金</a>
+        <a href="#flow">流れ</a>
+        <a class="nav-cta" href="mailto:sundedtech@zohomail.jp?cc=growup.kuriyama%40gmail.com,erinax%40live.jp&subject=クロスワード制作の相談">相談する</a>
+      </nav>
+    </div>
+  </div>
+
+  <header class="hero">
+    <div class="container hero-grid">
+      <div>
+        <div class="eyebrow">食育・教材・地域イベント向け</div>
+        <h1>子ども向け<br>クロスワードを<br>制作します。</h1>
+        <p class="hero-copy">
+          食育、魚、野菜、栄養、季節行事、地域イベントなどのテーマに合わせて、
+          小学生向けのクロスワードパズルを作成します。問題・解答・印刷用データまで、教材として使いやすい形で納品します。
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="mailto:sundedtech@zohomail.jp?cc=growup.kuriyama%40gmail.com,erinax%40live.jp&subject=クロスワード制作の相談&body=こんにちは。クロスワード制作について相談したいです。%0D%0A%0D%0Aテーマ：%0D%0A対象年齢：%0D%0Aサイズ：5×5 / 7×7 / その他%0D%0A希望納期：%0D%0A用途：">制作を相談する</a>
+          <a class="btn btn-secondary" href="#price">料金を見る</a>
+        </div>
+        <p class="note">練馬区の教育事業者が、子どもに伝わる言葉・見やすい教材形式を意識して制作します。</p>
+      </div>
+
+      <div class="sample-card" aria-label="制作サンプル">
+        <p class="sample-title">制作イメージ</p>
+        <img src="crossword-sample.png" alt="クロスワードパズル制作イメージ" class="sample-photo" />
+        <p class="small" style="margin-top:12px;">
+          実際の制作では、テーマ・対象年齢・語彙条件に合わせて、問題・解答つきのクロスワードを作成します。
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <section id="service" class="section">
+    <div class="container">
+      <div class="section-head">
+        <h2>こんな教材を作れます</h2>
+        <p>「子ども向け」「テーマ指定」「印刷して配れる」ことを重視した、実用向けのクロスワード制作です。</p>
+      </div>
+      <div class="cards">
+        <article class="info-card">
+          <div class="icon">🐟</div>
+          <h3>食育・魚・野菜テーマ</h3>
+          <p>魚の名前、魚の部位、野菜、栄養、旬の食材、給食、地域食材など、食育イベントに合わせて制作します。</p>
+        </article>
+        <article class="info-card">
+          <div class="icon">✏️</div>
+          <h3>小学生向けの言葉選び</h3>
+          <p>難しすぎる語や不自然な語を避け、対象年齢に合わせて、わかりやすいカギ文を作ります。</p>
+        </article>
+        <article class="info-card">
+          <div class="icon">📄</div>
+          <h3>問題・解答つきで納品</h3>
+          <p>問題用、解答用、印刷用画像またはPDFなど、配布しやすい形で納品できます。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container split">
+      <div class="panel">
+        <h2>AIだけでは難しい部分を、人の目で整えます</h2>
+        <p class="lead">
+          クロスワードは、単語を並べるだけでは完成しません。縦横の語の整合性、黒マス数、対象年齢、テーマ性、カギ文の自然さを同時に満たす必要があります。
+        </p>
+      </div>
+      <div class="panel">
+        <h3>対応できる条件例</h3>
+        <ul class="list">
+          <li>5×5、7×7など小さめ盤面の教材クロスワード</li>
+          <li>食育、魚、野菜、栄養、季節、理科、地域イベントなどのテーマ指定</li>
+          <li>小学校低学年向けのひらがな中心カギ文</li>
+          <li>問題用・解答用の2種類出力</li>
+          <li>黒マス少なめ、見やすさ重視などの条件調整</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="price" class="section">
+    <div class="container">
+      <div class="section-head">
+        <h2>料金の目安</h2>
+        <p>内容・納期・商用利用範囲により変わります。まずはテーマと用途をお知らせください。</p>
+      </div>
+      <div class="price-grid">
+        <article class="price-card">
+          <span class="badge">おためし</span>
+          <h3>5×5 おためし制作</h3>
+          <div class="price">9,800円〜 <small>税込目安</small></div>
+          <p>小さめのテーマ別クロスワードを1点作成します。</p>
+          <ul>
+            <li>問題・解答つき</li>
+            <li>テーマ指定可</li>
+            <li>簡易デザイン</li>
+          </ul>
+        </article>
+        <article class="price-card featured">
+          <span class="badge">おすすめ</span>
+          <h3>5×5 A4教材仕上げ</h3>
+          <div class="price">19,800円〜 <small>税込目安</small></div>
+          <p>配布しやすいA4教材プリント形式で整えます。</p>
+          <ul>
+            <li>問題ページ</li>
+            <li>解答ページ</li>
+            <li>カギ文調整</li>
+            <li>印刷向けデータ</li>
+          </ul>
+        </article>
+        <article class="price-card">
+          <span class="badge">大きめ</span>
+          <h3>7×7 教材仕上げ</h3>
+          <div class="price">29,800円〜 <small>税込目安</small></div>
+          <p>語数多めのクロスワードを、教材・イベント向けに作成します。</p>
+          <ul>
+            <li>問題・解答つき</li>
+            <li>カギ文調整</li>
+            <li>テーマ指定可</li>
+          </ul>
+        </article>
+        <article class="price-card">
+          <span class="badge">イベント向け</span>
+          <h3>複数枚・特注制作</h3>
+          <div class="price">49,800円〜 <small>税込目安</small></div>
+          <p>食育イベント、地域配布、教材セットなどに対応します。</p>
+          <ul>
+            <li>複数テーマ</li>
+            <li>ロゴ・表記調整相談可</li>
+            <li>商用利用は要相談</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="flow" class="section">
+    <div class="container">
+      <div class="section-head">
+        <h2>制作の流れ</h2>
+        <p>まずはテーマ、対象年齢、用途、納期をお知らせください。</p>
+      </div>
+      <div class="flow">
+        <div class="flow-item"><div><h3>ご相談</h3><p>テーマ、対象年齢、盤面サイズ、使いたい言葉、避けたい言葉、納品形式を確認します。</p></div></div>
+        <div class="flow-item"><div><h3>盤面案の作成</h3><p>条件に合わせてクロスワード候補を作成し、自然な語彙・見やすい形に整えます。</p></div></div>
+        <div class="flow-item"><div><h3>カギ文の調整</h3><p>子どもに伝わるよう、答えが直接出ない自然なヒント文に調整します。</p></div></div>
+        <div class="flow-item"><div><h3>納品</h3><p>問題用・解答用の画像またはPDFなど、用途に合わせて納品します。</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container split">
+      <div class="panel">
+        <h2>利用シーン</h2>
+        <ul class="list">
+          <li>食育イベントの配布プリント</li>
+          <li>スーパー・魚屋・地域イベントの子ども向け企画</li>
+          <li>学校・学童・PTA広報のミニ教材</li>
+          <li>塾や教室の季節イベント教材</li>
+          <li>子ども食堂・地域活動の学習プリント</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h2>よくあるご相談</h2>
+        <ul class="list">
+          <li>魚の名前だけで作りたい</li>
+          <li>野菜・栄養・旬の食材を入れたい</li>
+          <li>低学年でも読めるひらがな中心にしたい</li>
+          <li>黒マスを少なめにしたい</li>
+          <li>問題と解答を別々にほしい</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="cta">
+    <div class="container">
+      <div class="cta-box">
+        <div>
+          <h2>テーマが決まっていなくても相談できます。</h2>
+          <p>
+            「食育イベントで使いたい」「小学生向けに魚のクロスワードを作りたい」など、
+            ざっくりした段階でも大丈夫です。用途に合わせて、盤面サイズや語彙を提案します。
+          </p>
+        </div>
+        <div class="contact-card">
+          <strong>お問い合わせ</strong>
+          <p>サン教育開発システム<br>東京都練馬区4-8-3</p>
+          <a href="mailto:sundedtech@zohomail.jp?cc=growup.kuriyama%40gmail.com,erinax%40live.jp&subject=クロスワード制作の相談&body=こんにちは。クロスワード制作について相談したいです。%0D%0A%0D%0Aテーマ：%0D%0A対象年齢：%0D%0Aサイズ：%0D%0A希望納期：%0D%0A用途：">メールで相談する</a>
+          <p class="small">メール本文に「テーマ」「対象年齢」「用途」「希望納期」を書いていただくとスムーズです。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container footer-grid">
+      <div>
+        <strong>サン教育開発システム</strong><br>
+        食育・教材クロスワード制作<br>
+        東京都練馬区4-8-3
+      </div>
+      <div>
+        <div>お問い合わせ：<a href="mailto:sundedtech@zohomail.jp?cc=growup.kuriyama%40gmail.com,erinax%40live.jp&subject=クロスワード制作の相談">sundedtech@zohomail.jp</a></div>
+        <div>© サン教育開発システム</div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
