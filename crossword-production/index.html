@@ -68,6 +68,8 @@
     .primary { background: var(--accent); color: white; }
     .secondary { background: #e5e7eb; color: #111827; }
     .ghost { background: #ecfeff; color: #0f766e; border: 1px solid #99f6e4; }
+    .summer { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
+    .vegetable { background: #ecfdf5; color: #166534; border: 1px solid #bbf7d0; }
     .export-img { background: #0f766e; color: white; border-radius: 12px; padding: 10px 14px; font-size: 14px; }
     .export-answer { background: #7c3aed; color: white; border-radius: 12px; padding: 10px 14px; font-size: 14px; }
     .export-tex { background: #111827; color: white; border-radius: 12px; padding: 10px 14px; font-size: 14px; }
@@ -108,6 +110,73 @@
     .clues h4 { margin: 0 0 6px; }
     .clues ol { margin: 0; padding-left: 1.5em; line-height: 1.8; }
     .warning { color: var(--bad); font-weight: 800; }
+
+    .saved-section {
+      max-width: 1100px;
+      margin: 0 auto 48px;
+      padding: 0 16px;
+    }
+
+    .saved-panel {
+      background: #ffffff;
+      border: 1px solid rgba(148, 163, 184, .55);
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, .08);
+      padding: 16px;
+    }
+
+    .saved-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .saved-head h2 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .saved-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .saved-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 14px;
+      background: #fbfdff;
+    }
+
+    .saved-card-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: baseline;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .danger {
+      background: #fee2e2;
+      color: #991b1b;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 14px;
+    }
+
+    .save-btn {
+      background: #f59e0b;
+      color: white;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 14px;
+    }
   </style>
 </head>
 <body>
@@ -153,8 +222,9 @@
 
       <div class="buttons">
         <button class="primary" id="generateBtn">生成する</button>
-        <button class="secondary" id="sampleBtn">初期リストに戻す</button>
-        <button class="ghost" id="addFoodBtn">食育語を追加</button>
+        <button class="secondary" id="sampleBtn">魚ワードに戻す</button>
+        <button class="summer" id="summerBtn">夏ワード</button>
+        <button class="vegetable" id="vegetableBtn">野菜・くだもの</button>
       </div>
 
       <div id="status" class="status">ワードを入れて「生成する」を押してください。</div>
@@ -165,10 +235,28 @@
     </section>
   </main>
 
+  <section class="saved-section">
+    <div class="saved-panel">
+      <div class="saved-head">
+        <div>
+          <h2>保存済み作品</h2>
+          <div class="hint">良い候補を保存しておくと、あとから問題PNG・解答PNG・カギ文生成用TeXを再出力できます。</div>
+        </div>
+        <div class="buttons" style="margin-top:0;">
+          <button class="secondary" id="exportSavedBtn" type="button">保存作品をJSON出力</button>
+          <button class="secondary" id="importSavedBtn" type="button">JSON読み込み</button>
+          <input id="importSavedFile" type="file" accept="application/json,.json" style="display:none;" />
+        </div>
+      </div>
+      <div id="savedList" class="saved-list"></div>
+    </div>
+  </section>
+
   <script>
     const N = 5;
     const NL = String.fromCharCode(10);
     let LAST_CANDIDATES = [];
+    const STORAGE_KEY = "sun_crossword_saved_candidates_v1";
 
     const DEFAULT_WORDS = [
       "まぐろ", "さけ", "さば", "あじ", "さんま", "たい", "ぶり", "いわし", "かつお", "たら",
@@ -184,28 +272,87 @@
       "どんこ", "べら", "ぎんぽ"
     ].join(NL);
 
-    const EXTRA_FOOD_WORDS = [
-      "こめ", "みそ", "のり", "まめ", "いも", "ねぎ", "なす", "うみ", "かわ", "なみ", "しお", "いそ",
-      "さお", "あみ", "えさ", "つり", "すし", "にる", "やく", "たく", "めし", "だし", "やさい", "とうふ",
-      "わかめ", "こんぶ", "おにぎり", "みそしる", "やきざかな"
+    const VEGETABLE_WORDS = [
+      "やさい", "とまと", "なす", "きゅうり", "ぴーまん", "かぼちゃ", "にんじん", "だいこん", "かぶ", "ねぎ",
+      "たまねぎ", "れたす", "きゃべつ", "はくさい", "こまつな", "もやし", "ごぼう", "れんこん", "いも", "まめ",
+      "えだまめ", "そらまめ", "いんげん", "おくら", "しそ", "にら", "せろり", "ぱせり", "みずな", "とうふ",
+      "しいたけ", "えのき", "しめじ", "まいたけ", "きのこ", "しょうが", "にんにく", "あすぱら", "ぱぷりか", "こーん",
+      "くだもの", "りんご", "みかん", "ばなな", "ぶどう", "もも", "なし", "かき", "くり", "うめ",
+      "いちご", "めろん", "すいか", "れもん", "ゆず", "きうい", "ぱいん", "まんごー", "さくらんぼ", "びわ",
+      "いちじく", "ざくろ", "あんず", "すもも", "らいむ", "あけび", "ぐみ", "べりー", "ぶるべり",
+      "あまい", "すっぱい", "あかい", "きいろ", "みどり", "かわ", "たね", "み", "はっぱ", "ねっこ"
+    ].join(NL);
+
+    const SUMMER_WORDS = [
+      "なつ", "うみ", "かわ", "そら", "くも", "にじ", "あめ", "あさ", "よる", "ほし",
+      "たいよう", "すいか", "あいす", "こおり", "そうめん", "むぎちゃ", "とまと", "なす", "きゅうり", "とうふ",
+      "まつり", "はなび", "ゆかた", "うちわ", "ふうりん", "おぼん", "なつやすみ", "すなはま", "かいがん", "およぐ",
+      "みずぎ", "うきわ", "ぷうる", "せみ", "ほたる", "かぶと", "くわがた", "とんぼ", "ひまわり", "あさがお",
+      "ひやけ", "あせ", "ぼうし", "さんぽ", "やま", "はやし", "きゃんぷ", "てんと", "みず", "こかげ",
+      "あさひ", "ゆうひ", "かぜ", "あつさ", "すずみ", "らむね", "えだまめ", "とうもろこし", "かいすい", "なみ",
+      "さかな", "かに", "かい", "いるか", "くらげ", "やし", "はっぱ", "むし", "むしとり", "あみ"
     ].join(NL);
 
     const wordInput = document.getElementById("wordInput");
     const statusBox = document.getElementById("status");
     const results = document.getElementById("results");
+    const savedList = document.getElementById("savedList");
     wordInput.value = DEFAULT_WORDS;
 
     document.getElementById("sampleBtn").addEventListener("click", function () {
       wordInput.value = DEFAULT_WORDS;
-      statusBox.textContent = "初期リストに戻しました。";
+      document.getElementById("themeLabel").value = "魚・魚のからだ";
+      statusBox.textContent = "魚ワードの初期リストに戻しました。";
+    });
+    document.getElementById("summerBtn").addEventListener("click", function () {
+      wordInput.value = SUMMER_WORDS;
+      document.getElementById("themeLabel").value = "夏のことば";
+      statusBox.textContent = "夏ワードをロードしました。ワード入力欄を夏関連語に置き換えています。";
     });
 
-    document.getElementById("addFoodBtn").addEventListener("click", function () {
-      wordInput.value = wordInput.value.trim() + NL + EXTRA_FOOD_WORDS;
-      statusBox.textContent = "食育・海・釣り関連語を追加しました。";
+    document.getElementById("vegetableBtn").addEventListener("click", function () {
+      wordInput.value = VEGETABLE_WORDS;
+      document.getElementById("themeLabel").value = "野菜・くだもののことば";
+      statusBox.textContent = "野菜・くだものワードをロードしました。ワード入力欄を野菜・くだもの関連語に置き換えています。";
     });
 
     document.getElementById("generateBtn").addEventListener("click", generateCrosswords);
+
+    document.getElementById("exportSavedBtn").addEventListener("click", function () {
+      const saved = readSavedWorks();
+      const text = JSON.stringify(saved, null, 2);
+      downloadTextFile("saved_crossword_candidates.json", text);
+    });
+
+    document.getElementById("importSavedBtn").addEventListener("click", function () {
+      document.getElementById("importSavedFile").click();
+    });
+
+    document.getElementById("importSavedFile").addEventListener("change", function (event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function () {
+        try {
+          const imported = JSON.parse(String(reader.result || "[]"));
+          if (!Array.isArray(imported)) throw new Error("JSON is not an array");
+          const current = readSavedWorks();
+          const byId = new Map();
+          current.concat(imported).forEach(function (item) {
+            if (item && item.id && item.grid && item.slots) byId.set(item.id, item);
+          });
+          writeSavedWorks(Array.from(byId.values()));
+          renderSavedWorks();
+          statusBox.textContent = "保存済み作品JSONを読み込みました。";
+        } catch (error) {
+          alert("JSONを読み込めませんでした。保存済み作品のJSONか確認してください。");
+        }
+        event.target.value = "";
+      };
+      reader.readAsText(file, "utf-8");
+    });
+
+    renderSavedWorks();
 
     function normalizeWord(s) {
       return Array.from(String(s).trim()).map(function (ch) {
@@ -495,9 +642,15 @@
       div.innerHTML = '' +
         '<h2><span>候補 ' + displayIndex + '</span><span class="score">score ' + cand.score + '</span></h2>' +
         '<div class="meta"><span class="pill">黒マス ' + cand.blockCount + '</span><span class="pill">白マス ' + cand.whiteCount + '</span><span class="pill">ワード ' + cand.wordsUsed.length + '</span><span class="pill">1文字交差 ' + cand.singleCount + '</span><span class="pill">上位語点 ' + cand.priorityBonus + '</span></div>' +
-        '<div class="export-tools"><button class="export-img" type="button" data-action="problem">問題画像PNG</button><button class="export-answer" type="button" data-action="answer">解答画像PNG</button><button class="export-tex" type="button" data-action="tex">カギ文生成用TeX</button><span class="copy-note">盤面はPNG、カギ文はAI作成用TeXとして出力します。</span></div>' +
+        '<div class="export-tools"><button class="save-btn" type="button" data-action="save">この候補を保存</button><button class="export-img" type="button" data-action="problem">問題画像PNG</button><button class="export-answer" type="button" data-action="answer">解答画像PNG</button><button class="export-tex" type="button" data-action="tex">カギ文生成用TeX</button><span class="copy-note">良い盤面は保存できます。</span></div>' +
         '<div class="boards"><div class="board-box"><h3>問題</h3>' + boardTable(cand.grid, cand.slots, false) + '</div><div class="board-box"><h3>解答</h3>' + boardTable(cand.grid, cand.slots, true) + '</div></div>' +
         '<details open><summary>答え一覧</summary><div class="clues"><div><h4>よこ</h4>' + answerList(across) + '</div><div><h4>たて</h4>' + answerList(down) + '</div></div></details>';
+
+      div.querySelector('[data-action="save"]').addEventListener("click", function () {
+        const target = LAST_CANDIDATES[exportIndex];
+        if (!target) return;
+        saveCandidate(target);
+      });
 
       div.querySelector('[data-action="problem"]').addEventListener("click", function () {
         const target = LAST_CANDIDATES[exportIndex];
@@ -515,6 +668,91 @@
         downloadTextFile("crossword_clue_generation_candidate_" + displayIndex + ".tex", buildClueTex(target));
       });
       return div;
+    }
+
+    function saveCandidate(cand) {
+      const saved = readSavedWorks();
+      const theme = document.getElementById("themeLabel").value.trim() || "クロスワード";
+      const item = {
+        id: "cw_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8),
+        savedAt: new Date().toISOString(),
+        theme: theme,
+        grid: cand.grid,
+        slots: cand.slots,
+        score: cand.score,
+        blockCount: cand.blockCount,
+        whiteCount: cand.whiteCount,
+        singleCount: cand.singleCount,
+        wordsUsed: cand.wordsUsed || [],
+        duplicatePenalty: cand.duplicatePenalty || 0,
+        priorityBonus: cand.priorityBonus || 0
+      };
+      saved.unshift(item);
+      writeSavedWorks(saved.slice(0, 100));
+      renderSavedWorks();
+      statusBox.textContent = "候補を保存しました。保存済み作品から再出力できます。";
+    }
+
+    function readSavedWorks() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function writeSavedWorks(items) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    }
+
+    function renderSavedWorks() {
+      const saved = readSavedWorks();
+      if (!savedList) return;
+      if (saved.length === 0) {
+        savedList.innerHTML = '<div class="hint">まだ保存済み作品はありません。候補の「この候補を保存」を押すと、ここに残ります。</div>';
+        return;
+      }
+      savedList.innerHTML = "";
+      saved.forEach(function (item, index) {
+        const div = document.createElement("div");
+        div.className = "saved-card";
+        const dateText = item.savedAt ? new Date(item.savedAt).toLocaleString("ja-JP") : "保存日時不明";
+        const across = item.slots.filter(function (s) { return s.dir === "across"; });
+        const down = item.slots.filter(function (s) { return s.dir === "down"; });
+        div.innerHTML = '' +
+          '<div class="saved-card-title"><span>' + escapeHtml(item.theme || "クロスワード") + ' / score ' + (item.score || 0) + '</span><span class="hint">' + escapeHtml(dateText) + '</span></div>' +
+          '<div class="meta"><span class="pill">黒マス ' + (item.blockCount || 0) + '</span><span class="pill">白マス ' + (item.whiteCount || 0) + '</span><span class="pill">ワード ' + (item.wordsUsed ? item.wordsUsed.length : item.slots.length) + '</span><span class="pill">上位語点 ' + (item.priorityBonus || 0) + '</span></div>' +
+          '<div class="boards"><div class="board-box"><h3>問題</h3>' + boardTable(item.grid, item.slots, false) + '</div><div class="board-box"><h3>解答</h3>' + boardTable(item.grid, item.slots, true) + '</div></div>' +
+          '<div class="export-tools"><button class="export-img" type="button" data-action="saved-problem">問題画像PNG</button><button class="export-answer" type="button" data-action="saved-answer">解答画像PNG</button><button class="export-tex" type="button" data-action="saved-tex">カギ文生成用TeX</button><button class="danger" type="button" data-action="saved-delete">削除</button></div>' +
+          '<details><summary>答え一覧</summary><div class="clues"><div><h4>よこ</h4>' + answerList(across) + '</div><div><h4>たて</h4>' + answerList(down) + '</div></div></details>';
+        div.querySelector('[data-action="saved-problem"]').addEventListener("click", function () {
+          downloadBoardPng(item, false, "saved_crossword_problem_" + (index + 1) + ".png");
+        });
+        div.querySelector('[data-action="saved-answer"]').addEventListener("click", function () {
+          downloadBoardPng(item, true, "saved_crossword_answer_" + (index + 1) + ".png");
+        });
+        div.querySelector('[data-action="saved-tex"]').addEventListener("click", function () {
+          downloadTextFile("saved_crossword_clue_generation_" + (index + 1) + ".tex", buildClueTex(item));
+        });
+        div.querySelector('[data-action="saved-delete"]').addEventListener("click", function () {
+          if (!confirm("この保存済み作品を削除しますか？")) return;
+          const current = readSavedWorks().filter(function (x) { return x.id !== item.id; });
+          writeSavedWorks(current);
+          renderSavedWorks();
+        });
+        savedList.appendChild(div);
+      });
+    }
+
+    function escapeHtml(s) {
+      return String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
     }
 
     function boardTable(grid, slots, showAnswer) {
@@ -619,7 +857,7 @@
     }
 
     function buildClueTex(cand) {
-      const label = document.getElementById("themeLabel").value.trim() || "魚・魚のからだ";
+      const label = document.getElementById("themeLabel").value.trim() || "クロスワード";
       const across = cand.slots.filter(function (s) { return s.dir === "across"; });
       const down = cand.slots.filter(function (s) { return s.dir === "down"; });
       const lines = [];
@@ -634,10 +872,11 @@
       lines.push("");
       lines.push("\\subsection*{カギ文作成ルール}");
       lines.push("\\begin{itemize}");
-      lines.push("\\item 魚の名前なら、食べ方、見た目、季節、よく聞く料理、泳ぎ方などをヒントにする。");
-      lines.push("\\item 魚の部位なら、体のどこにあるか、何に使うかをヒントにする。");
-      lines.push("\\item 例：答えが「ひれ」なら「さかなが およぐときに つかう からだの ぶぶん」のようにする。");
-      lines.push("\\item 例：答えが「さけ」なら「おにぎりの ぐにも なる、あかっぽい みの さかな」のようにする。");
+      lines.push("\\item テーマに合う、子ども向けのやさしいヒントにする。");
+      lines.push("\\item 魚の名前なら、食べ方、見た目、季節、料理、泳ぎ方などをヒントにする。");
+      lines.push("\item 夏の言葉なら、夏の行事、食べ物、自然、生き物、遊びなどをヒントにする。");
+      lines.push("\item 野菜・くだものの言葉なら、色、形、味、食べ方、畑、木、旬、料理などをヒントにする。");
+      lines.push("\\item 答えそのものはカギ文に入れない。");
       lines.push("\\item ひらがな中心で、短く、子どもが読める文にする。");
       lines.push("\\end{itemize}");
       lines.push("");
