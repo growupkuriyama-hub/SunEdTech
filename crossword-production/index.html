@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>5×5 教材クロスワード生成プロトタイプ</title>
+  <style>
+    :root {
+      --bg: #f7fafc;
+      --panel: #ffffff;
+      --ink: #1f2937;
+      --muted: #6b7280;
+      --line: #d1d5db;
+      --accent: #2563eb;
+      --accent2: #0f766e;
+      --bad: #dc2626;
+      --black: #111827;
+      --soft: #eff6ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+      background: linear-gradient(180deg, #eff6ff 0%, var(--bg) 210px);
+      color: var(--ink);
+    }
+    header { max-width: 1100px; margin: 0 auto; padding: 24px 16px 12px; }
+    h1 { margin: 0 0 8px; font-size: clamp(24px, 4vw, 38px); letter-spacing: .02em; }
+    .lead { margin: 0; color: var(--muted); line-height: 1.7; max-width: 900px; }
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 12px 16px 48px;
+      display: grid;
+      grid-template-columns: minmax(300px, 420px) 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+    @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
+    .card {
+      background: var(--panel);
+      border: 1px solid rgba(148, 163, 184, .55);
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, .08);
+    }
+    .control-card { padding: 16px; position: sticky; top: 12px; }
+    @media (max-width: 900px) { .control-card { position: static; } }
+    label { display: block; font-weight: 700; margin: 14px 0 6px; }
+    textarea {
+      width: 100%; min-height: 260px; resize: vertical; padding: 12px;
+      border: 1px solid var(--line); border-radius: 12px; font-size: 16px;
+      line-height: 1.6; background: #fbfdff;
+    }
+    .hint { color: var(--muted); font-size: 13px; line-height: 1.55; margin-top: 6px; }
+    .row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .field input {
+      width: 100%; padding: 10px; border: 1px solid var(--line);
+      border-radius: 12px; font-size: 15px; background: white;
+    }
+    .checks { display: grid; gap: 8px; margin-top: 12px; }
+    .checkline { display: flex; align-items: flex-start; gap: 8px; color: var(--ink); font-size: 14px; line-height: 1.5; }
+    .checkline input { margin-top: 4px; }
+    .buttons, .export-tools { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+    button {
+      border: none; border-radius: 999px; padding: 11px 16px;
+      font-weight: 800; cursor: pointer; font-size: 15px;
+    }
+    .primary { background: var(--accent); color: white; }
+    .secondary { background: #e5e7eb; color: #111827; }
+    .ghost { background: #ecfeff; color: #0f766e; border: 1px solid #99f6e4; }
+    .export-btn { background: #111827; color: white; border-radius: 12px; padding: 10px 14px; font-size: 14px; }
+    .copy-note { font-size: 13px; color: var(--muted); align-self: center; }
+    .status {
+      margin-top: 14px; padding: 12px; background: #f8fafc;
+      border: 1px dashed #cbd5e1; border-radius: 12px; color: var(--muted);
+      line-height: 1.65; font-size: 14px; white-space: pre-wrap;
+    }
+    .result-area { display: grid; gap: 16px; }
+    .empty { padding: 24px; color: var(--muted); line-height: 1.8; }
+    .candidate { padding: 16px; }
+    .candidate h2 {
+      margin: 0 0 8px; font-size: 20px; display: flex;
+      justify-content: space-between; gap: 10px; align-items: center; flex-wrap: wrap;
+    }
+    .score { font-size: 13px; color: var(--muted); font-weight: 600; }
+    .boards { display: grid; grid-template-columns: repeat(2, minmax(180px, 1fr)); gap: 14px; margin: 12px 0; align-items: start; }
+    @media (max-width: 600px) { .boards { grid-template-columns: 1fr; } }
+    .board-box h3 { margin: 0 0 6px; font-size: 15px; }
+    table.crossword { border-collapse: collapse; background: white; user-select: none; }
+    .crossword td {
+      position: relative; width: 48px; height: 48px; border: 2px solid #374151;
+      text-align: center; vertical-align: middle; font-size: 24px; font-weight: 800; background: #ffffff;
+    }
+    .crossword td.black { background: var(--black); border-color: var(--black); }
+    .num { position: absolute; top: 2px; left: 4px; font-size: 10px; color: #4b5563; font-weight: 800; }
+    .blank-dot { color: transparent; }
+    .meta { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+    .pill {
+      display: inline-flex; align-items: center; border-radius: 999px; padding: 5px 10px;
+      font-size: 12px; font-weight: 800; background: var(--soft); color: #1d4ed8;
+    }
+    details { border-top: 1px solid #e5e7eb; padding-top: 10px; margin-top: 10px; }
+    summary { cursor: pointer; font-weight: 800; color: var(--accent2); }
+    .clues { display: grid; grid-template-columns: repeat(2, minmax(180px, 1fr)); gap: 14px; margin-top: 10px; }
+    @media (max-width: 600px) { .clues { grid-template-columns: 1fr; } }
+    .clues h4 { margin: 0 0 6px; }
+    .clues ol { margin: 0; padding-left: 1.5em; line-height: 1.8; }
+    .warning { color: var(--bad); font-weight: 800; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>5×5 教材クロスワード生成プロトタイプ</h1>
+    <p class="lead">入力したワードだけを使って、5×5のクロスワード候補を作ります。入力欄の上にあるワードほど強く優先されます。</p>
+  </header>
+
+  <main>
+    <section class="card control-card">
+      <label for="wordInput">ワード入力欄</label>
+      <textarea id="wordInput"></textarea>
+      <div class="hint">1行に1語。上にある語ほどメジャー語として強く優先します。5×5なので、2〜5文字の語だけを使います。</div>
+
+      <div class="row">
+        <div class="field">
+          <label for="maxBlocks">黒マス上限</label>
+          <input id="maxBlocks" type="number" min="0" max="20" value="7" />
+        </div>
+        <div class="field">
+          <label for="targetCount">候補数</label>
+          <input id="targetCount" type="number" min="1" max="20" value="5" />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="attempts">試行回数</label>
+          <input id="attempts" type="number" min="100" max="200000" step="1000" value="100000" />
+        </div>
+        <div class="field">
+          <label for="themeLabel">テーマ名</label>
+          <input id="themeLabel" type="text" value="魚・魚のからだ" />
+        </div>
+      </div>
+
+      <div class="checks">
+        <label class="checkline"><input id="allowSingles" type="checkbox" checked /><span>1文字の交差部分を許可する（語彙が少ないときの実務用ゆるめモード）</span></label>
+        <label class="checkline"><input id="allowReuse" type="checkbox" /><span>同じワードの再利用を許可する</span></label>
+        <label class="checkline"><input id="preferDense" type="checkbox" checked /><span>黒マスが少ない候補を優先する</span></label>
+        <label class="checkline"><input id="preferMajor" type="checkbox" checked /><span>入力欄の上のワードをかなり強く優先する</span></label>
+      </div>
+
+      <div class="buttons">
+        <button class="primary" id="generateBtn">生成する</button>
+        <button class="secondary" id="sampleBtn">初期リストに戻す</button>
+        <button class="ghost" id="addFoodBtn">食育語を追加</button>
+      </div>
+
+      <div id="status" class="status">ワードを入れて「生成する」を押してください。</div>
+    </section>
+
+    <section id="results" class="result-area">
+      <div class="card empty">ここにクロスワード候補が表示されます。<br>出ないときは、黒マス上限を増やす、食育語を追加する、または「1文字の交差部分を許可」をONにしてください。</div>
+    </section>
+  </main>
+
+  <script>
+    const N = 5;
+    const NL = String.fromCharCode(10);
+    let LAST_CANDIDATES = [];
+
+    const DEFAULT_WORDS = [
+      "まぐろ", "さけ", "さば", "あじ", "さんま", "たい", "ぶり", "いわし", "かつお", "たら",
+      "うなぎ", "しらす", "ほっけ", "かれい", "ひらめ", "ふぐ", "あなご", "あゆ", "ます", "ひれ",
+      "えら", "うろこ", "あたま", "しっぽ", "くち", "ほね", "かわ", "からだ", "せなか", "はら",
+      "きりみ", "さしみ", "にしん", "さわら", "きす", "ししゃも", "かじき", "すずき", "あんこう", "きんめ",
+      "はも", "こい", "めだか", "きんぎょ", "わかさぎ", "やまめ", "いわな", "どじょう", "おびれ", "せびれ",
+      "たまご", "はらみ", "きも", "めだま", "あご", "かんぱち", "ひらまさ", "まだい", "くろだい", "しまあじ",
+      "たちうお", "とびうお", "かわはぎ", "かさご", "めばる", "いさき", "むつ", "かます", "さより", "はぜ",
+      "ぼら", "さめ", "えい", "おこぜ", "むなびれ", "はらびれ", "しりびれ", "しらこ", "うきぶくろ", "ぎょらん",
+      "すじ", "ちあい", "ほうぼう", "あまだい", "あかうお", "ぎんだら", "きんき", "のどぐろ", "びんちょう", "しろぎす",
+      "いしだい", "いしもち", "あかむつ", "ちだい", "きびなご", "はたはた", "にじます", "たなご", "はや", "いとう",
+      "どんこ", "べら", "ぎんぽ"
+    ].join(NL);
+
+    const EXTRA_FOOD_WORDS = [
+      "こめ", "みそ", "のり", "まめ", "いも", "ねぎ", "なす", "うみ", "かわ", "なみ", "しお", "いそ",
+      "さお", "あみ", "えさ", "つり", "すし", "にる", "やく", "たく", "めし", "だし", "やさい", "とうふ",
+      "わかめ", "こんぶ", "おにぎり", "みそしる", "やきざかな"
+    ].join(NL);
+
+    const wordInput = document.getElementById("wordInput");
+    const statusBox = document.getElementById("status");
+    const results = document.getElementById("results");
+    wordInput.value = DEFAULT_WORDS;
+
+    document.getElementById("sampleBtn").addEventListener("click", function () {
+      wordInput.value = DEFAULT_WORDS;
+      statusBox.textContent = "初期リストに戻しました。";
+    });
+
+    document.getElementById("addFoodBtn").addEventListener("click", function () {
+      wordInput.value = wordInput.value.trim() + NL + EXTRA_FOOD_WORDS;
+      statusBox.textContent = "食育・海・釣り関連語を追加しました。";
+    });
+
+    document.getElementById("generateBtn").addEventListener("click", generateCrosswords);
+
+    function normalizeWord(s) {
+      return Array.from(String(s).trim()).map(function (ch) {
+        const code = ch.charCodeAt(0);
+        if (code >= 0x30A1 && code <= 0x30F6) return String.fromCharCode(code - 0x60);
+        return ch;
+      }).join("").replace(/[\s　・ー\-＿_、。,.\/\\]/g, "");
+    }
+
+    function parseWords(text) {
+      const seen = new Set();
+      const words = [];
+      text.split(/\n|,|、|\s+/).forEach(function (raw) {
+        const w = normalizeWord(raw);
+        const len = Array.from(w).length;
+        if (len >= 2 && len <= N && !seen.has(w)) {
+          seen.add(w);
+          words.push(w);
+        }
+      });
+      return words;
+    }
+
+    function makePriority(words) {
+      const priority = new Map();
+      const total = words.length;
+      words.forEach(function (w, i) {
+        const rank = total - i;
+        priority.set(w, rank * rank);
+      });
+      return priority;
+    }
+
+    function priorityOf(word, priority) {
+      return priority.get(word) || 0;
+    }
+
+    function groupByLength(words) {
+      const byLen = new Map();
+      words.forEach(function (w) {
+        const len = Array.from(w).length;
+        if (!byLen.has(len)) byLen.set(len, []);
+        byLen.get(len).push(w);
+      });
+      return byLen;
+    }
+
+    function randomMask(maxBlocks) {
+      const cells = Array.from({ length: N * N }, function (_, i) { return i; });
+      shuffle(cells);
+      const k = Math.floor(Math.random() * (maxBlocks + 1));
+      const blocked = new Set(cells.slice(0, k));
+      const mask = [];
+      for (let r = 0; r < N; r++) {
+        const row = [];
+        for (let c = 0; c < N; c++) row.push(blocked.has(r * N + c));
+        mask.push(row);
+      }
+      return mask;
+    }
+
+    function extractSlots(mask, allowSingles) {
+      const slots = [];
+      let singleCount = 0;
+      for (let r = 0; r < N; r++) {
+        let c = 0;
+        while (c < N) {
+          while (c < N && mask[r][c]) c++;
+          const start = c;
+          while (c < N && !mask[r][c]) c++;
+          const len = c - start;
+          if (len === 1) {
+            singleCount++;
+            if (!allowSingles) return null;
+          }
+          if (len >= 2) {
+            const cells = [];
+            for (let x = start; x < c; x++) cells.push([r, x]);
+            slots.push({ dir: "across", r: r, c: start, len: len, cells: cells });
+          }
+        }
+      }
+      for (let c = 0; c < N; c++) {
+        let r = 0;
+        while (r < N) {
+          while (r < N && mask[r][c]) r++;
+          const start = r;
+          while (r < N && !mask[r][c]) r++;
+          const len = r - start;
+          if (len === 1) {
+            singleCount++;
+            if (!allowSingles) return null;
+          }
+          if (len >= 2) {
+            const cells = [];
+            for (let y = start; y < r; y++) cells.push([y, c]);
+            slots.push({ dir: "down", r: start, c: c, len: len, cells: cells });
+          }
+        }
+      }
+      if (slots.length === 0) return null;
+      const covered = new Set();
+      slots.forEach(function (slot) {
+        slot.cells.forEach(function (cell) { covered.add(cell[0] + "," + cell[1]); });
+      });
+      for (let r = 0; r < N; r++) {
+        for (let c = 0; c < N; c++) {
+          if (!mask[r][c] && !covered.has(r + "," + c)) return null;
+        }
+      }
+      return { slots: slots, singleCount: singleCount };
+    }
+
+    function solveMask(mask, byLen, allowReuse, allowSingles, priority, preferMajor) {
+      const slotData = extractSlots(mask, allowSingles);
+      if (!slotData) return null;
+      const slots = slotData.slots;
+      for (const slot of slots) {
+        if (!byLen.has(slot.len) || byLen.get(slot.len).length === 0) return null;
+      }
+      const grid = Array.from({ length: N }, function (_, r) {
+        return Array.from({ length: N }, function (_, c) { return mask[r][c] ? "#" : ""; });
+      });
+      const used = new Set();
+      const assigned = new Map();
+
+      function candidates(slot) {
+        const pool = byLen.get(slot.len) || [];
+        const out = [];
+        for (const w of pool) {
+          if (!allowReuse && used.has(w)) continue;
+          const chars = Array.from(w);
+          let ok = true;
+          for (let i = 0; i < slot.cells.length; i++) {
+            const r = slot.cells[i][0];
+            const c = slot.cells[i][1];
+            if (grid[r][c] !== "" && grid[r][c] !== chars[i]) { ok = false; break; }
+          }
+          if (ok) out.push(w);
+        }
+        if (preferMajor) {
+          out.sort(function (a, b) { return priorityOf(b, priority) - priorityOf(a, priority); });
+        } else {
+          shuffle(out);
+        }
+        return out;
+      }
+
+      function backtrack() {
+        if (assigned.size === slots.length) return true;
+        let bestIndex = -1;
+        let bestCandidates = null;
+        for (let i = 0; i < slots.length; i++) {
+          if (assigned.has(i)) continue;
+          const cand = candidates(slots[i]);
+          if (cand.length === 0) return false;
+          if (bestCandidates === null || cand.length < bestCandidates.length) {
+            bestCandidates = cand;
+            bestIndex = i;
+          }
+        }
+        const slot = slots[bestIndex];
+        for (const w of bestCandidates.slice(0, 120)) {
+          const chars = Array.from(w);
+          const changed = [];
+          for (let i = 0; i < slot.cells.length; i++) {
+            const r = slot.cells[i][0];
+            const c = slot.cells[i][1];
+            if (grid[r][c] === "") {
+              grid[r][c] = chars[i];
+              changed.push([r, c]);
+            }
+          }
+          assigned.set(bestIndex, w);
+          used.add(w);
+          if (backtrack()) return true;
+          assigned.delete(bestIndex);
+          used.delete(w);
+          changed.forEach(function (cell) { grid[cell[0]][cell[1]] = ""; });
+        }
+        return false;
+      }
+
+      if (!backtrack()) return null;
+      const wordSet = new Set(Array.from(byLen.values()).flat());
+      const validation = validateGrid(grid, wordSet, allowSingles);
+      if (!validation.ok) return null;
+
+      const numberedSlots = addNumbers(grid, slots);
+      const wordsUsed = numberedSlots.map(function (slot) { return slot.answer; });
+      const uniqueWords = new Set(wordsUsed);
+      const blockCount = grid.flat().filter(function (x) { return x === "#"; }).length;
+      const whiteCount = N * N - blockCount;
+      const duplicatePenalty = wordsUsed.length - uniqueWords.size;
+      const preferDense = document.getElementById("preferDense").checked;
+      const priorityBonus = preferMajor ? wordsUsed.reduce(function (sum, w) { return sum + priorityOf(w, priority); }, 0) : 0;
+      const score = validation.runs.length * 12 + whiteCount * (preferDense ? 10 : 4) - blockCount * (preferDense ? 4 : 1) - slotData.singleCount * 3 - duplicatePenalty * 20 + priorityBonus * 20;
+      return { grid: grid, slots: numberedSlots, score: score, blockCount: blockCount, whiteCount: whiteCount, singleCount: slotData.singleCount, wordsUsed: wordsUsed, duplicatePenalty: duplicatePenalty, priorityBonus: priorityBonus };
+    }
+
+    function validateGrid(grid, wordSet, allowSingles) {
+      const runs = [];
+      function checkRun(chars) {
+        if (chars.length === 0) return true;
+        if (chars.length === 1) return allowSingles;
+        const w = chars.join("");
+        if (!wordSet.has(w)) return false;
+        runs.push(w);
+        return true;
+      }
+      for (let r = 0; r < N; r++) {
+        let chars = [];
+        for (let c = 0; c <= N; c++) {
+          if (c < N && grid[r][c] !== "#") chars.push(grid[r][c]);
+          else { if (!checkRun(chars)) return { ok: false, runs: runs }; chars = []; }
+        }
+      }
+      for (let c = 0; c < N; c++) {
+        let chars = [];
+        for (let r = 0; r <= N; r++) {
+          if (r < N && grid[r][c] !== "#") chars.push(grid[r][c]);
+          else { if (!checkRun(chars)) return { ok: false, runs: runs }; chars = []; }
+        }
+      }
+      return { ok: true, runs: runs };
+    }
+
+    function readSlot(grid, slot) {
+      return slot.cells.map(function (cell) { return grid[cell[0]][cell[1]]; }).join("");
+    }
+
+    function addNumbers(grid, slots) {
+      const startMap = new Map();
+      const starts = [];
+      slots.forEach(function (slot) {
+        const key = slot.r + "," + slot.c;
+        if (!startMap.has(key)) starts.push([slot.r, slot.c, key]);
+      });
+      starts.sort(function (a, b) { return a[0] - b[0] || a[1] - b[1]; });
+      starts.forEach(function (item, idx) { startMap.set(item[2], idx + 1); });
+      return slots.map(function (slot) {
+        return Object.assign({}, slot, { number: startMap.get(slot.r + "," + slot.c), answer: readSlot(grid, slot) });
+      }).sort(function (a, b) { return a.number - b.number || (a.dir === "across" ? -1 : 1); });
+    }
+
+    function generateCrosswords() {
+      const words = parseWords(wordInput.value);
+      const byLen = groupByLength(words);
+      const priority = makePriority(words);
+      const maxBlocks = clampInt(document.getElementById("maxBlocks").value, 0, 20, 9);
+      const targetCount = clampInt(document.getElementById("targetCount").value, 1, 20, 5);
+      const attempts = clampInt(document.getElementById("attempts").value, 100, 200000, 100000);
+      const allowReuse = document.getElementById("allowReuse").checked;
+      const allowSingles = document.getElementById("allowSingles").checked;
+      const preferMajor = document.getElementById("preferMajor").checked;
+      LAST_CANDIDATES = [];
+      results.innerHTML = "";
+      statusBox.textContent = "生成中...";
+
+      setTimeout(function () {
+        const started = performance.now();
+        const candidates = [];
+        const seenGrids = new Set();
+        for (let t = 0; t < attempts && candidates.length < targetCount * 10; t++) {
+          const mask = randomMask(maxBlocks);
+          const solved = solveMask(mask, byLen, allowReuse, allowSingles, priority, preferMajor);
+          if (!solved) continue;
+          const key = solved.grid.map(function (row) { return row.join(""); }).join("/");
+          if (seenGrids.has(key)) continue;
+          seenGrids.add(key);
+          candidates.push(solved);
+        }
+        candidates.sort(function (a, b) { return b.score - a.score; });
+        LAST_CANDIDATES = candidates.slice(0, targetCount);
+        const elapsed = Math.round(performance.now() - started);
+        const counts = [2, 3, 4, 5].map(function (n) { return n + "文字:" + ((byLen.get(n) || []).length); }).join(" / ");
+        if (LAST_CANDIDATES.length === 0) {
+          results.innerHTML = '<div class="card empty"><span class="warning">候補が見つかりませんでした。</span><br><br>ワード数：' + words.length + '語（' + counts + '）<br>対策：黒マス上限を増やす、食育語を追加する、または「1文字の交差部分を許可」をONにしてください。</div>';
+          statusBox.textContent = "生成失敗：" + attempts + "回試行 / " + elapsed + "ms / 入力 " + words.length + "語 / " + counts;
+          return;
+        }
+        statusBox.textContent = "生成成功：" + LAST_CANDIDATES.length + "件表示 / " + attempts + "回試行 / " + elapsed + "ms / 入力 " + words.length + "語 / " + counts + NL + "メジャー語優先：" + (preferMajor ? "ON 強" : "OFF");
+        LAST_CANDIDATES.forEach(function (cand, idx) { results.appendChild(renderCandidate(cand, idx + 1, idx)); });
+      }, 20);
+    }
+
+    function renderCandidate(cand, displayIndex, exportIndex) {
+      const div = document.createElement("div");
+      div.className = "card candidate";
+      const across = cand.slots.filter(function (s) { return s.dir === "across"; });
+      const down = cand.slots.filter(function (s) { return s.dir === "down"; });
+      div.innerHTML = '' +
+        '<h2><span>候補 ' + displayIndex + '</span><span class="score">score ' + cand.score + '</span></h2>' +
+        '<div class="meta"><span class="pill">黒マス ' + cand.blockCount + '</span><span class="pill">白マス ' + cand.whiteCount + '</span><span class="pill">ワード ' + cand.wordsUsed.length + '</span><span class="pill">1文字交差 ' + cand.singleCount + '</span><span class="pill">上位語点 ' + cand.priorityBonus + '</span></div>' +
+        '<div class="export-tools"><button class="export-btn" type="button">この候補を出力プロンプトにする</button><span class="copy-note">AIに個別のカギ文を考えさせるプロンプトを.txtで保存します。</span></div>' +
+        '<div class="boards"><div class="board-box"><h3>問題</h3>' + boardTable(cand.grid, cand.slots, false) + '</div><div class="board-box"><h3>解答</h3>' + boardTable(cand.grid, cand.slots, true) + '</div></div>' +
+        '<details open><summary>答え一覧</summary><div class="clues"><div><h4>よこ</h4>' + answerList(across) + '</div><div><h4>たて</h4>' + answerList(down) + '</div></div></details>';
+      div.querySelector(".export-btn").addEventListener("click", function () {
+        const target = LAST_CANDIDATES[exportIndex];
+        if (!target) return;
+        downloadTextFile("crossword_prompt_candidate_" + displayIndex + ".txt", buildImagePrompt(target));
+      });
+      return div;
+    }
+
+    function boardTable(grid, slots, showAnswer) {
+      const numMap = new Map();
+      slots.forEach(function (slot) {
+        const key = slot.r + "," + slot.c;
+        if (!numMap.has(key)) numMap.set(key, slot.number);
+      });
+      let html = '<table class="crossword" aria-label="crossword">';
+      for (let r = 0; r < N; r++) {
+        html += '<tr>';
+        for (let c = 0; c < N; c++) {
+          const val = grid[r][c];
+          if (val === "#") html += '<td class="black"></td>';
+          else {
+            const n = numMap.get(r + "," + c);
+            html += '<td>' + (n ? '<span class="num">' + n + '</span>' : '') + '<span class="' + (showAnswer ? '' : 'blank-dot') + '">' + (showAnswer ? val : '・') + '</span></td>';
+          }
+        }
+        html += '</tr>';
+      }
+      html += '</table>';
+      return html;
+    }
+
+    function answerList(slots) {
+      if (slots.length === 0) return '<p class="hint">なし</p>';
+      return '<ol>' + slots.map(function (slot) {
+        return '<li value="' + slot.number + '">' + slot.answer + '（' + Array.from(slot.answer).length + '文字）</li>';
+      }).join('') + '</ol>';
+    }
+
+    function buildImagePrompt(cand) {
+      const label = document.getElementById("themeLabel").value.trim() || "魚・魚のからだ";
+      const across = cand.slots.filter(function (s) { return s.dir === "across"; });
+      const down = cand.slots.filter(function (s) { return s.dir === "down"; });
+      const lines = [];
+      lines.push("以下の内容で、日本の小学生向けの5×5クロスワードパズル画像を作成してください。");
+      lines.push("");
+      lines.push("【最重要】");
+      lines.push("カギ文はAIが新しく作成してください。すべてを『魚の名前』のような同じ文にしないでください。");
+      lines.push("下の答え一覧を見て、答えごとに別々のヒントを作ってください。");
+      lines.push("カギ文の中に答えそのものを絶対に書かないでください。");
+      lines.push("問題画像には答え一覧を載せないでください。答え一覧はカギ文作成のための資料です。");
+      lines.push("");
+      lines.push("【画像の形式】");
+      lines.push("- A4縦向きの教材プリント風。");
+      lines.push("- 7歳前後の子ども向け。ひらがな中心で、やさしい言葉にする。");
+      lines.push("- クロスワード盤面は必ず5×5。");
+      lines.push("- ■ は黒マス。白マスは空欄。");
+      lines.push("- 問題盤面に答えの文字を入れない。");
+      lines.push("- 各ワードの開始マスには小さな番号を入れる。");
+      lines.push("- 盤面の形、黒マスの位置、番号、カギ番号を変更しない。");
+      lines.push("");
+      lines.push("【タイトル】");
+      lines.push(label + " クロスワード");
+      lines.push("");
+      lines.push("【子ども向け問題文】");
+      lines.push("したの ますに、" + label + "に かんけいする ことばを いれましょう。■の ますには 文字を いれません。");
+      lines.push("");
+      lines.push("【問題盤面】");
+      lines.push(gridToText(cand.grid, false));
+      lines.push("");
+      lines.push("【よこの答え一覧：画像には載せず、カギ文作成に使う】");
+      lines.push(across.map(function (s) { return s.number + ". " + s.answer + "（" + Array.from(s.answer).length + "文字）"; }).join(NL) || "なし");
+      lines.push("");
+      lines.push("【たての答え一覧：画像には載せず、カギ文作成に使う】");
+      lines.push(down.map(function (s) { return s.number + ". " + s.answer + "（" + Array.from(s.answer).length + "文字）"; }).join(NL) || "なし");
+      lines.push("");
+      lines.push("【カギ文作成ルール】");
+      lines.push("- 魚の名前なら、食べ方、見た目、季節、よく聞く料理、泳ぎ方などをヒントにする。");
+      lines.push("- 魚の部位なら、体のどこにあるか、何に使うかをヒントにする。");
+      lines.push("- 例：答えが『ひれ』なら『さかなが およぐときに つかう からだの ぶぶん』のようにする。");
+      lines.push("- 例：答えが『さけ』なら『おにぎりの ぐにも なる、あかっぽい みの さかな』のようにする。");
+      lines.push("- 答えそのものはカギ文に入れない。");
+      lines.push("- 各カギは短く、子どもが読める文にする。");
+      lines.push("");
+      lines.push("【解答用資料：画像の下部に小さく別枠で入れてもよい】");
+      lines.push(gridToText(cand.grid, true));
+      lines.push("");
+      lines.push("【禁止事項】");
+      lines.push("- 盤面を6×6以上にしない。");
+      lines.push("- 答えの文字を問題盤面に入れない。");
+      lines.push("- カギ番号を変えない。");
+      lines.push("- 存在しないカギや単語を追加しない。");
+      lines.push("- カギ文を全部『魚の名前』にしない。");
+      lines.push("- 問題部分に答え一覧を載せない。");
+      return lines.join(NL);
+    }
+
+    function gridToText(grid, showAnswer) {
+      return grid.map(function (row) {
+        return row.map(function (cell) { return cell === "#" ? "■" : (showAnswer ? cell : "□"); }).join(" ");
+      }).join(NL);
+    }
+
+    function downloadTextFile(filename, text) {
+      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+      }
+      return arr;
+    }
+
+    function clampInt(value, min, max, fallback) {
+      const n = parseInt(value, 10);
+      if (Number.isNaN(n)) return fallback;
+      return Math.max(min, Math.min(max, n));
+    }
+  </script>
+</body>
+</html>
