@@ -68,7 +68,9 @@
     .primary { background: var(--accent); color: white; }
     .secondary { background: #e5e7eb; color: #111827; }
     .ghost { background: #ecfeff; color: #0f766e; border: 1px solid #99f6e4; }
-    .export-btn { background: #111827; color: white; border-radius: 12px; padding: 10px 14px; font-size: 14px; }
+    .export-img { background: #0f766e; color: white; border-radius: 12px; padding: 10px 14px; font-size: 14px; }
+    .export-answer { background: #7c3aed; color: white; border-radius: 12px; padding: 10px 14px; font-size: 14px; }
+    .export-tex { background: #111827; color: white; border-radius: 12px; padding: 10px 14px; font-size: 14px; }
     .copy-note { font-size: 13px; color: var(--muted); align-self: center; }
     .status {
       margin-top: 14px; padding: 12px; background: #f8fafc;
@@ -111,7 +113,7 @@
 <body>
   <header>
     <h1>5×5 教材クロスワード生成プロトタイプ</h1>
-    <p class="lead">入力したワードだけを使って、5×5のクロスワード候補を作ります。入力欄の上にあるワードほど強く優先されます。</p>
+    <p class="lead">入力したワードだけを使って、5×5のクロスワード候補を作ります。盤面画像はアプリ側で正確にPNG出力し、AIにはカギ文だけを考えさせるTeXを出力します。</p>
   </header>
 
   <main>
@@ -237,9 +239,7 @@
       return priority;
     }
 
-    function priorityOf(word, priority) {
-      return priority.get(word) || 0;
-    }
+    function priorityOf(word, priority) { return priority.get(word) || 0; }
 
     function groupByLength(words) {
       const byLen = new Map();
@@ -344,11 +344,8 @@
           }
           if (ok) out.push(w);
         }
-        if (preferMajor) {
-          out.sort(function (a, b) { return priorityOf(b, priority) - priorityOf(a, priority); });
-        } else {
-          shuffle(out);
-        }
+        if (preferMajor) out.sort(function (a, b) { return priorityOf(b, priority) - priorityOf(a, priority); });
+        else shuffle(out);
         return out;
       }
 
@@ -453,7 +450,7 @@
       const words = parseWords(wordInput.value);
       const byLen = groupByLength(words);
       const priority = makePriority(words);
-      const maxBlocks = clampInt(document.getElementById("maxBlocks").value, 0, 20, 9);
+      const maxBlocks = clampInt(document.getElementById("maxBlocks").value, 0, 20, 7);
       const targetCount = clampInt(document.getElementById("targetCount").value, 1, 20, 5);
       const attempts = clampInt(document.getElementById("attempts").value, 100, 200000, 100000);
       const allowReuse = document.getElementById("allowReuse").checked;
@@ -498,13 +495,24 @@
       div.innerHTML = '' +
         '<h2><span>候補 ' + displayIndex + '</span><span class="score">score ' + cand.score + '</span></h2>' +
         '<div class="meta"><span class="pill">黒マス ' + cand.blockCount + '</span><span class="pill">白マス ' + cand.whiteCount + '</span><span class="pill">ワード ' + cand.wordsUsed.length + '</span><span class="pill">1文字交差 ' + cand.singleCount + '</span><span class="pill">上位語点 ' + cand.priorityBonus + '</span></div>' +
-        '<div class="export-tools"><button class="export-btn" type="button">この候補を出力プロンプトにする</button><span class="copy-note">AIに個別のカギ文を考えさせるプロンプトを.txtで保存します。</span></div>' +
+        '<div class="export-tools"><button class="export-img" type="button" data-action="problem">問題画像PNG</button><button class="export-answer" type="button" data-action="answer">解答画像PNG</button><button class="export-tex" type="button" data-action="tex">カギ文生成用TeX</button><span class="copy-note">盤面はPNG、カギ文はAI作成用TeXとして出力します。</span></div>' +
         '<div class="boards"><div class="board-box"><h3>問題</h3>' + boardTable(cand.grid, cand.slots, false) + '</div><div class="board-box"><h3>解答</h3>' + boardTable(cand.grid, cand.slots, true) + '</div></div>' +
         '<details open><summary>答え一覧</summary><div class="clues"><div><h4>よこ</h4>' + answerList(across) + '</div><div><h4>たて</h4>' + answerList(down) + '</div></div></details>';
-      div.querySelector(".export-btn").addEventListener("click", function () {
+
+      div.querySelector('[data-action="problem"]').addEventListener("click", function () {
         const target = LAST_CANDIDATES[exportIndex];
         if (!target) return;
-        downloadTextFile("crossword_prompt_candidate_" + displayIndex + ".txt", buildImagePrompt(target));
+        downloadBoardPng(target, false, "crossword_problem_candidate_" + displayIndex + ".png");
+      });
+      div.querySelector('[data-action="answer"]').addEventListener("click", function () {
+        const target = LAST_CANDIDATES[exportIndex];
+        if (!target) return;
+        downloadBoardPng(target, true, "crossword_answer_candidate_" + displayIndex + ".png");
+      });
+      div.querySelector('[data-action="tex"]').addEventListener("click", function () {
+        const target = LAST_CANDIDATES[exportIndex];
+        if (!target) return;
+        downloadTextFile("crossword_clue_generation_candidate_" + displayIndex + ".tex", buildClueTex(target));
       });
       return div;
     }
@@ -539,62 +547,143 @@
       }).join('') + '</ol>';
     }
 
-    function buildImagePrompt(cand) {
+    function downloadBoardPng(cand, showAnswer, filename) {
+      const title = document.getElementById("themeLabel").value.trim() || "クロスワード";
+      const scale = 3;
+      const cell = 96;
+      const margin = 70;
+      const titleH = 90;
+      const size = margin * 2 + cell * N;
+      const height = titleH + margin + cell * N;
+      const canvas = document.createElement("canvas");
+      canvas.width = size * scale;
+      canvas.height = height * scale;
+      const ctx = canvas.getContext("2d");
+      ctx.scale(scale, scale);
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, size, height);
+      ctx.fillStyle = "#111827";
+      ctx.font = "bold 28px sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText((showAnswer ? "解答：" : "問題：") + title, size / 2, 42);
+
+      const numMap = new Map();
+      cand.slots.forEach(function (slot) {
+        const key = slot.r + "," + slot.c;
+        if (!numMap.has(key)) numMap.set(key, slot.number);
+      });
+
+      const x0 = margin;
+      const y0 = titleH;
+      for (let r = 0; r < N; r++) {
+        for (let c = 0; c < N; c++) {
+          const x = x0 + c * cell;
+          const y = y0 + r * cell;
+          const val = cand.grid[r][c];
+          if (val === "#") {
+            ctx.fillStyle = "#111827";
+            ctx.fillRect(x, y, cell, cell);
+          } else {
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(x, y, cell, cell);
+          }
+          ctx.strokeStyle = "#111827";
+          ctx.lineWidth = 3;
+          ctx.strokeRect(x, y, cell, cell);
+          if (val !== "#") {
+            const n = numMap.get(r + "," + c);
+            if (n) {
+              ctx.fillStyle = "#374151";
+              ctx.font = "bold 18px sans-serif";
+              ctx.textAlign = "left";
+              ctx.textBaseline = "top";
+              ctx.fillText(String(n), x + 8, y + 6);
+            }
+            if (showAnswer) {
+              ctx.fillStyle = "#111827";
+              ctx.font = "bold 44px sans-serif";
+              ctx.textAlign = "center";
+              ctx.textBaseline = "middle";
+              ctx.fillText(val, x + cell / 2, y + cell / 2 + 4);
+            }
+          }
+        }
+      }
+      const link = document.createElement("a");
+      link.download = filename;
+      link.href = canvas.toDataURL("image/png");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function buildClueTex(cand) {
       const label = document.getElementById("themeLabel").value.trim() || "魚・魚のからだ";
       const across = cand.slots.filter(function (s) { return s.dir === "across"; });
       const down = cand.slots.filter(function (s) { return s.dir === "down"; });
       const lines = [];
-      lines.push("以下の内容で、日本の小学生向けの5×5クロスワードパズル画像を作成してください。");
+      lines.push("\\documentclass[uplatex,dvipdfmx]{jsarticle}");
+      lines.push("\\usepackage[margin=20mm]{geometry}");
+      lines.push("\\usepackage{enumitem}");
+      lines.push("\\begin{document}");
+      lines.push("\\section*{カギ文生成用スクリプト}");
+      lines.push("以下の答え一覧をもとに、7歳前後の子ども向けのクロスワードのカギ文を作成してください。");
+      lines.push("答えそのものをカギ文に含めないでください。全部を同じ文にせず、答えごとに具体的に変えてください。");
+      lines.push("テーマは「" + escapeTex(label) + "」です。");
       lines.push("");
-      lines.push("【最重要】");
-      lines.push("カギ文はAIが新しく作成してください。すべてを『魚の名前』のような同じ文にしないでください。");
-      lines.push("下の答え一覧を見て、答えごとに別々のヒントを作ってください。");
-      lines.push("カギ文の中に答えそのものを絶対に書かないでください。");
-      lines.push("問題画像には答え一覧を載せないでください。答え一覧はカギ文作成のための資料です。");
+      lines.push("\\subsection*{カギ文作成ルール}");
+      lines.push("\\begin{itemize}");
+      lines.push("\\item 魚の名前なら、食べ方、見た目、季節、よく聞く料理、泳ぎ方などをヒントにする。");
+      lines.push("\\item 魚の部位なら、体のどこにあるか、何に使うかをヒントにする。");
+      lines.push("\\item 例：答えが「ひれ」なら「さかなが およぐときに つかう からだの ぶぶん」のようにする。");
+      lines.push("\\item 例：答えが「さけ」なら「おにぎりの ぐにも なる、あかっぽい みの さかな」のようにする。");
+      lines.push("\\item ひらがな中心で、短く、子どもが読める文にする。");
+      lines.push("\\end{itemize}");
       lines.push("");
-      lines.push("【画像の形式】");
-      lines.push("- A4縦向きの教材プリント風。");
-      lines.push("- 7歳前後の子ども向け。ひらがな中心で、やさしい言葉にする。");
-      lines.push("- クロスワード盤面は必ず5×5。");
-      lines.push("- ■ は黒マス。白マスは空欄。");
-      lines.push("- 問題盤面に答えの文字を入れない。");
-      lines.push("- 各ワードの開始マスには小さな番号を入れる。");
-      lines.push("- 盤面の形、黒マスの位置、番号、カギ番号を変更しない。");
-      lines.push("");
-      lines.push("【タイトル】");
-      lines.push(label + " クロスワード");
-      lines.push("");
-      lines.push("【子ども向け問題文】");
-      lines.push("したの ますに、" + label + "に かんけいする ことばを いれましょう。■の ますには 文字を いれません。");
-      lines.push("");
-      lines.push("【問題盤面】");
+      lines.push("\\subsection*{問題盤面}");
+      lines.push("\\begin{verbatim}");
       lines.push(gridToText(cand.grid, false));
+      lines.push("\\end{verbatim}");
       lines.push("");
-      lines.push("【よこの答え一覧：画像には載せず、カギ文作成に使う】");
-      lines.push(across.map(function (s) { return s.number + ". " + s.answer + "（" + Array.from(s.answer).length + "文字）"; }).join(NL) || "なし");
+      lines.push("\\subsection*{よこの答え}");
+      lines.push("\\begin{enumerate}[label=\\arabic*.]");
+      across.forEach(function (s) {
+        lines.push("\\item[" + s.number + ".] " + escapeTex(s.answer) + "（" + Array.from(s.answer).length + "文字）");
+      });
+      if (across.length === 0) lines.push("\\item なし");
+      lines.push("\\end{enumerate}");
       lines.push("");
-      lines.push("【たての答え一覧：画像には載せず、カギ文作成に使う】");
-      lines.push(down.map(function (s) { return s.number + ". " + s.answer + "（" + Array.from(s.answer).length + "文字）"; }).join(NL) || "なし");
+      lines.push("\\subsection*{たての答え}");
+      lines.push("\\begin{enumerate}[label=\\arabic*.]");
+      down.forEach(function (s) {
+        lines.push("\\item[" + s.number + ".] " + escapeTex(s.answer) + "（" + Array.from(s.answer).length + "文字）");
+      });
+      if (down.length === 0) lines.push("\\item なし");
+      lines.push("\\end{enumerate}");
       lines.push("");
-      lines.push("【カギ文作成ルール】");
-      lines.push("- 魚の名前なら、食べ方、見た目、季節、よく聞く料理、泳ぎ方などをヒントにする。");
-      lines.push("- 魚の部位なら、体のどこにあるか、何に使うかをヒントにする。");
-      lines.push("- 例：答えが『ひれ』なら『さかなが およぐときに つかう からだの ぶぶん』のようにする。");
-      lines.push("- 例：答えが『さけ』なら『おにぎりの ぐにも なる、あかっぽい みの さかな』のようにする。");
-      lines.push("- 答えそのものはカギ文に入れない。");
-      lines.push("- 各カギは短く、子どもが読める文にする。");
-      lines.push("");
-      lines.push("【解答用資料：画像の下部に小さく別枠で入れてもよい】");
-      lines.push(gridToText(cand.grid, true));
-      lines.push("");
-      lines.push("【禁止事項】");
-      lines.push("- 盤面を6×6以上にしない。");
-      lines.push("- 答えの文字を問題盤面に入れない。");
-      lines.push("- カギ番号を変えない。");
-      lines.push("- 存在しないカギや単語を追加しない。");
-      lines.push("- カギ文を全部『魚の名前』にしない。");
-      lines.push("- 問題部分に答え一覧を載せない。");
+      lines.push("\\subsection*{AIへの出力形式指定}");
+      lines.push("次の形式で出力してください。");
+      lines.push("\\begin{verbatim}");
+      lines.push("よこのカギ");
+      lines.push("1. ...");
+      lines.push("たてのカギ");
+      lines.push("2. ...");
+      lines.push("\\end{verbatim}");
+      lines.push("\\end{document}");
       return lines.join(NL);
+    }
+
+    function escapeTex(s) {
+      return String(s)
+        .replace(/\\/g, "\\textbackslash{}")
+        .replace(/%/g, "\\%")
+        .replace(/&/g, "\\&")
+        .replace(/#/g, "\\#")
+        .replace(/_/g, "\\_")
+        .replace(/\{/g, "\\{")
+        .replace(/\}/g, "\\}")
+        .replace(/\$/g, "\\$");
     }
 
     function gridToText(grid, showAnswer) {
