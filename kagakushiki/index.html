@@ -318,6 +318,7 @@
     .feedback.ok { background: var(--green-bg); color: var(--green-text); display: block; border: 1px solid rgba(74, 133, 97, 0.2); }
     .feedback.partial { background: #FFF8D7; color: #9A6A00; display: block; border: 1px solid rgba(154, 106, 0, 0.22); }
     .feedback.ng { background: var(--red-bg);   color: var(--red-text);   display: block; border: 1px solid rgba(191, 90, 90, 0.2); }
+    .feedback small { display: block; margin-top: 6px; font-size: 13px; line-height: 1.5; font-weight: 500; }
 
     .btn-next {
       margin-top: 15px;
@@ -519,7 +520,7 @@
     { name: "硝酸",           formula: "HNO₃",    category: "化合物" },
     { name: "塩酸（塩化水素水溶液）", formula: "HCl", category: "化合物" },
     { name: "酸化銅",         formula: "CuO",      category: "酸化物" },
-    { name: "酸化鉄",         formula: "Fe₂O₃",   category: "酸化物" },
+    { name: "酸化鉄",         formula: "Fe₂O₃",   aliases: ["FeO"], answerNote: "酸化鉄にはいくつか種類があります。このアプリでは FeO も Fe₂O₃ も正解にしています。", category: "酸化物" },
     { name: "酸化マグネシウム", formula: "MgO",   category: "酸化物" },
     { name: "酸化銀",         formula: "Ag₂O",    category: "酸化物" },
     { name: "酸化アルミニウム", formula: "Al₂O₃", category: "酸化物" },
@@ -546,7 +547,7 @@
     "NaOH": "Na×1, O×1, H×1", "Ca(OH)₂": "Ca×1, O×2, H×2",
     "CaCO₃": "Ca×1, C×1, O×3", "CaCl₂": "Ca×1, Cl×2",
     "H₂SO₄": "H×2, S×1, O×4", "HNO₃": "H×1, N×1, O×3",
-    "CuO": "Cu×1, O×1", "Fe₂O₃": "Fe×2, O×3", "MgO": "Mg×1, O×1",
+    "CuO": "Cu×1, O×1", "Fe₂O₃": "FeO または Fe₂O₃。酸化鉄にはいくつか種類があります。", "MgO": "Mg×1, O×1",
     "Ag₂O": "Ag×2, O×1", "Al₂O₃": "Al×2, O×3", "CaO": "Ca×1, O×1",
     "FeS": "Fe×1, S×1", "CuS": "Cu×1, S×1", "H₂S": "H×2, S×1",
     "CuCl₂": "Cu×1, Cl×2", "FeCl₃": "Fe×1, Cl×3", "NH₄Cl": "N×1, H×4, Cl×1",
@@ -569,19 +570,30 @@
       .trim();
   }
 
-  function judgeAnswer(input, formula) {
+  function acceptedFormulas(q) {
+    return [q.formula, ...(q.aliases || [])];
+  }
+
+  function displayAcceptedFormulas(q) {
+    return acceptedFormulas(q).join(' / ');
+  }
+
+  function judgeAnswer(input, q) {
     const answer = normalizeFormulaInput(input);
-    const correct = normalizeFormulaInput(formula);
+    const formulas = acceptedFormulas(q);
+    const corrects = formulas.map(f => normalizeFormulaInput(f));
+    const primary = normalizeFormulaInput(q.formula);
 
-    if (answer === correct) {
-      return { status: 'ok', correct };
+    const exactIndex = corrects.findIndex(correct => answer === correct);
+    if (exactIndex !== -1) {
+      return { status: 'ok', correct: primary, matched: formulas[exactIndex] };
     }
 
-    if (answer.length > 0 && answer.toUpperCase() === correct.toUpperCase()) {
-      return { status: 'partial', correct };
+    if (answer.length > 0 && corrects.some(correct => answer.toUpperCase() === correct.toUpperCase())) {
+      return { status: 'partial', correct: primary };
     }
 
-    return { status: 'ng', correct };
+    return { status: 'ng', correct: primary };
   }
   function shuffle(arr) {
     const a = [...arr];
@@ -735,7 +747,7 @@
         <button class="btn-next" id="btn-next">${cur + 1 < questions.length ? '次の問題へ　→' : '結果を見る ✨'}</button>
         <button class="btn-skip" id="btn-skip">この問題をスキップ</button>
       </div>
-      <p class="hint-note">✏️ 入力例: H2O, CuCl2, Fe2O3, NaHCO3 など<br>小さい数字は普通の数字でOK。半角・全角どちらでもOK。<br>⚠️ 元素記号の大文字小文字が違うと「△」になります。<br>📌 この端末内に成績を保存し、正解済みの問題は少し出にくくなります。</p>
+      <p class="hint-note">✏️ 入力例: H2O, CuCl2, FeO, Fe2O3, NaHCO3 など<br>小さい数字は普通の数字でOK。半角・全角どちらでもOK。<br>⚠️ 元素記号の大文字小文字が違うと「△」になります。<br>📌 この端末内に成績を保存し、正解済みの問題は少し出にくくなります。</p>
     `;
 
     document.getElementById('sel-count').onchange = e => { qCount = +e.target.value; };
@@ -764,17 +776,20 @@
 
     function check() {
       if (answered) return;
-      const judgment = judgeAnswer(inp.value, q.formula);
+      const judgment = judgeAnswer(inp.value, q);
       answered = true;
       results.push(judgment.status);
       recordAnswer(q, judgment.status);
 
+      const displayAnswer = displayAcceptedFormulas(q);
+      const noteHtml = q.answerNote ? `<small>${q.answerNote}</small>` : '';
+
       if (judgment.status === 'ok') {
-        fb.innerHTML = `<span>⭕</span> 正解！　${q.formula}`;
+        fb.innerHTML = `<span>⭕</span> 正解！　${displayAnswer}${noteHtml}`;
       } else if (judgment.status === 'partial') {
-        fb.innerHTML = `<span>△</span> おしい！元素記号は大文字・小文字を区別します。正しくは ${q.formula}`;
+        fb.innerHTML = `<span>△</span> おしい！元素記号は大文字・小文字を区別します。正しくは ${displayAnswer}${noteHtml}`;
       } else {
-        fb.innerHTML = `<span>❌</span> 不正解… 正解は ${q.formula}`;
+        fb.innerHTML = `<span>❌</span> 不正解… 正解は ${displayAnswer}${noteHtml}`;
       }
 
       fb.className = 'feedback ' + judgment.status;
@@ -822,7 +837,7 @@
         ${wrong.map(q => `
           <div class="wrong-row">
             <span class="wrong-name">${q.name}</span>
-            <span class="wrong-formula">${q.formula}</span>
+            <span class="wrong-formula">${displayAcceptedFormulas(q)}</span>
           </div>`).join('')}
       </div>` : '';
 
