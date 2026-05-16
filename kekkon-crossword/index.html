@@ -129,6 +129,47 @@
       color: var(--main-dark);
     }
 
+
+    .privacy-box {
+      display: grid;
+      gap: 12px;
+      margin: 22px 0;
+      padding: 20px;
+      border: 1px solid #dcebdc;
+      border-radius: var(--radius);
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.96), rgba(244, 252, 246, 0.94));
+      box-shadow: 0 12px 30px rgba(80, 54, 38, 0.08);
+    }
+
+    .privacy-box h2 {
+      margin: 0;
+      font-size: 1.16rem;
+      color: #3f6c4d;
+      line-height: 1.5;
+    }
+
+    .privacy-box p {
+      margin: 0;
+      color: #5f524c;
+    }
+
+    .privacy-box ul {
+      margin: 0;
+      padding-left: 1.25em;
+      color: #5f524c;
+    }
+
+    .privacy-box li {
+      margin: 4px 0;
+    }
+
+    .privacy-emphasis {
+      display: inline-block;
+      font-weight: 800;
+      color: #3f6c4d;
+    }
+
     .top-status {
       display: grid;
       gap: 10px;
@@ -449,8 +490,29 @@
         <div><strong>答えられる範囲で、できれば50問以上ご回答ください。</strong></div>
         <div><strong>制作に使いやすい言葉をこちらで選んでパズルにします。</strong></div>
         <div>できれば、ひらがな・カタカナで2〜8文字くらいの言葉でお答えください。長い場合はこちらでクロスワード用に短く調整いたします。</div>
+        <div><strong>本ツールの入力内容は外部サーバーへ送信されません。データはお使いの端末・ブラウザ内でのみ処理されます。</strong></div>
       </div>
     </header>
+
+
+    <section class="privacy-box" aria-label="個人情報の取り扱いについて">
+      <h2>【個人情報の取り扱いについて】</h2>
+      <p>
+        入力いただいた情報は、結婚式用クロスワード制作およびヒアリング整理の目的にのみ使用します。
+      </p>
+      <p>
+        取得した情報を第三者へ提供することはありません。また、制作完了後は一定期間保管したのち削除します。
+      </p>
+      <p>
+        <span class="privacy-emphasis">本ツールの入力内容は外部サーバーへ送信されません。</span>
+        入力内容はお使いの端末内でのみ処理され、ブラウザの保存機能を使う場合も、お使いのブラウザ内に保存されます。
+      </p>
+      <ul>
+        <li>本ツールは入力補助用です。</li>
+        <li>入力内容は、このページから自動送信されません。</li>
+        <li>正式なやり取り・データ送付はココナラのトークルームをご利用ください。</li>
+      </ul>
+    </section>
 
     <div class="top-status">
       <div class="progress-row">
@@ -459,7 +521,7 @@
       </div>
       <div class="bar" aria-hidden="true"><div id="barFill"></div></div>
       <p id="status" class="status">できれば50問以上ご回答ください。あと50問です。</p>
-      <p class="status">5問ごとの「ここまでの解答をセーブする」ボタンを押すと、このブラウザに保存されます。次回同じ端末・同じブラウザで開くと、続きから入力できます。</p>
+      <p class="status">5問ごとの「ここまでの解答をセーブする」ボタンを押すと、このブラウザに保存されます。次回同じ端末・同じブラウザで開くと、続きから入力できます。保存内容は外部サーバーへ送信されません。</p>
     </div>
 
     <form id="questionnaire" class="panel">
@@ -491,7 +553,7 @@
         <h2>アンケートの回答をファイル出力する</h2>
         <p>
           入力が終わりましたら、下のボタンから <strong>.mdファイル</strong> を出力してください。
-          出力されたファイルを制作担当者へお送りください。
+          このページから自動送信はされません。出力されたファイルを、ココナラのトークルームから制作担当者へお送りください。
         </p>
         <button type="button" id="markdownBtn" class="file-button">ファイル出力</button>
       </section>
@@ -1154,6 +1216,14 @@
         lines.push("");
         lines.push(`- 出力日時: ${new Date().toLocaleString("ja-JP")}`);
         lines.push(`- 回答数: ${answeredCount()}/100問`);
+        lines.push("");
+        lines.push("## 個人情報の取り扱いについて");
+        lines.push("");
+        lines.push("- 入力いただいた情報は、結婚式用クロスワード制作およびヒアリング整理の目的にのみ使用します。");
+        lines.push("- 取得した情報を第三者へ提供することはありません。");
+        lines.push("- 制作完了後は一定期間保管したのち削除します。");
+        lines.push("- 本ツールの入力内容は外部サーバーへ自動送信されません。");
+        lines.push("- 正式なやり取り・データ送付はココナラのトークルームをご利用ください。");
         lines.push("");
         lines.push("## ご依頼情報");
         lines.push("");
