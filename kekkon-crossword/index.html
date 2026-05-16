@@ -1,0 +1,1235 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>結婚式クロスワード用アンケート 100問</title>
+  <meta name="description" content="新郎新婦の出会い・思い出をもとに、結婚式用クロスワードパズルを制作するための100問アンケートフォームです。" />
+  <style>
+    :root {
+      --bg: #fffaf7;
+      --paper: #ffffff;
+      --ink: #3f342e;
+      --muted: #8b7b72;
+      --line: #f0dfd6;
+      --main: #f48fb1;
+      --main-dark: #d95c86;
+      --sub: #f8cfcf;
+      --cream: #fff1dc;
+      --green: #9cc9a8;
+      --green-dark: #4f8b63;
+      --shadow: 0 18px 42px rgba(80, 54, 38, 0.12);
+      --radius: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family:
+        "Hiragino Sans",
+        "Hiragino Kaku Gothic ProN",
+        "Yu Gothic",
+        "YuGothic",
+        "Noto Sans JP",
+        system-ui,
+        sans-serif;
+      background:
+        radial-gradient(circle at 10% 5%, rgba(244, 143, 177, 0.20), transparent 28rem),
+        radial-gradient(circle at 90% 10%, rgba(156, 201, 168, 0.18), transparent 26rem),
+        linear-gradient(180deg, #fffaf7 0%, #fff4ee 100%);
+      line-height: 1.75;
+    }
+
+    .page {
+      width: min(1040px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 32px 0 80px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(28px, 5vw, 56px);
+      border: 1px solid rgba(240, 223, 214, 0.9);
+      border-radius: 36px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,241,220,0.84)),
+        repeating-linear-gradient(
+          45deg,
+          transparent 0 16px,
+          rgba(244, 143, 177, 0.06) 16px 32px
+        );
+      box-shadow: var(--shadow);
+    }
+
+    .hero::after {
+      content: "♡";
+      position: absolute;
+      right: clamp(20px, 5vw, 64px);
+      top: 16px;
+      color: rgba(244, 143, 177, 0.18);
+      font-size: clamp(96px, 16vw, 190px);
+      line-height: 1;
+      transform: rotate(8deg);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 12px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(244, 143, 177, 0.12);
+      color: var(--main-dark);
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    h1 {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      font-size: clamp(1.8rem, 4vw, 3.25rem);
+      line-height: 1.22;
+      letter-spacing: 0.03em;
+    }
+
+    .lead {
+      position: relative;
+      z-index: 1;
+      width: min(800px, 100%);
+      margin: 18px 0 0;
+      color: #66564e;
+      font-size: clamp(1rem, 2vw, 1.15rem);
+    }
+
+    .notice {
+      display: grid;
+      gap: 10px;
+      margin-top: 22px;
+      padding: 18px 20px;
+      border: 1px solid #f4d4da;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.76);
+      backdrop-filter: blur(8px);
+    }
+
+    .notice strong {
+      color: var(--main-dark);
+    }
+
+    .top-status {
+      display: grid;
+      gap: 10px;
+      margin: 22px 0;
+      padding: 18px;
+      border: 1px solid rgba(240, 223, 214, 0.95);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 12px 30px rgba(80, 54, 38, 0.08);
+    }
+
+    .progress-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .count {
+      color: var(--main-dark);
+      font-weight: 900;
+      font-size: 1.45rem;
+    }
+
+    .bar {
+      overflow: hidden;
+      height: 14px;
+      border-radius: 999px;
+      background: #f5e3dc;
+    }
+
+    .bar > div {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--main), var(--green));
+      transition: width .22s ease;
+    }
+
+    .status {
+      margin: 0;
+      color: #745d53;
+      font-size: 0.96rem;
+    }
+
+    .status.good {
+      color: var(--green-dark);
+      font-weight: 800;
+    }
+
+    .panel {
+      border: 1px solid rgba(240, 223, 214, 0.95);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 12px 30px rgba(80, 54, 38, 0.08);
+      padding: clamp(18px, 3vw, 28px);
+    }
+
+    .section {
+      margin-top: 34px;
+      padding-top: 30px;
+      border-top: 1px dashed var(--line);
+    }
+
+    .section:first-of-type {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    .section h2 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 16px;
+      font-size: 1.25rem;
+    }
+
+    .section h2 span {
+      display: inline-grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      flex: 0 0 auto;
+      border-radius: 12px;
+      color: #fff;
+      background: var(--main);
+      font-size: 0.95rem;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+
+    label.meta-label {
+      display: grid;
+      gap: 6px;
+      font-weight: 700;
+      font-size: 0.96rem;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    textarea {
+      width: 100%;
+      border: 1px solid #ead8ce;
+      border-radius: 16px;
+      background: #fffdfb;
+      color: var(--ink);
+      font: inherit;
+      outline: none;
+      transition: border-color .16s ease, box-shadow .16s ease, background .16s ease;
+    }
+
+    input[type="text"],
+    input[type="email"] {
+      min-height: 46px;
+      padding: 10px 13px;
+    }
+
+    textarea {
+      min-height: 86px;
+      padding: 12px 13px;
+      resize: vertical;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: var(--main);
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(244, 143, 177, 0.14);
+    }
+
+    .q {
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 12px;
+      padding: 16px 0;
+      border-bottom: 1px solid #f5e8e1;
+    }
+
+    .q-num {
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 16px;
+      background: var(--cream);
+      color: #9f6b4c;
+      font-weight: 800;
+    }
+
+    .q-body {
+      display: grid;
+      gap: 7px;
+    }
+
+    .q-title {
+      font-weight: 800;
+      line-height: 1.55;
+    }
+
+    .example {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .save-block {
+      display: grid;
+      gap: 8px;
+      margin: 18px 0 22px 64px;
+      padding: 14px;
+      border-radius: 20px;
+      background: #fff7ef;
+      border: 1px solid #f2ded3;
+    }
+
+    button {
+      min-height: 46px;
+      border: 0;
+      border-radius: 16px;
+      padding: 10px 16px;
+      color: #fff;
+      background: var(--main);
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 10px 20px rgba(217, 92, 134, 0.18);
+      transition: transform .12s ease, filter .12s ease;
+    }
+
+    button:hover {
+      filter: brightness(0.98);
+      transform: translateY(-1px);
+    }
+
+    .save-button {
+      width: fit-content;
+      max-width: 100%;
+      background: var(--green);
+      box-shadow: 0 10px 20px rgba(79, 139, 99, 0.16);
+    }
+
+    .save-note {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .final-box {
+      margin-top: 34px;
+      padding: clamp(20px, 4vw, 32px);
+      border: 1px solid #f4d4da;
+      border-radius: 28px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,241,220,0.92));
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .final-box h2 {
+      margin: 0 0 10px;
+      font-size: clamp(1.35rem, 3vw, 2rem);
+    }
+
+    .final-box p {
+      margin: 0 auto 18px;
+      max-width: 720px;
+      color: #66564e;
+    }
+
+    .file-button {
+      width: min(420px, 100%);
+      min-height: 56px;
+      font-size: 1.08rem;
+      background: var(--main-dark);
+    }
+
+    .footer {
+      margin-top: 28px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 20;
+      max-width: min(460px, calc(100% - 36px));
+      padding: 14px 16px;
+      border-radius: 18px;
+      color: #fff;
+      background: rgba(63, 52, 46, 0.92);
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+      transition: opacity .2s ease, transform .2s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 680px) {
+      .page {
+        width: min(100% - 20px, 1040px);
+        padding-top: 14px;
+      }
+
+      .hero {
+        border-radius: 26px;
+        padding: 24px 18px;
+      }
+
+      .meta-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .q {
+        grid-template-columns: 42px 1fr;
+        gap: 8px;
+      }
+
+      .q-num {
+        width: 36px;
+        height: 36px;
+        border-radius: 12px;
+      }
+
+      .save-block {
+        margin-left: 0;
+      }
+
+      .save-button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <header class="hero">
+      <p class="eyebrow">Wedding Crossword Questionnaire</p>
+      <h1>結婚式クロスワード用<br>お二人の出会い・思い出アンケート 100問</h1>
+      <p class="lead">
+        お二人の出会い、デート、日常、プロポーズ、これからの夢などをもとに、
+        世界にひとつだけの結婚式クロスワードパズルを制作いたします。
+      </p>
+      <div class="notice">
+        <div><strong>答えられる範囲で、できれば50問以上ご回答ください。</strong></div>
+        <div><strong>制作に使いやすい言葉をこちらで選んでパズルにします。</strong></div>
+        <div>できれば、ひらがな・カタカナで2〜8文字くらいの言葉でお答えください。長い場合はこちらでクロスワード用に短く調整いたします。</div>
+      </div>
+    </header>
+
+    <div class="top-status">
+      <div class="progress-row">
+        <strong>回答状況</strong>
+        <span><span id="answeredCount" class="count">0</span>/100問</span>
+      </div>
+      <div class="bar" aria-hidden="true"><div id="barFill"></div></div>
+      <p id="status" class="status">できれば50問以上ご回答ください。あと50問です。</p>
+      <p class="status">5問ごとの「ここまでの解答をセーブする」ボタンを押すと、このブラウザに保存されます。次回同じ端末・同じブラウザで開くと、続きから入力できます。</p>
+    </div>
+
+    <form id="questionnaire" class="panel">
+      <section class="section">
+        <h2><span>♡</span> ご依頼情報</h2>
+        <div class="meta-grid">
+          <label class="meta-label">
+            ご回答者さまのお名前
+            <input type="text" name="ご回答者さまのお名前" placeholder="例：山田 花子" autocomplete="name">
+          </label>
+          <label class="meta-label">
+            メールアドレス
+            <input type="email" name="メールアドレス" placeholder="例：sample@example.com" autocomplete="email">
+          </label>
+          <label class="meta-label">
+            挙式日・納品希望日
+            <input type="text" name="挙式日・納品希望日" placeholder="例：2026年10月10日">
+          </label>
+          <label class="meta-label">
+            パズルに入れたいお名前表記
+            <input type="text" name="パズルに入れたいお名前表記" placeholder="例：しょうた・あや">
+          </label>
+        </div>
+      </section>
+
+      <div id="questionsRoot"></div>
+
+      <section class="final-box" id="fileOutputSection">
+        <h2>アンケートの回答をファイル出力する</h2>
+        <p>
+          入力が終わりましたら、下のボタンから <strong>.mdファイル</strong> を出力してください。
+          出力されたファイルを制作担当者へお送りください。
+        </p>
+        <button type="button" id="markdownBtn" class="file-button">ファイル出力</button>
+      </section>
+    </form>
+
+    <p class="footer">Wedding Crossword Questionnaire 100 / Static HTML App</p>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const QUESTIONS = [
+  {
+    "section": "お二人の基本情報",
+    "question": "新郎さまのお名前・ニックネームを教えてください。",
+    "example": "例：たか、くりちゃん、しょうた"
+  },
+  {
+    "section": "お二人の基本情報",
+    "question": "新婦さまのお名前・ニックネームを教えてください。",
+    "example": "例：あや、みほ、なっちゃん"
+  },
+  {
+    "section": "お二人の基本情報",
+    "question": "お二人を一言で表すなら、どんなカップルですか？",
+    "example": "例：なかよし、ほんわか、にぎやか"
+  },
+  {
+    "section": "お二人の基本情報",
+    "question": "お二人の共通の趣味を教えてください。",
+    "example": "例：りょこう、えいが、カフェ、さんぽ"
+  },
+  {
+    "section": "お二人の基本情報",
+    "question": "お二人がよく一緒に食べるものは何ですか？",
+    "example": "例：ラーメン、すし、パスタ、カレー"
+  },
+  {
+    "section": "お二人の基本情報",
+    "question": "お二人がよく行く場所はどこですか？",
+    "example": "例：こうえん、カフェ、うみ、えきまえ"
+  },
+  {
+    "section": "お二人の基本情報",
+    "question": "お二人の休日の過ごし方を一言で教えてください。",
+    "example": "例：さんぽ、ドライブ、ゲーム、ねる"
+  },
+  {
+    "section": "お二人の基本情報",
+    "question": "お二人を色で表すなら何色ですか？",
+    "example": "例：ピンク、みどり、あお、オレンジ"
+  },
+  {
+    "section": "お二人の基本情報",
+    "question": "お二人を動物にたとえると何ですか？",
+    "example": "例：いぬ、ねこ、うさぎ、くま"
+  },
+  {
+    "section": "お二人の基本情報",
+    "question": "お二人の関係を一言で表す言葉を教えてください。",
+    "example": "例：あいぼう、なかま、うんめい、しんゆう"
+  },
+  {
+    "section": "出会い・なれそめ",
+    "question": "お二人が初めて出会った場所を教えてください。",
+    "example": "例：しょくば、だいがく、カフェ、アプリ"
+  },
+  {
+    "section": "出会い・なれそめ",
+    "question": "初めて出会った季節を教えてください。",
+    "example": "例：はる、なつ、あき、ふゆ"
+  },
+  {
+    "section": "出会い・なれそめ",
+    "question": "初めて出会った日や時期に関係する言葉はありますか？",
+    "example": "例：さくら、はなび、クリスマス、ゆき"
+  },
+  {
+    "section": "出会い・なれそめ",
+    "question": "初対面で印象に残っていることは何ですか？",
+    "example": "例：えがお、こえ、ふく、めがね"
+  },
+  {
+    "section": "出会い・なれそめ",
+    "question": "最初に話したきっかけは何でしたか？",
+    "example": "例：しごと、ともだち、のみかい、しゅみ"
+  },
+  {
+    "section": "出会い・なれそめ",
+    "question": "出会いを一言で表すなら何ですか？",
+    "example": "例：ぐうぜん、きせき、うんめい、しょうかい"
+  },
+  {
+    "section": "出会い・なれそめ",
+    "question": "最初に連絡を取った方法は何ですか？",
+    "example": "例：ライン、メール、でんわ、インスタ"
+  },
+  {
+    "section": "出会い・なれそめ",
+    "question": "最初に盛り上がった話題は何ですか？",
+    "example": "例：えいが、りょこう、たべもの、しごと"
+  },
+  {
+    "section": "出会い・なれそめ",
+    "question": "お互いを意識しはじめたきっかけは何ですか？",
+    "example": "例：えがお、やさしさ、そうだん、のみかい"
+  },
+  {
+    "section": "出会い・なれそめ",
+    "question": "告白に関係する場所や言葉があれば教えてください。",
+    "example": "例：こうえん、よる、えき、レストラン"
+  },
+  {
+    "section": "交際初期の思い出",
+    "question": "初デートの場所を教えてください。",
+    "example": "例：えいがかん、すいぞくかん、カフェ、こうえん"
+  },
+  {
+    "section": "交際初期の思い出",
+    "question": "初デートで食べたもの・飲んだものを教えてください。",
+    "example": "例：パスタ、ケーキ、コーヒー、すし"
+  },
+  {
+    "section": "交際初期の思い出",
+    "question": "初デートで印象に残っていることは何ですか？",
+    "example": "例：あめ、えがお、きんちょう、よるけい"
+  },
+  {
+    "section": "交際初期の思い出",
+    "question": "交際が始まったころによく行った場所はどこですか？",
+    "example": "例：こうえん、カフェ、えき、うみ"
+  },
+  {
+    "section": "交際初期の思い出",
+    "question": "交際初期によく話していた話題は何ですか？",
+    "example": "例：しごと、えいが、たべもの、りょこう"
+  },
+  {
+    "section": "交際初期の思い出",
+    "question": "お二人で初めて撮った写真に関係する言葉はありますか？",
+    "example": "例：さくら、うみ、カフェ、ピース"
+  },
+  {
+    "section": "交際初期の思い出",
+    "question": "初めて手をつないだ場所や場面に関係する言葉はありますか？",
+    "example": "例：えき、こうえん、よる、かえりみち"
+  },
+  {
+    "section": "交際初期の思い出",
+    "question": "初めての記念日に関係する言葉はありますか？",
+    "example": "例：ケーキ、はな、てがみ、レストラン"
+  },
+  {
+    "section": "交際初期の思い出",
+    "question": "付き合い始めたころの気持ちを一言で表すなら？",
+    "example": "例：どきどき、あんしん、うれしい、しあわせ"
+  },
+  {
+    "section": "交際初期の思い出",
+    "question": "交際が始まったころの二人を一言で表すなら？",
+    "example": "例：ぎこちない、なかよし、ピュア、ほんわか"
+  },
+  {
+    "section": "デート・旅行",
+    "question": "思い出に残っているデートスポットを教えてください。",
+    "example": "例：よこはま、ディズニー、うみ、タワー"
+  },
+  {
+    "section": "デート・旅行",
+    "question": "よく行った街や駅名を教えてください。",
+    "example": "例：しぶや、しんじゅく、よこはま、うえの"
+  },
+  {
+    "section": "デート・旅行",
+    "question": "思い出に残っている旅行先を教えてください。",
+    "example": "例：きょうと、おきなわ、はこね、ほっかいどう"
+  },
+  {
+    "section": "デート・旅行",
+    "question": "旅行で印象に残っている食べ物は何ですか？",
+    "example": "例：そば、かに、ぎゅうたん、アイス"
+  },
+  {
+    "section": "デート・旅行",
+    "question": "旅行やデートで起きたハプニングを一言で教えてください。",
+    "example": "例：ねぼう、まいご、あめ、わすれもの"
+  },
+  {
+    "section": "デート・旅行",
+    "question": "二人で見た景色で印象に残っているものは何ですか？",
+    "example": "例：よるけい、うみ、さくら、はなび"
+  },
+  {
+    "section": "デート・旅行",
+    "question": "二人で行ったイベントやお祭りはありますか？",
+    "example": "例：はなび、ライブ、フェス、まつり"
+  },
+  {
+    "section": "デート・旅行",
+    "question": "二人でよくした移動手段は何ですか？",
+    "example": "例：でんしゃ、くるま、じてんしゃ、さんぽ"
+  },
+  {
+    "section": "デート・旅行",
+    "question": "雨の日の思い出に関係する言葉はありますか？",
+    "example": "例：かさ、あめ、カフェ、えいが"
+  },
+  {
+    "section": "デート・旅行",
+    "question": "晴れの日の思い出に関係する言葉はありますか？",
+    "example": "例：そら、うみ、こうえん、ピクニック"
+  },
+  {
+    "section": "お二人の好きなもの",
+    "question": "お二人でよく見た映画・作品・ジャンルはありますか？",
+    "example": "例：アニメ、えいが、ドラマ、ジブリ"
+  },
+  {
+    "section": "お二人の好きなもの",
+    "question": "お二人でよく聞いた音楽やアーティストに関係する言葉はありますか？",
+    "example": "例：ライブ、うた、フェス、バンド"
+  },
+  {
+    "section": "お二人の好きなもの",
+    "question": "お二人が好きなお店や場所に関係する言葉はありますか？",
+    "example": "例：カフェ、パンや、いざかや、ほんや"
+  },
+  {
+    "section": "お二人の好きなもの",
+    "question": "お二人が好きな食べ物を教えてください。",
+    "example": "例：すし、ラーメン、からあげ、パスタ"
+  },
+  {
+    "section": "お二人の好きなもの",
+    "question": "お二人が好きな飲み物を教えてください。",
+    "example": "例：コーヒー、おちゃ、ビール、ソーダ"
+  },
+  {
+    "section": "お二人の好きなもの",
+    "question": "お二人が好きなスイーツを教えてください。",
+    "example": "例：ケーキ、プリン、アイス、チョコ"
+  },
+  {
+    "section": "お二人の好きなもの",
+    "question": "お二人が好きなキャラクター・作品に関係する言葉はありますか？",
+    "example": "例：ミッキー、ジブリ、ポケモン、スヌーピー"
+  },
+  {
+    "section": "お二人の好きなもの",
+    "question": "お二人が好きなスポーツや運動はありますか？",
+    "example": "例：テニス、サッカー、ランニング、ヨガ"
+  },
+  {
+    "section": "お二人の好きなもの",
+    "question": "お二人が好きな季節の行事はありますか？",
+    "example": "例：はなみ、はなび、クリスマス、ハロウィン"
+  },
+  {
+    "section": "お二人の好きなもの",
+    "question": "お二人の好きな時間帯や雰囲気はありますか？",
+    "example": "例：あさ、よる、ゆうやけ、まったり"
+  },
+  {
+    "section": "お互いの好きなところ",
+    "question": "新郎さまの好きなところを一言で教えてください。",
+    "example": "例：やさしさ、えがお、まじめ、せいじつ"
+  },
+  {
+    "section": "お互いの好きなところ",
+    "question": "新婦さまの好きなところを一言で教えてください。",
+    "example": "例：あかるさ、えがお、がんばりや、やさしさ"
+  },
+  {
+    "section": "お互いの好きなところ",
+    "question": "新郎さまのチャームポイントを教えてください。",
+    "example": "例：えくぼ、めがね、えがお、こえ"
+  },
+  {
+    "section": "お互いの好きなところ",
+    "question": "新婦さまのチャームポイントを教えてください。",
+    "example": "例：えがお、えくぼ、かみ、こえ"
+  },
+  {
+    "section": "お互いの好きなところ",
+    "question": "新郎さまの得意なことを教えてください。",
+    "example": "例：りょうり、うんてん、けいさん、そうじ"
+  },
+  {
+    "section": "お互いの好きなところ",
+    "question": "新婦さまの得意なことを教えてください。",
+    "example": "例：りょうり、せつやく、デザイン、えがお"
+  },
+  {
+    "section": "お互いの好きなところ",
+    "question": "新郎さまを一言で表すなら？",
+    "example": "例：まじめ、やさしい、ポジティブ、マイペース"
+  },
+  {
+    "section": "お互いの好きなところ",
+    "question": "新婦さまを一言で表すなら？",
+    "example": "例：あかるい、しっかり、かわいい、がんばりや"
+  },
+  {
+    "section": "お互いの好きなところ",
+    "question": "お互いに「ここが似ている」と思うところは何ですか？",
+    "example": "例：わらい、しゅみ、のんびり、まじめ"
+  },
+  {
+    "section": "お互いの好きなところ",
+    "question": "お互いに「ここが違って面白い」と思うところは何ですか？",
+    "example": "例：せいかく、はやおき、からさ、テンポ"
+  },
+  {
+    "section": "お二人の日常",
+    "question": "お二人の間でよく使う言葉・口ぐせはありますか？",
+    "example": "例：ありがとう、まあいっか、おなかすいた、だいじょうぶ"
+  },
+  {
+    "section": "お二人の日常",
+    "question": "家でよくしていることを教えてください。",
+    "example": "例：りょうり、そうじ、ゲーム、テレビ"
+  },
+  {
+    "section": "お二人の日常",
+    "question": "二人の家での定番メニューはありますか？",
+    "example": "例：カレー、なべ、パスタ、ぎょうざ"
+  },
+  {
+    "section": "お二人の日常",
+    "question": "二人でよく買うものはありますか？",
+    "example": "例：アイス、コーヒー、おかし、パン"
+  },
+  {
+    "section": "お二人の日常",
+    "question": "二人の生活で大事にしていることは何ですか？",
+    "example": "例：あいさつ、かんしゃ、そうだん、えがお"
+  },
+  {
+    "section": "お二人の日常",
+    "question": "けんかをしたときの仲直りに関係する言葉はありますか？",
+    "example": "例：ごめんね、アイス、さんぽ、てがみ"
+  },
+  {
+    "section": "お二人の日常",
+    "question": "二人で笑ってしまう定番ネタはありますか？",
+    "example": "例：ものまね、だじゃれ、ねぼう、くいしんぼう"
+  },
+  {
+    "section": "お二人の日常",
+    "question": "お互いに少し直してほしいけど笑えるところはありますか？",
+    "example": "例：ねぼう、わすれもの、マイペース、ちらかす"
+  },
+  {
+    "section": "お二人の日常",
+    "question": "二人の中で大切な合言葉はありますか？",
+    "example": "例：いっしょに、なんとかなる、ありがとう、だいすき"
+  },
+  {
+    "section": "お二人の日常",
+    "question": "二人の毎日を一言で表すなら？",
+    "example": "例：にぎやか、ほのぼの、まったり、たのしい"
+  },
+  {
+    "section": "家族・友人・ゲスト",
+    "question": "ゲストに知ってほしいお二人のエピソードはありますか？",
+    "example": "例：けんか、なかなおり、サプライズ、だいぼうけん"
+  },
+  {
+    "section": "家族・友人・ゲスト",
+    "question": "ご家族から見たお二人のイメージを教えてください。",
+    "example": "例：なかよし、あんしん、ほんわか、にぎやか"
+  },
+  {
+    "section": "家族・友人・ゲスト",
+    "question": "ご友人から見たお二人のイメージを教えてください。",
+    "example": "例：おもしろい、まじめ、ラブラブ、マイペース"
+  },
+  {
+    "section": "家族・友人・ゲスト",
+    "question": "結婚式で感謝を伝えたい人に関係する言葉はありますか？",
+    "example": "例：かぞく、ともだち、せんせい、なかま"
+  },
+  {
+    "section": "家族・友人・ゲスト",
+    "question": "お二人にとって大切な友人グループや場所はありますか？",
+    "example": "例：サークル、ぶかつ、しょくば、ゼミ"
+  },
+  {
+    "section": "家族・友人・ゲスト",
+    "question": "ペットや大切な動物に関係する言葉はありますか？",
+    "example": "例：いぬ、ねこ、うさぎ、ハムスター"
+  },
+  {
+    "section": "家族・友人・ゲスト",
+    "question": "結婚式でゲストに楽しんでほしいことは何ですか？",
+    "example": "例：クイズ、えがお、しゃしん、りょうり"
+  },
+  {
+    "section": "家族・友人・ゲスト",
+    "question": "ゲストが聞いたら笑顔になりそうな言葉はありますか？",
+    "example": "例：くいしんぼう、ねぼすけ、どじ、にぎやか"
+  },
+  {
+    "section": "家族・友人・ゲスト",
+    "question": "お二人の思い出に関係する地元・学校・職場の言葉はありますか？",
+    "example": "例：ねりま、だいがく、しょくば、えき"
+  },
+  {
+    "section": "家族・友人・ゲスト",
+    "question": "結婚式で特に大切にしたいゲストへの気持ちは何ですか？",
+    "example": "例：かんしゃ、ありがとう、えがお、おもてなし"
+  },
+  {
+    "section": "プロポーズ・結婚",
+    "question": "プロポーズの場所を教えてください。",
+    "example": "例：レストラン、ホテル、うみ、いえ"
+  },
+  {
+    "section": "プロポーズ・結婚",
+    "question": "プロポーズのとき印象に残っているものは何ですか？",
+    "example": "例：ゆびわ、はな、てがみ、よるけい"
+  },
+  {
+    "section": "プロポーズ・結婚",
+    "question": "プロポーズを一言で表すなら？",
+    "example": "例：サプライズ、かんどう、なみだ、えがお"
+  },
+  {
+    "section": "プロポーズ・結婚",
+    "question": "結婚を決めた理由を一言で表すなら？",
+    "example": "例：あんしん、しんらい、えがお、いっしょ"
+  },
+  {
+    "section": "プロポーズ・結婚",
+    "question": "入籍日や記念日に関係する言葉はありますか？",
+    "example": "例：いいふうふ、たなばた、クリスマス、さくら"
+  },
+  {
+    "section": "プロポーズ・結婚",
+    "question": "結婚式のテーマや雰囲気を一言で教えてください。",
+    "example": "例：ナチュラル、わふう、かわいい、あたたかい"
+  },
+  {
+    "section": "プロポーズ・結婚",
+    "question": "結婚式で大切にしたいことは何ですか？",
+    "example": "例：かんしゃ、えがお、かぞく、なかま"
+  },
+  {
+    "section": "プロポーズ・結婚",
+    "question": "結婚式で使う花・色・モチーフに関係する言葉はありますか？",
+    "example": "例：バラ、さくら、ピンク、リボン"
+  },
+  {
+    "section": "プロポーズ・結婚",
+    "question": "ウェルカムスペースや演出に入れたい言葉はありますか？",
+    "example": "例：しゃしん、キャンドル、はな、ボード"
+  },
+  {
+    "section": "プロポーズ・結婚",
+    "question": "結婚式当日に一番楽しみにしていることは何ですか？",
+    "example": "例：ケーキ、ドレス、スピーチ、しゃしん"
+  },
+  {
+    "section": "これからの二人",
+    "question": "これからお二人で叶えたい夢を一言で教えてください。",
+    "example": "例：マイホーム、りょこう、かぞく、せかいいっしゅう"
+  },
+  {
+    "section": "これからの二人",
+    "question": "新婚生活で楽しみにしていることは何ですか？",
+    "example": "例：りょうり、さんぽ、インテリア、りょこう"
+  },
+  {
+    "section": "これからの二人",
+    "question": "将来行きたい旅行先はありますか？",
+    "example": "例：ハワイ、パリ、おきなわ、ほっかいどう"
+  },
+  {
+    "section": "これからの二人",
+    "question": "将来二人で挑戦したいことはありますか？",
+    "example": "例：キャンプ、りょうり、えいご、マラソン"
+  },
+  {
+    "section": "これからの二人",
+    "question": "理想の家庭を一言で表すなら？",
+    "example": "例：あたたかい、にぎやか、えがお、あんしん"
+  },
+  {
+    "section": "これからの二人",
+    "question": "10年後のお二人を一言で表すなら？",
+    "example": "例：なかよし、かぞく、しあわせ、パワフル"
+  },
+  {
+    "section": "これからの二人",
+    "question": "これからも大切にしたい言葉はありますか？",
+    "example": "例：ありがとう、しんらい、えがお、いっしょ"
+  },
+  {
+    "section": "これからの二人",
+    "question": "お二人の物語を一言で表すタイトルをつけるなら？",
+    "example": "例：きせき、はじまり、えがお、だいぼうけん"
+  },
+  {
+    "section": "これからの二人",
+    "question": "クロスワードに必ず入れてほしい言葉があれば教えてください。",
+    "example": "例：名前、場所、記念日、合言葉"
+  },
+  {
+    "section": "これからの二人",
+    "question": "その他、自由に伝えたいエピソードや言葉があればお書きください。",
+    "example": "例：家族、友人、サプライズ、思い出の一言など"
+  }
+];
+
+    (() => {
+      const STORAGE_KEY = "wedding-crossword-questionnaire-100-v1";
+      const TARGET_COUNT = 50;
+      const QUESTION_COUNT = 100;
+
+      const form = document.getElementById("questionnaire");
+      const root = document.getElementById("questionsRoot");
+      const answeredCountEl = document.getElementById("answeredCount");
+      const barFill = document.getElementById("barFill");
+      const statusEl = document.getElementById("status");
+      const toastEl = document.getElementById("toast");
+
+      const sectionNumbers = new Map();
+      const escapeHtml = (value) => String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+      const showToast = (message) => {
+        toastEl.textContent = message;
+        toastEl.classList.add("show");
+        window.clearTimeout(showToast.timer);
+        showToast.timer = window.setTimeout(() => {
+          toastEl.classList.remove("show");
+        }, 2600);
+      };
+
+      const renderQuestions = () => {
+        let html = "";
+        let currentSection = "";
+        let sectionIndex = 0;
+
+        QUESTIONS.forEach((item, index) => {
+          const number = index + 1;
+          if (item.section !== currentSection) {
+            currentSection = item.section;
+            sectionIndex += 1;
+            html += `<section class="section" data-section="${escapeHtml(currentSection)}">`;
+            html += `<h2><span>${sectionIndex}</span> ${escapeHtml(currentSection)}</h2>`;
+          }
+
+          html += `
+            <div class="q">
+              <div class="q-num">${number}</div>
+              <div class="q-body">
+                <label class="q-title" for="q${number}">${escapeHtml(item.question)}</label>
+                <div class="example">${escapeHtml(item.example)}</div>
+                <textarea id="q${number}" name="Q${String(number).padStart(3, "0")} ${escapeHtml(item.question)}"></textarea>
+              </div>
+            </div>
+          `;
+
+          if (number % 5 === 0) {
+            html += `
+              <div class="save-block">
+                <button type="button" class="save-button" data-save-through="${number}">
+                  ここまでの解答をセーブする
+                </button>
+                <div class="save-note">Q${number}までの入力内容を、このブラウザに保存します。</div>
+              </div>
+            `;
+          }
+
+          const next = QUESTIONS[index + 1];
+          if (!next || next.section !== currentSection) {
+            html += `</section>`;
+          }
+        });
+
+        root.innerHTML = html;
+      };
+
+      renderQuestions();
+
+      const getFields = () => Array.from(form.querySelectorAll("input, textarea"));
+      const getQuestionFields = () => Array.from(form.querySelectorAll("textarea[id^='q']"));
+
+      const getData = () => {
+        const data = {};
+        getFields().forEach((field) => {
+          data[field.name] = field.value.trim();
+        });
+        return data;
+      };
+
+      const save = (throughNumber = null) => {
+        const payload = {
+          savedAt: new Date().toISOString(),
+          throughNumber,
+          data: getData()
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      };
+
+      const load = () => {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (!saved) return false;
+        try {
+          const payload = JSON.parse(saved);
+          const data = payload.data || payload;
+          getFields().forEach((field) => {
+            if (Object.prototype.hasOwnProperty.call(data, field.name)) {
+              field.value = data[field.name] || "";
+            }
+          });
+          return true;
+        } catch (e) {
+          console.warn("保存データを読み込めませんでした。", e);
+          return false;
+        }
+      };
+
+      const answeredCount = () => {
+        return getQuestionFields().filter((field) => field.value.trim().length > 0).length;
+      };
+
+      const updateProgress = () => {
+        const count = answeredCount();
+        const percent = Math.min(100, Math.round((count / QUESTION_COUNT) * 100));
+        answeredCountEl.textContent = count;
+        barFill.style.width = `${percent}%`;
+
+        if (count >= TARGET_COUNT) {
+          statusEl.classList.add("good");
+          statusEl.textContent = `ありがとうございます。${count}問ご回答済みです。制作に使いやすい言葉をこちらで選んでパズルにします。`;
+        } else {
+          statusEl.classList.remove("good");
+          statusEl.textContent = `できれば50問以上ご回答ください。あと${TARGET_COUNT - count}問です。`;
+        }
+      };
+
+      const nowString = () => {
+        const d = new Date();
+        const pad = (n) => String(n).padStart(2, "0");
+        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}`;
+      };
+
+      const makeMarkdown = () => {
+        save(100);
+
+        const data = getData();
+        const lines = [];
+        lines.push("# 結婚式クロスワード用アンケート回答");
+        lines.push("");
+        lines.push(`- 出力日時: ${new Date().toLocaleString("ja-JP")}`);
+        lines.push(`- 回答数: ${answeredCount()}/100問`);
+        lines.push("");
+        lines.push("## ご依頼情報");
+        lines.push("");
+
+        const metaNames = [
+          "ご回答者さまのお名前",
+          "メールアドレス",
+          "挙式日・納品希望日",
+          "パズルに入れたいお名前表記"
+        ];
+
+        metaNames.forEach((name) => {
+          lines.push(`- ${name}: ${data[name] || ""}`);
+        });
+
+        let currentSection = "";
+        QUESTIONS.forEach((item, index) => {
+          const number = index + 1;
+          const fieldName = `Q${String(number).padStart(3, "0")} ${item.question}`;
+          const answer = data[fieldName] || "";
+
+          if (item.section !== currentSection) {
+            currentSection = item.section;
+            lines.push("");
+            lines.push(`## ${currentSection}`);
+            lines.push("");
+          }
+
+          lines.push(`### Q${number}. ${item.question}`);
+          lines.push("");
+          lines.push(answer ? answer : "（未回答）");
+          lines.push("");
+        });
+
+        return lines.join("\n");
+      };
+
+      const download = (filename, content, type) => {
+        const blob = new Blob([content], { type });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      };
+
+      form.addEventListener("input", updateProgress);
+
+      form.addEventListener("click", (event) => {
+        const target = event.target;
+        if (!(target instanceof HTMLElement)) return;
+
+        if (target.matches("[data-save-through]")) {
+          const throughNumber = Number(target.getAttribute("data-save-through"));
+          save(throughNumber);
+          updateProgress();
+          showToast(`Q${throughNumber}までの解答をセーブしました。次回もこのブラウザで続きから入力できます。`);
+        }
+      });
+
+      document.getElementById("markdownBtn").addEventListener("click", () => {
+        const content = makeMarkdown();
+        download(`wedding-crossword-answers_${nowString()}.md`, content, "text/markdown;charset=utf-8");
+        showToast(".mdファイルを出力しました。");
+      });
+
+      const hadSavedData = load();
+      updateProgress();
+
+      if (hadSavedData) {
+        showToast("保存済みの回答を読み込みました。続きから入力できます。");
+      }
+    })();
+  </script>
+</body>
+</html>
