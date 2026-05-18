@@ -169,9 +169,18 @@
       background: #ffffff;
       display: inline-flex;
       align-items: center;
-      gap: 12px;
-      min-width: 250px;
+      gap: 14px;
+      min-width: 300px;
       justify-content: space-between;
+    }
+
+    .timer-count {
+      font-size: clamp(1.55rem, 4vw, 2.35rem);
+      font-weight: 950;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.04em;
+      color: #c2410c;
+      line-height: 1;
     }
 
     .result-marks {
@@ -324,12 +333,13 @@
     }
 
     .answer-row {
-      display: flex;
-      gap: 9px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto auto;
+      gap: 8px;
       justify-content: center;
       align-items: stretch;
       margin: 10px auto 8px;
-      max-width: 380px;
+      max-width: 560px;
     }
 
     #answerInput {
@@ -350,13 +360,24 @@
       box-shadow: 0 0 0 4px rgba(255, 159, 104, 0.16);
     }
 
-    .check-btn {
-      min-width: 105px;
+    .check-btn,
+    .skip-btn {
+      min-width: 78px;
       border-radius: 20px;
+      font-weight: 950;
+      padding: 0 13px;
+      white-space: nowrap;
+    }
+
+    .check-btn {
       background: var(--ink);
       color: white;
-      font-weight: 950;
-      padding: 0 15px;
+    }
+
+    .skip-btn {
+      background: #f8f3ed;
+      color: var(--ink);
+      border: 1px solid var(--line);
     }
 
     .feedback {
@@ -628,11 +649,14 @@
       }
 
       .answer-row {
-        flex-direction: column;
+        grid-template-columns: 1fr 78px 98px;
+        max-width: 100%;
       }
 
-      .check-btn {
+      .check-btn,
+      .skip-btn {
         min-height: 50px;
+        padding: 0 8px;
       }
 
       .question {
@@ -674,7 +698,7 @@
     <section class="card">
       <div class="status-row">
         <div class="timer-result-pill">
-          <span>タイム <span id="timerText">00:00</span></span>
+          <span class="timer-count" id="timerText">00:00,0</span>
           <span class="result-marks" id="resultMarks" aria-label="正解不正解の記録"></span>
         </div>
       </div>
@@ -691,6 +715,7 @@
           <div class="answer-row">
             <input id="answerInput" type="text" inputmode="decimal" autocomplete="off" placeholder="答え" aria-label="答えを入力" />
             <button class="check-btn" id="checkBtn" type="button">答える</button>
+            <button class="skip-btn" id="skipBtn" type="button">スキップ</button>
           </div>
 
           <div class="feedback" id="feedback"></div>
@@ -766,6 +791,7 @@
         rightNumber: document.getElementById("rightNumber"),
         answerInput: document.getElementById("answerInput"),
         checkBtn: document.getElementById("checkBtn"),
+        skipBtn: document.getElementById("skipBtn"),
         feedback: document.getElementById("feedback"),
         scratchCanvas: document.getElementById("scratchCanvas"),
         clearScratchBtn: document.getElementById("clearScratchBtn"),
@@ -928,10 +954,11 @@
       }
 
       function formatTime(ms) {
-        const total = Math.max(0, Math.floor(ms / 1000));
-        const min = String(Math.floor(total / 60)).padStart(2, "0");
-        const sec = String(total % 60).padStart(2, "0");
-        return `${min}:${sec}`;
+        const totalTenths = Math.max(0, Math.floor(ms / 100));
+        const min = String(Math.floor(totalTenths / 600)).padStart(2, "0");
+        const sec = String(Math.floor((totalTenths % 600) / 10)).padStart(2, "0");
+        const tenth = String(totalTenths % 10);
+        return `${min}:${sec},${tenth}`;
       }
 
       function elapsedMs() {
@@ -943,7 +970,7 @@
         stopTimer();
         state.timerId = window.setInterval(() => {
           els.timerText.textContent = formatTime(elapsedMs());
-        }, 500);
+        }, 100);
       }
 
       function stopTimer() {
@@ -1059,6 +1086,7 @@
         els.answerInput.value = "";
         els.answerInput.disabled = false;
         els.checkBtn.disabled = false;
+        els.skipBtn.disabled = false;
         els.feedback.className = "feedback";
         els.feedback.textContent = "";
         renderResultMarks();
@@ -1113,6 +1141,33 @@
         }
       }
 
+      function goNext(waitMs) {
+        window.setTimeout(() => {
+          if (state.index + 1 >= QUESTION_COUNT) {
+            finishQuiz();
+          } else {
+            state.index++;
+            renderProblem();
+          }
+        }, waitMs);
+      }
+
+      function skipProblem() {
+        if (state.answered) return;
+        const current = state.questions[state.index];
+        if (!current) return;
+
+        state.answered = true;
+        state.results[state.index] = false;
+        els.answerInput.disabled = true;
+        els.checkBtn.disabled = true;
+        els.skipBtn.disabled = true;
+        els.feedback.className = "feedback ng";
+        els.feedback.textContent = `スキップ！ 正解は ${current.answerText} です。`;
+        renderResultMarks();
+        goNext(750);
+      }
+
       function checkAnswer() {
         if (state.answered) return;
         const current = state.questions[state.index];
@@ -1129,6 +1184,7 @@
         state.answered = true;
         els.answerInput.disabled = true;
         els.checkBtn.disabled = true;
+        els.skipBtn.disabled = true;
 
         const correct = isCorrectAnswer(userAnswer, current.answerValue);
         state.results[state.index] = correct;
@@ -1144,16 +1200,10 @@
         }
 
         renderResultMarks();
-
-        window.setTimeout(() => {
-          if (state.index + 1 >= QUESTION_COUNT) {
-            finishQuiz();
-          } else {
-            state.index++;
-            renderProblem();
-          }
-        }, correct ? 1150 : 950);
+        goNext(correct ? 1150 : 950);
       }
+
+      function finishQuiz() {     }
 
       function finishQuiz() {
         stopTimer();
@@ -1188,7 +1238,7 @@
         state.answered = false;
         state.results = Array(QUESTION_COUNT).fill(null);
         state.startedAt = Date.now();
-        els.timerText.textContent = "00:00";
+        els.timerText.textContent = "00:00,0";
         els.summaryView.classList.remove("show");
         els.quizView.classList.remove("hidden");
         renderResultMarks();
@@ -1197,6 +1247,7 @@
       }
 
       els.checkBtn.addEventListener("click", checkAnswer);
+      els.skipBtn.addEventListener("click", skipProblem);
       els.againBtn.addEventListener("click", restartQuiz);
       els.clearHistoryBtn.addEventListener("click", clearHistory);
       els.integerModeBtn.addEventListener("click", () => setDecimalMode(false));
