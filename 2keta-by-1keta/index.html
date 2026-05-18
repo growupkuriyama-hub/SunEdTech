@@ -148,14 +148,12 @@
     }
 
     .status-row {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 10px;
+      display: flex;
+      justify-content: flex-end;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
     }
 
-    .progress-pill,
     .timer-result-pill {
       border-radius: 999px;
       padding: 10px 14px;
@@ -165,10 +163,6 @@
       white-space: nowrap;
     }
 
-    .progress-pill {
-      font-size: 1.05rem;
-      color: #a94a17;
-    }
 
     .timer-result-pill {
       color: var(--ink);
@@ -366,13 +360,17 @@
     }
 
     .feedback {
-      min-height: 42px;
+      min-height: 0;
       font-size: 1.08rem;
       font-weight: 900;
       line-height: 1.45;
       display: grid;
       place-items: center;
-      margin-top: 2px;
+      margin: 0;
+    }
+
+    .feedback:empty {
+      display: none;
     }
 
     .feedback.ok {
@@ -400,19 +398,33 @@
       align-items: center;
       gap: 8px;
       margin-bottom: 8px;
-      color: var(--muted);
-      font-size: 0.86rem;
-      font-weight: 800;
+    }
+
+    .scratch-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--ink);
+      color: white;
+      border-radius: 999px;
+      padding: 7px 13px;
+      font-size: 1.02rem;
+      font-weight: 950;
+      letter-spacing: 0.04em;
+      box-shadow: 0 6px 14px rgba(90, 70, 45, 0.16);
     }
 
     .clear-scratch-btn {
+      width: 38px;
+      height: 38px;
       background: #f8f3ed;
       color: var(--ink);
       border: 1px solid var(--line);
       border-radius: 999px;
-      padding: 6px 10px;
+      padding: 0;
       font-weight: 900;
-      font-size: 0.84rem;
+      font-size: 1.22rem;
+      box-shadow: 0 5px 12px rgba(90, 70, 45, 0.08);
     }
 
     .scratch-wrap {
@@ -521,11 +533,11 @@
       }
 
       .status-row {
-        grid-template-columns: 1fr;
+        justify-content: stretch;
       }
 
       .timer-result-pill {
-        justify-self: stretch;
+        width: 100%;
         min-width: 0;
       }
 
@@ -567,7 +579,6 @@
 
     <section class="card">
       <div class="status-row">
-        <div class="progress-pill" id="progressText">1 / 10問</div>
         <div class="timer-result-pill">
           <span>タイム <span id="timerText">00:00</span></span>
           <span class="result-marks" id="resultMarks" aria-label="正解不正解の記録"></span>
@@ -588,12 +599,12 @@
             <button class="check-btn" id="checkBtn" type="button">答える</button>
           </div>
 
-          <div class="feedback" id="feedback">答えを入力してね。</div>
+          <div class="feedback" id="feedback"></div>
 
           <div class="scratch-box">
             <div class="scratch-head">
-              <span>筆算スペース</span>
-              <button class="clear-scratch-btn" id="clearScratchBtn" type="button">ここを消す</button>
+              <span class="scratch-title">✎ 筆算スペース</span>
+              <button class="clear-scratch-btn" id="clearScratchBtn" type="button" aria-label="筆算スペースを消す" title="筆算スペースを消す">🧽</button>
             </div>
             <div class="scratch-wrap">
               <canvas id="scratchCanvas" aria-label="筆算を書くスペース"></canvas>
@@ -640,7 +651,6 @@
       const els = {
         integerModeBtn: document.getElementById("integerModeBtn"),
         decimalModeBtn: document.getElementById("decimalModeBtn"),
-        progressText: document.getElementById("progressText"),
         timerText: document.getElementById("timerText"),
         resultMarks: document.getElementById("resultMarks"),
         problemArea: document.getElementById("problemArea"),
@@ -667,26 +677,71 @@
         return Math.floor(Math.random() * (max - min + 1)) + min;
       }
 
-      function formatDecimalFromTenths(tenths) {
-        if (tenths % 10 === 0) return String(tenths / 10);
-        return (tenths / 10).toFixed(1);
+      function formatDecimal(value) {
+        return Number(value.toFixed(4)).toString();
       }
 
       function makeProblem() {
-        const b = randInt(2, 9);
-
         if (state.decimalMode) {
-          let tenths = randInt(10, 99);
-          while (tenths % 10 === 0) tenths = randInt(10, 99);
+          const pattern = randInt(1, 4);
+
+          // 例：3.1 × 4
+          if (pattern === 1) {
+            let aTenths = randInt(10, 99);
+            while (aTenths % 10 === 0) aTenths = randInt(10, 99);
+            const b = randInt(2, 9);
+            const answer = (aTenths * b) / 10;
+            return {
+              aText: (aTenths / 10).toFixed(1),
+              bText: String(b),
+              answerValue: answer,
+              answerText: formatDecimal(answer)
+            };
+          }
+
+          // 例：0.31 × 4
+          if (pattern === 2) {
+            let aHundredths = randInt(11, 99);
+            while (aHundredths % 10 === 0) aHundredths = randInt(11, 99);
+            const b = randInt(2, 9);
+            const answer = (aHundredths * b) / 100;
+            return {
+              aText: (aHundredths / 100).toFixed(2),
+              bText: String(b),
+              answerValue: answer,
+              answerText: formatDecimal(answer)
+            };
+          }
+
+          // 例：3.1 × 0.4
+          if (pattern === 3) {
+            let aTenths = randInt(10, 99);
+            while (aTenths % 10 === 0) aTenths = randInt(10, 99);
+            const bTenths = randInt(2, 9);
+            const answer = (aTenths * bTenths) / 100;
+            return {
+              aText: (aTenths / 10).toFixed(1),
+              bText: (bTenths / 10).toFixed(1),
+              answerValue: answer,
+              answerText: formatDecimal(answer)
+            };
+          }
+
+          // 例：0.31 × 0.4
+          let aHundredths = randInt(11, 99);
+          while (aHundredths % 10 === 0) aHundredths = randInt(11, 99);
+          const bTenths = randInt(2, 9);
+          const answer = (aHundredths * bTenths) / 1000;
           return {
-            aText: (tenths / 10).toFixed(1),
-            bText: String(b),
-            answerValue: (tenths * b) / 10,
-            answerText: formatDecimalFromTenths(tenths * b)
+            aText: (aHundredths / 100).toFixed(2),
+            bText: (bTenths / 10).toFixed(1),
+            answerValue: answer,
+            answerText: formatDecimal(answer)
           };
         }
 
         const a = randInt(10, 99);
+        const b = randInt(2, 9);
         return {
           aText: String(a),
           bText: String(b),
@@ -844,8 +899,7 @@
         els.answerInput.disabled = false;
         els.checkBtn.disabled = false;
         els.feedback.className = "feedback";
-        els.feedback.textContent = "答えを入力してね。";
-        els.progressText.textContent = `${state.index + 1} / ${QUESTION_COUNT}問`;
+        els.feedback.textContent = "";
         renderResultMarks();
         clearScratch();
         window.setTimeout(() => els.answerInput.focus(), 0);
@@ -945,7 +999,6 @@
         els.timerText.textContent = formatTime(elapsedMs());
         els.quizView.classList.add("hidden");
         els.summaryView.classList.add("show");
-        els.progressText.textContent = `10 / 10問 おわり`;
         els.sumCorrect.textContent = `${state.correct} / 10`;
         els.sumTime.textContent = formatTime(elapsedMs());
         renderResultMarks();
