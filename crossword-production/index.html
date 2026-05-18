@@ -71,6 +71,7 @@
     .summer { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
     .vegetable { background: #ecfdf5; color: #166534; border: 1px solid #bbf7d0; }
     .half-adult { background: #fdf2f8; color: #be185d; border: 1px solid #fbcfe8; }
+    .retirement { background: #f5f3ff; color: #6d28d9; border: 1px solid #ddd6fe; }
     .export-img { background: #0f766e; color: white; border-radius: 12px; padding: 10px 14px; font-size: 14px; }
     .export-answer { background: #7c3aed; color: white; border-radius: 12px; padding: 10px 14px; font-size: 14px; }
     .export-tex { background: #111827; color: white; border-radius: 12px; padding: 10px 14px; font-size: 14px; }
@@ -227,12 +228,13 @@
         <label class="checkline"><input id="allowSingles" type="checkbox" checked /><span>1文字の交差部分を許可する（語彙が少ないときの実務用ゆるめモード）</span></label>
         <label class="checkline"><input id="allowReuse" type="checkbox" /><span>同じワードの再利用を許可する</span></label>
         <label class="checkline"><input id="preferDense" type="checkbox" checked /><span>黒マスが少ない候補を優先する</span></label>
-        <label class="checkline"><input id="preferMajor" type="checkbox"/><span>入力欄の上のワードをかなり強く優先する</span></label>
+        <label class="checkline"><input id="preferMajor" type="checkbox" /><span>入力欄の上のワードをかなり強く優先する</span></label>
       </div>
 
       <div class="buttons">
         <button class="primary" id="generateBtn">生成する</button>
         <button class="half-adult" id="halfAdultBtn">1/2成人式用</button>
+        <button class="retirement" id="retirementBtn">退職祝い・送別会用</button>
         <button class="summer" id="summerBtn">夏ワード</button>
         <button class="vegetable" id="vegetableBtn">野菜・くだもの</button>
       </div>
@@ -707,6 +709,215 @@
       "これから"
     ].join(NL);
 
+
+    const RETIREMENT_WORDS = [
+      "こばやし",
+      "こばやしさん",
+      "やまだ",
+      "やまだきかい",
+      "せいさくしょ",
+      "きかい",
+      "こうじょう",
+      "じむいん",
+      "じむしょ",
+      "そうむ",
+      "けいり",
+      "でんわ",
+      "うけつけ",
+      "らいきゃく",
+      "おちゃ",
+      "おちゃだし",
+      "でんぴょう",
+      "せいきゅう",
+      "みつもり",
+      "しょるい",
+      "ふぁいる",
+      "はんこ",
+      "いんかん",
+      "ふせん",
+      "めも",
+      "でんたく",
+      "ぱそこん",
+      "ぷりんた",
+      "こぴーき",
+      "ふぁっくす",
+      "めーる",
+      "れんらく",
+      "ほうこく",
+      "かくにん",
+      "せいり",
+      "そうじ",
+      "びひん",
+      "ちゅうもん",
+      "ざいこ",
+      "のうひん",
+      "しめび",
+      "げつまつ",
+      "ねんまつ",
+      "けっさん",
+      "きゅうよ",
+      "きんたい",
+      "しゅっきん",
+      "たいきん",
+      "ざんぎょう",
+      "きゅうけい",
+      "ひるやすみ",
+      "おべんとう",
+      "きゅうとう",
+      "かいぎしつ",
+      "げんば",
+      "しょくにん",
+      "こうば",
+      "せいぞう",
+      "ぶひん",
+      "ねじ",
+      "ぼると",
+      "なっと",
+      "せんばん",
+      "ふらいす",
+      "ようせつ",
+      "こうぐ",
+      "ずめん",
+      "せっけい",
+      "けんさ",
+      "しゅっか",
+      "こんぽう",
+      "とらっく",
+      "のうき",
+      "あんぜん",
+      "へるめっと",
+      "さぎょうぎ",
+      "えんか",
+      "からおけ",
+      "うたごころ",
+      "こぶし",
+      "なみだうた",
+      "じんせいか",
+      "さけとうた",
+      "十八ばん",
+      "しぶいこえ",
+      "おんち",
+      "うたじまん",
+      "なみだ",
+      "なみだもろい",
+      "すぐなく",
+      "ほろり",
+      "かんどうや",
+      "やさしい",
+      "おだやか",
+      "きくばり",
+      "ていねい",
+      "まじめ",
+      "しっかり",
+      "あんしん",
+      "たより",
+      "せわやき",
+      "ものしり",
+      "はたらきもの",
+      "えんのした",
+      "おくさん",
+      "おくさま",
+      "びじん",
+      "びじんおくさん",
+      "あいさいか",
+      "ふうふ",
+      "なかよし",
+      "てれわらい",
+      "のろけ",
+      "じまんのつま",
+      "じてんしゃ",
+      "ちゃり",
+      "ぱんく",
+      "ぱんくなおし",
+      "くうきいれ",
+      "ちぇーん",
+      "ぶれーき",
+      "べる",
+      "かご",
+      "さびとり",
+      "めんて",
+      "しゅうり",
+      "なおす",
+      "なおしや",
+      "たよりになる",
+      "こまったとき",
+      "工具箱",
+      "こうぐばこ",
+      "ねじまわし",
+      "ぺんち",
+      "すぱな",
+      "ものづくり",
+      "手先きよう",
+      "てさききよう",
+      "えがお",
+      "おおわらい",
+      "にこにこ",
+      "むーどめーかー",
+      "にんきもの",
+      "しんらい",
+      "あんしんかん",
+      "こころづかい",
+      "さしいれ",
+      "おみやげ",
+      "おかし",
+      "せんべい",
+      "あめちゃん",
+      "こーひー",
+      "おちゃのみ",
+      "ひといき",
+      "てづくり",
+      "めいぶつ",
+      "ありがと",
+      "ありがとう",
+      "かんしゃ",
+      "おつかれ",
+      "たいしょく",
+      "そうべつ",
+      "おいわい",
+      "はなたば",
+      "よせがき",
+      "ぷれぜんと",
+      "きねんひん",
+      "しゃしん",
+      "あるばむ",
+      "すぴーち",
+      "かんぱい",
+      "はくしゅ",
+      "さいご",
+      "であい",
+      "おもいで",
+      "ながねん",
+      "せんぱい",
+      "こうはい",
+      "どうりょう",
+      "しゃちょう",
+      "ぶちょう",
+      "かちょう",
+      "えいぎょう",
+      "みんな",
+      "なかま",
+      "ちーむ",
+      "しょくば",
+      "かいしゃ",
+      "つくえ",
+      "いす",
+      "ろっかー",
+      "あさそうじ",
+      "おはよう",
+      "またね",
+      "さびしい",
+      "げんきで",
+      "これから",
+      "だいすき",
+      "たからもの",
+      "こばやしめも",
+      "かみわざ",
+      "いつものせき",
+      "かいしゃのはは",
+      "じむのほし",
+      "やまだのかお"
+    ].join(NL);
+
     const VEGETABLE_WORDS = [
       "やさい", "とまと", "なす", "きゅうり", "ぴーまん", "かぼちゃ", "にんじん", "だいこん", "かぶ", "ねぎ",
       "たまねぎ", "れたす", "きゃべつ", "はくさい", "こまつな", "もやし", "ごぼう", "れんこん", "いも", "まめ",
@@ -749,6 +960,16 @@
       syncGridSizeOptions(true);
       maxBlocksInput.value = "30";
       statusBox.textContent = "1/2成人式用ワードをロードしました。架空の男の子『はるとくん』を想定し、スポーツ・思い出の場所・家族エピソード・将来の夢を入れています。";
+    });
+
+
+    document.getElementById("retirementBtn").addEventListener("click", function () {
+      wordInput.value = RETIREMENT_WORDS;
+      document.getElementById("themeLabel").value = "山田機械製作所・小林さん退職祝い送別会";
+      gridSizeSelect.value = "6";
+      syncGridSizeOptions(true);
+      maxBlocksInput.value = "14";
+      statusBox.textContent = "退職祝い・送別会用ワードをロードしました。山田機械製作所の事務員・小林さんを想定し、演歌好き、涙もろい、美人の奥さん、自転車修理などのエピソードを入れています。";
     });
 
     document.getElementById("summerBtn").addEventListener("click", function () {
@@ -1489,6 +1710,7 @@
 
     function currentClueThemeMode(label) {
       const text = String(label || "");
+      if (text.includes("退職") || text.includes("送別") || text.includes("小林") || text.includes("山田機械")) return "retirement";
       if (text.includes("1/2") || text.includes("成人式") || text.includes("10歳") || text.includes("十歳") || text.includes("はると")) return "halfAdult";
       return "wedding";
     }
@@ -1503,9 +1725,11 @@
       lines.push("\\usepackage{enumitem}");
       lines.push("\\begin{document}");
       const mode = currentClueThemeMode(label);
-      lines.push("\section*{カギ文生成用スクリプト}");
+      lines.push("\\section*{カギ文生成用スクリプト}");
       if (mode === "halfAdult") {
         lines.push("以下の答え一覧をもとに、1/2成人式・10歳記念・家族向けプロフィール紹介で使いやすいクロスワードのカギ文を作成してください。");
+      } else if (mode === "retirement") {
+        lines.push("以下の答え一覧をもとに、退職祝い・送別会・職場の寄せ書き企画で使いやすいクロスワードのカギ文を作成してください。");
       } else {
         lines.push("以下の答え一覧をもとに、結婚式・披露宴・プロフィール紹介で使いやすいクロスワードのカギ文を作成してください。");
       }
@@ -1513,8 +1737,8 @@
       lines.push("テーマは「" + escapeTex(label) + "」です。");
       lines.push("盤面サイズは" + gridSizeOf(cand.grid) + "×" + gridSizeOf(cand.grid) + "です。");
       lines.push("");
-      lines.push("\subsection*{カギ文作成ルール}");
-      lines.push("\begin{itemize}");
+      lines.push("\\subsection*{カギ文作成ルール}");
+      lines.push("\\begin{itemize}");
       if (mode === "halfAdult") {
         lines.push("\item 10歳の子の成長、好きなスポーツ、思い出の場所、家族とのエピソード、将来の夢が伝わるヒントにする。");
         lines.push("\item 主役の子をからかわず、親が読んで少し泣ける、本人が読んで照れながら喜ぶ温かい文にする。");
@@ -1522,6 +1746,13 @@
         lines.push("\item 親族・先生・友だちにも伝わる、やさしい言葉にする。");
         lines.push("\item 答えそのものはカギ文に入れない。");
         lines.push("\item ひらがな中心で、短く、記念冊子や発表用紙面に載せやすい文にする。");
+      } else if (mode === "retirement") {
+        lines.push("\item 長年会社を支えた人への感謝が伝わる、温かく、少し笑えて、送別会で読み上げやすいヒントにする。");
+        lines.push("\item 山田機械製作所の事務員・小林さんという架空ペルソナを想定し、職場・事務・工場・同僚・思い出の文脈に寄せる。");
+        lines.push("\item 演歌好き、涙もろい、美人の奥さん、自転車を直してくれる、という人柄エピソードは愛のある表現にする。");
+        lines.push("\item 内輪ネタにしすぎず、本人・家族・同僚が読んで嫌な気持ちにならない、上品な送別会トーンにする。");
+        lines.push("\item 答えそのものはカギ文に入れない。");
+        lines.push("\item ひらがな中心で、短く、寄せ書きや送別会の紙面に載せやすい文にする。");
       } else {
         lines.push("\item テーマに合う、温かく、少し笑えて、ゲストが答えやすいヒントにする。");
         lines.push("\item 新郎新婦の性格・習慣・思い出・好み・結婚式らしい言葉を、やさしく紹介するヒントにする。");
@@ -1530,7 +1761,7 @@
         lines.push("\item 答えそのものはカギ文に入れない。");
         lines.push("\item ひらがな中心で、短く、披露宴の紙面に載せやすい文にする。");
       }
-      lines.push("\end{itemize}");
+      lines.push("\\end{itemize}");
       lines.push("");
       lines.push("\\subsection*{問題盤面}");
       lines.push("\\begin{verbatim}");
