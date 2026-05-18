@@ -432,14 +432,11 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: var(--ink);
-      color: white;
-      border-radius: 999px;
-      padding: 7px 13px;
-      font-size: 1.02rem;
+      color: var(--ink);
+      padding: 0;
+      font-size: 1.08rem;
       font-weight: 950;
       letter-spacing: 0.04em;
-      box-shadow: 0 6px 14px rgba(90, 70, 45, 0.16);
     }
 
     .clear-scratch-btn {
@@ -698,7 +695,7 @@
     <section class="card">
       <div class="status-row">
         <div class="timer-result-pill">
-          <span class="timer-count" id="timerText">00:00,0</span>
+          <span class="timer-count" id="timerText">00:00,00</span>
           <span class="result-marks" id="resultMarks" aria-label="正解不正解の記録"></span>
         </div>
       </div>
@@ -955,11 +952,11 @@
       }
 
       function formatTime(ms) {
-        const totalTenths = Math.max(0, Math.floor(ms / 100));
-        const min = String(Math.floor(totalTenths / 600)).padStart(2, "0");
-        const sec = String(Math.floor((totalTenths % 600) / 10)).padStart(2, "0");
-        const tenth = String(totalTenths % 10);
-        return `${min}:${sec},${tenth}`;
+        const totalHundredths = Math.max(0, Math.floor(ms / 10));
+        const min = String(Math.floor(totalHundredths / 6000)).padStart(2, "0");
+        const sec = String(Math.floor((totalHundredths % 6000) / 100)).padStart(2, "0");
+        const hundredths = String(totalHundredths % 100).padStart(2, "0");
+        return `${min}:${sec},${hundredths}`;
       }
 
       function elapsedMs() {
@@ -971,7 +968,7 @@
         stopTimer();
         state.timerId = window.setInterval(() => {
           els.timerText.textContent = formatTime(elapsedMs());
-        }, 100);
+        }, 50);
       }
 
       function stopTimer() {
@@ -1237,7 +1234,7 @@
         state.answered = false;
         state.results = Array(QUESTION_COUNT).fill(null);
         state.startedAt = Date.now();
-        els.timerText.textContent = "00:00,0";
+        els.timerText.textContent = "00:00,00";
         els.summaryView.classList.remove("show");
         els.quizView.classList.remove("hidden");
         renderResultMarks();
