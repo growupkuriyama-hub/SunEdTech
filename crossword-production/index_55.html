@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>5×5・7×7 結婚式クロスワード生成プロトタイプ</title>
+  <title>5×5 教材クロスワード生成プロトタイプ</title>
   <style>
     :root {
       --bg: #f7fafc;
@@ -53,7 +53,7 @@
     }
     .hint { color: var(--muted); font-size: 13px; line-height: 1.55; margin-top: 6px; }
     .row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .field input, .field select {
+    .field input {
       width: 100%; padding: 10px; border: 1px solid var(--line);
       border-radius: 12px; font-size: 15px; background: white;
     }
@@ -181,44 +181,36 @@
 </head>
 <body>
   <header>
-    <h1>5×5・7×7 結婚式クロスワード生成プロトタイプ</h1>
-    <p class="lead">入力したワードだけを使って、5×5または7×7のクロスワード候補を作ります。結婚式・プロフィール・余興向けの言葉を初期セットにし、盤面画像はPNG出力、カギ文はTeXで出力できます。</p>
+    <h1>5×5 教材クロスワード生成プロトタイプ</h1>
+    <p class="lead">入力したワードだけを使って、5×5のクロスワード候補を作ります。盤面画像はアプリ側で正確にPNG出力し、AIにはカギ文だけを考えさせるTeXを出力します。</p>
   </header>
 
   <main>
     <section class="card control-card">
       <label for="wordInput">ワード入力欄</label>
       <textarea id="wordInput"></textarea>
-      <div class="hint">1行に1語、またはコンマ区切りで入力できます。上にある語ほどメジャー語として強く優先します。盤面サイズに合わせて、5×5では2〜5文字、7×7では2〜7文字の語だけを使います。</div>
+      <div class="hint">1行に1語。上にある語ほどメジャー語として強く優先します。5×5なので、2〜5文字の語だけを使います。</div>
 
       <div class="row">
-        <div class="field">
-          <label for="gridSize">盤面サイズ</label>
-          <select id="gridSize">
-            <option value="5">5×5</option>
-            <option value="7" selected>7×7</option>
-          </select>
-        </div>
         <div class="field">
           <label for="maxBlocks">黒マス上限</label>
-          <input id="maxBlocks" type="number" min="0" max="48" value="24" />
+          <input id="maxBlocks" type="number" min="0" max="20" value="7" />
         </div>
-      </div>
-
-      <div class="row">
         <div class="field">
           <label for="targetCount">候補数</label>
           <input id="targetCount" type="number" min="1" max="20" value="5" />
         </div>
-        <div class="field">
-          <label for="attempts">試行回数</label>
-          <input id="attempts" type="number" min="100" max="300000" step="1000" value="100000" />
-        </div>
       </div>
 
-      <div class="field">
-        <label for="themeLabel">テーマ名</label>
-        <input id="themeLabel" type="text" value="結婚式・ふたりのことば" />
+      <div class="row">
+        <div class="field">
+          <label for="attempts">試行回数</label>
+          <input id="attempts" type="number" min="100" max="200000" step="1000" value="100000" />
+        </div>
+        <div class="field">
+          <label for="themeLabel">テーマ名</label>
+          <input id="themeLabel" type="text" value="魚・魚のからだ" />
+        </div>
       </div>
 
       <div class="checks">
@@ -230,7 +222,7 @@
 
       <div class="buttons">
         <button class="primary" id="generateBtn">生成する</button>
-        <button class="secondary" id="sampleBtn">結婚式ワードに戻す</button>
+        <button class="secondary" id="sampleBtn">魚ワードに戻す</button>
         <button class="summer" id="summerBtn">夏ワード</button>
         <button class="vegetable" id="vegetableBtn">野菜・くだもの</button>
       </div>
@@ -261,215 +253,24 @@
   </section>
 
   <script>
-    let N = 5;
+    const N = 5;
     const NL = String.fromCharCode(10);
     let LAST_CANDIDATES = [];
     const STORAGE_KEY = "sun_crossword_saved_candidates_v1";
 
     const DEFAULT_WORDS = [
-      "しおたいおう",
-      "かみたいおう",
-      "そくへんしん",
-      "みどくま",
-      "きどくま",
-      "ながでんわ",
-      "ほうげん",
-      "かんさいべん",
-      "とちぎべん",
-      "よこはまそだち",
-      "おっとり",
-      "せっかち",
-      "じゆうじん",
-      "きちょうめん",
-      "おおざっぱ",
-      "わらいぶくろ",
-      "ていけつあつ",
-      "こうしんちょう",
-      "こがら",
-      "いろじろ",
-      "くろかみ",
-      "めがね",
-      "くせげ",
-      "ねぐせ",
-      "ねこぜ",
-      "はやぐい",
-      "しょうしょく",
-      "おおぐい",
-      "へんしょく",
-      "げきから",
-      "うすあじ",
-      "こいあじ",
-      "まよは",
-      "けちゃは",
-      "そーすは",
-      "しょうゆは",
-      "しおは",
-      "こめは",
-      "ぱんは",
-      "めんは",
-      "わしょく",
-      "ようしょく",
-      "ちゅうか",
-      "ていしょく",
-      "ばんしゃく",
-      "たくのみ",
-      "そとのみ",
-      "かふぇかつ",
-      "きっさてん",
-      "れとろ",
-      "ふるぎ",
-      "むじるし",
-      "ほくおうふう",
-      "かんこくふう",
-      "なちゅらる",
-      "しんぷる",
-      "ものとーん",
-      "べーじゅ",
-      "りょこうずき",
-      "おんせんたび",
-      "ひとりたび",
-      "だんがんたび",
-      "たべあるき",
-      "ごしゅいん",
-      "しろめぐり",
-      "じんじゃ",
-      "てらめぐり",
-      "やまのぼり",
-      "かわあそび",
-      "うみずき",
-      "ゆうやけ",
-      "あさやけ",
-      "ほしずき",
-      "あまおと",
-      "ゆきずき",
-      "はるずき",
-      "なつずき",
-      "あきずき",
-      "ふゆずき",
-      "きんけつ",
-      "せつやくか",
-      "ちょきんは",
-      "ろうひか",
-      "ふくぶくろ",
-      "はんがく",
-      "くーぽん",
-      "ぽいかつ",
-      "ふくみみ",
-      "やえば",
-      "えくぼ",
-      "ていおん",
-      "こうおん",
-      "はなうた",
-      "おんち",
-      "ぜったいおんかん",
-      "どりょくか",
-      "まけずぎらい",
-      "がんこ",
-      "すなお",
-      "へいわしゅぎ",
-      "せわやき",
-      "あまえんぼう",
-      "つんでれ",
-      "かまちょ",
-      "おちょうしもの",
-      "むーどめーかー",
-      "あいされ",
-      "いやしけい",
-      "ぶきよう",
-      "きよう",
-      "てさききよう",
-      "こうさく",
-      "さいほう",
-      "あみもの",
-      "いらすと",
-      "こうさくずき",
-      "どくしょか",
-      "ほんずき",
-      "かつじずき",
-      "じしょずき",
-      "かんじずき",
-      "ちずずき",
-      "れきしずき",
-      "りけい",
-      "ぶんけい",
-      "いんすた",
-      "えっくすみん",
-      "どうがぜい",
-      "はいしんしゃ",
-      "ねとふり",
-      "あまぷら",
-      "しんやぐみ",
-      "あさかつぜい",
-      "ねぶそく",
-      "ばくすい",
-      "おひるね",
-      "ていねんぴ",
-      "こうねんぴ",
-      "ますく",
-      "こうすい",
-      "じゅうなんざい",
-      "あろま",
-      "きゃんどる",
-      "たにくしょくぶつ",
-      "かんようしょくぶつ",
-      "べらんだ",
-      "かていさいえん",
-      "もようがえ",
-      "だんしゃり",
-      "ころもがえ",
-      "しゅうのうじゅつ",
-      "かたづけ",
-      "せんしゃ",
-      "どらいぶ",
-      "じょしゅせき",
-      "ぺーぱー",
-      "あんぜんうんてん",
-      "まいご",
-      "ほうこうおんち",
-      "えもい",
-      "しょうわずき",
-      "へいせいかん",
-      "れとろきっさ",
-      "だがし",
-      "えんにち",
-      "なつまつり",
-      "ぼんおどり",
-      "くりすます",
-      "ばれんたいん",
-      "たんじょうび",
-      "きねんび",
-      "はなたば",
-      "ゆびわ",
-      "けっこんしき",
-      "ひろうえん",
-      "まえどり",
-      "ぶーけ",
-      "どれす",
-      "たきしーど",
-      "ちゃぺる",
-      "ちかい",
-      "ふうふ",
-      "しんこん",
-      "かぞくあい",
-      "しあわせもの",
-      "わらいごえ",
-      "なみだもろい",
-      "かんしゃさい",
-      "たからさがし",
-      "せいしゅんかん",
-      "どうせい",
-      "しんせいかつ",
-      "おそろい",
-      "ぺあるっく",
-      "てつなぎ",
-      "そうしそうあい",
-      "うんめいてき",
-      "きせきてき",
-      "ふたりたび",
-      "あいじょうぶかい",
-      "ささえあい",
-      "あんしんかん"
-].join(NL);
+      "まぐろ", "さけ", "さば", "あじ", "さんま", "たい", "ぶり", "いわし", "かつお", "たら",
+      "うなぎ", "しらす", "ほっけ", "かれい", "ひらめ", "ふぐ", "あなご", "あゆ", "ます", "ひれ",
+      "えら", "うろこ", "あたま", "しっぽ", "くち", "ほね", "かわ", "からだ", "せなか", "はら",
+      "きりみ", "さしみ", "にしん", "さわら", "きす", "ししゃも", "かじき", "すずき", "あんこう", "きんめ",
+      "はも", "こい", "めだか", "きんぎょ", "わかさぎ", "やまめ", "いわな", "どじょう", "おびれ", "せびれ",
+      "たまご", "はらみ", "きも", "めだま", "あご", "かんぱち", "ひらまさ", "まだい", "くろだい", "しまあじ",
+      "たちうお", "とびうお", "かわはぎ", "かさご", "めばる", "いさき", "むつ", "かます", "さより", "はぜ",
+      "ぼら", "さめ", "えい", "おこぜ", "むなびれ", "はらびれ", "しりびれ", "しらこ", "うきぶくろ", "ぎょらん",
+      "すじ", "ちあい", "ほうぼう", "あまだい", "あかうお", "ぎんだら", "きんき", "のどぐろ", "びんちょう", "しろぎす",
+      "いしだい", "いしもち", "あかむつ", "ちだい", "きびなご", "はたはた", "にじます", "たなご", "はや", "いとう",
+      "どんこ", "べら", "ぎんぽ"
+    ].join(NL);
 
     const VEGETABLE_WORDS = [
       "やさい", "とまと", "なす", "きゅうり", "ぴーまん", "かぼちゃ", "にんじん", "だいこん", "かぶ", "ねぎ",
@@ -496,20 +297,12 @@
     const statusBox = document.getElementById("status");
     const results = document.getElementById("results");
     const savedList = document.getElementById("savedList");
-    const gridSizeSelect = document.getElementById("gridSize");
-    const maxBlocksInput = document.getElementById("maxBlocks");
     wordInput.value = DEFAULT_WORDS;
-    syncGridSizeOptions(false);
-
-    gridSizeSelect.addEventListener("change", function () {
-      syncGridSizeOptions(true);
-      statusBox.textContent = gridSizeSelect.value + "×" + gridSizeSelect.value + "モードに切り替えました。7×7では黒マス上限24〜36くらいが出やすいです。";
-    });
 
     document.getElementById("sampleBtn").addEventListener("click", function () {
       wordInput.value = DEFAULT_WORDS;
-      document.getElementById("themeLabel").value = "結婚式・ふたりのことば";
-      statusBox.textContent = "結婚式ワードの初期リストに戻しました。";
+      document.getElementById("themeLabel").value = "魚・魚のからだ";
+      statusBox.textContent = "魚ワードの初期リストに戻しました。";
     });
     document.getElementById("summerBtn").addEventListener("click", function () {
       wordInput.value = SUMMER_WORDS;
@@ -561,34 +354,18 @@
 
     renderSavedWorks();
 
-    function syncGridSizeOptions(changedByUser) {
-      const selected = parseInt(gridSizeSelect.value, 10);
-      N = (selected === 7) ? 7 : 5;
-      const maxAllowed = N * N - 1;
-      maxBlocksInput.max = String(maxAllowed);
-      const current = parseInt(maxBlocksInput.value, 10);
-      if (changedByUser) {
-        if (N === 7 && (Number.isNaN(current) || current <= 14)) maxBlocksInput.value = "24";
-        if (N === 5 && (Number.isNaN(current) || current > 20)) maxBlocksInput.value = "7";
-      }
-    }
-
-    function gridSizeOf(grid) {
-      return Array.isArray(grid) ? grid.length : N;
-    }
-
     function normalizeWord(s) {
       return Array.from(String(s).trim()).map(function (ch) {
         const code = ch.charCodeAt(0);
         if (code >= 0x30A1 && code <= 0x30F6) return String.fromCharCode(code - 0x60);
         return ch;
-      }).join("").replace(/[\s　・\-＿_、。,.\/\\]/g, "");
+      }).join("").replace(/[\s　・ー\-＿_、。,.\/\\]/g, "");
     }
 
     function parseWords(text) {
       const seen = new Set();
       const words = [];
-      text.split(/\n|,|、|，|;|；|\s+/).forEach(function (raw) {
+      text.split(/\n|,|、|\s+/).forEach(function (raw) {
         const w = normalizeWord(raw);
         const len = Array.from(w).length;
         if (len >= 2 && len <= N && !seen.has(w)) {
@@ -816,176 +593,13 @@
       }).sort(function (a, b) { return a.number - b.number || (a.dir === "across" ? -1 : 1); });
     }
 
-    function candidateFromCompletedGrid(grid, allowSingles, priority, preferMajor) {
-      const wordSet = new Set(parseWords(wordInput.value));
-      const mask = grid.map(function (row) { return row.map(function (cell) { return cell === "#"; }); });
-      const slotData = extractSlots(mask, allowSingles);
-      if (!slotData) return null;
-      const validation = validateGrid(grid, wordSet, allowSingles);
-      if (!validation.ok) return null;
-      const numberedSlots = addNumbers(grid, slotData.slots);
-      const wordsUsed = numberedSlots.map(function (slot) { return slot.answer; });
-      const uniqueWords = new Set(wordsUsed);
-      const blockCount = grid.flat().filter(function (x) { return x === "#"; }).length;
-      const whiteCount = N * N - blockCount;
-      const duplicatePenalty = wordsUsed.length - uniqueWords.size;
-      const preferDense = document.getElementById("preferDense").checked;
-      const priorityBonus = preferMajor ? wordsUsed.reduce(function (sum, w) { return sum + priorityOf(w, priority); }, 0) : 0;
-      const crossingCount = countFilledCrossings(grid);
-      const score = validation.runs.length * 18 + whiteCount * (preferDense ? 7 : 4) - blockCount * (preferDense ? 1 : 0) - slotData.singleCount * 3 - duplicatePenalty * 20 + priorityBonus * 20 + crossingCount * 30;
-      return { grid: grid, slots: numberedSlots, score: score, blockCount: blockCount, whiteCount: whiteCount, singleCount: slotData.singleCount, wordsUsed: wordsUsed, duplicatePenalty: duplicatePenalty, priorityBonus: priorityBonus };
-    }
-
-    function countFilledCrossings(grid) {
-      let count = 0;
-      const nSize = grid.length;
-      for (let r = 0; r < nSize; r++) {
-        for (let c = 0; c < nSize; c++) {
-          if (grid[r][c] === "#") continue;
-          const hasH = (c > 0 && grid[r][c - 1] !== "#") || (c + 1 < nSize && grid[r][c + 1] !== "#");
-          const hasV = (r > 0 && grid[r - 1][c] !== "#") || (r + 1 < nSize && grid[r + 1][c] !== "#");
-          if (hasH && hasV) count++;
-        }
-      }
-      return count;
-    }
-
-    function canPlaceWordOnGrid(grid, word, r, c, dir, mustCross) {
-      const chars = Array.from(word);
-      const dr = dir === "down" ? 1 : 0;
-      const dc = dir === "across" ? 1 : 0;
-      const nSize = grid.length;
-      const endR = r + dr * (chars.length - 1);
-      const endC = c + dc * (chars.length - 1);
-      if (r < 0 || c < 0 || endR >= nSize || endC >= nSize) return false;
-      const beforeR = r - dr;
-      const beforeC = c - dc;
-      const afterR = endR + dr;
-      const afterC = endC + dc;
-      if (insideGrid(beforeR, beforeC, nSize) && grid[beforeR][beforeC] !== "#") return false;
-      if (insideGrid(afterR, afterC, nSize) && grid[afterR][afterC] !== "#") return false;
-      let crossing = 0;
-      let newCells = 0;
-      for (let i = 0; i < chars.length; i++) {
-        const rr = r + dr * i;
-        const cc = c + dc * i;
-        const current = grid[rr][cc];
-        if (current !== "#" && current !== chars[i]) return false;
-        if (current === chars[i]) {
-          crossing++;
-        } else {
-          newCells++;
-          if (dir === "across") {
-            if (insideGrid(rr - 1, cc, nSize) && grid[rr - 1][cc] !== "#") return false;
-            if (insideGrid(rr + 1, cc, nSize) && grid[rr + 1][cc] !== "#") return false;
-          } else {
-            if (insideGrid(rr, cc - 1, nSize) && grid[rr][cc - 1] !== "#") return false;
-            if (insideGrid(rr, cc + 1, nSize) && grid[rr][cc + 1] !== "#") return false;
-          }
-        }
-      }
-      if (mustCross && crossing === 0) return false;
-      if (newCells === 0) return false;
-      return true;
-    }
-
-    function placeWordOnGrid(grid, word, r, c, dir) {
-      const chars = Array.from(word);
-      const dr = dir === "down" ? 1 : 0;
-      const dc = dir === "across" ? 1 : 0;
-      for (let i = 0; i < chars.length; i++) grid[r + dr * i][c + dc * i] = chars[i];
-    }
-
-    function insideGrid(r, c, nSize) {
-      return r >= 0 && c >= 0 && r < nSize && c < nSize;
-    }
-
-    function buildWordPlacementCandidate(words, allowReuse, allowSingles, priority, preferMajor, maxBlocks) {
-      if (words.length === 0) return null;
-      const grid = Array.from({ length: N }, function () { return Array.from({ length: N }, function () { return "#"; }); });
-      const used = new Set();
-      const ordered = words.slice().sort(function (a, b) {
-        const lenDiff = Array.from(b).length - Array.from(a).length;
-        if (lenDiff !== 0) return lenDiff;
-        return priorityOf(b, priority) - priorityOf(a, priority);
-      });
-      const firstPool = ordered.filter(function (w) { return Array.from(w).length >= Math.min(4, N); });
-      const first = (firstPool.length ? firstPool : ordered)[Math.floor(Math.random() * (firstPool.length ? firstPool.length : ordered.length))];
-      const firstLen = Array.from(first).length;
-      const firstDir = Math.random() < 0.5 ? "across" : "down";
-      const firstR = firstDir === "across" ? Math.floor(N / 2) : Math.floor(Math.random() * (N - firstLen + 1));
-      const firstC = firstDir === "down" ? Math.floor(N / 2) : Math.floor(Math.random() * (N - firstLen + 1));
-      if (!canPlaceWordOnGrid(grid, first, firstR, firstC, firstDir, false)) return null;
-      placeWordOnGrid(grid, first, firstR, firstC, firstDir);
-      used.add(first);
-
-      const placementTries = N === 7 ? 180 : 90;
-      let noProgress = 0;
-      for (let step = 0; step < placementTries && noProgress < 45; step++) {
-        const placement = findRandomPlacement(grid, ordered, used, allowReuse, priority, preferMajor);
-        if (!placement) { noProgress++; continue; }
-        placeWordOnGrid(grid, placement.word, placement.r, placement.c, placement.dir);
-        used.add(placement.word);
-        noProgress = 0;
-      }
-
-      const blockCount = grid.flat().filter(function (x) { return x === "#"; }).length;
-      if (blockCount > maxBlocks) return null;
-      const cand = candidateFromCompletedGrid(grid, allowSingles, priority, preferMajor);
-      if (!cand) return null;
-      if (cand.wordsUsed.length < (N === 7 ? 6 : 4)) return null;
-      return cand;
-    }
-
-    function findRandomPlacement(grid, words, used, allowReuse, priority, preferMajor) {
-      const filled = [];
-      for (let r = 0; r < N; r++) {
-        for (let c = 0; c < N; c++) if (grid[r][c] !== "#") filled.push([r, c, grid[r][c]]);
-      }
-      shuffle(filled);
-      const wordPool = words.filter(function (w) { return allowReuse || !used.has(w); });
-      if (preferMajor) wordPool.sort(function (a, b) { return priorityOf(b, priority) - priorityOf(a, priority); });
-      else shuffle(wordPool);
-
-      const limit = Math.min(wordPool.length, 80);
-      for (let wi = 0; wi < limit; wi++) {
-        const word = wordPool[wi];
-        const chars = Array.from(word);
-        for (const cell of filled.slice(0, 35)) {
-          const r = cell[0], c = cell[1], ch = cell[2];
-          for (let i = 0; i < chars.length; i++) {
-            if (chars[i] !== ch) continue;
-            const placements = [
-              { r: r, c: c - i, dir: "across", word: word },
-              { r: r - i, c: c, dir: "down", word: word }
-            ];
-            shuffle(placements);
-            for (const p of placements) {
-              if (canPlaceWordOnGrid(grid, p.word, p.r, p.c, p.dir, true)) return p;
-            }
-          }
-        }
-      }
-      return null;
-    }
-
-    function randomCandidate(maxBlocks, byLen, words, allowReuse, allowSingles, priority, preferMajor) {
-      if (N === 7 && Math.random() < 0.85) {
-        const placed = buildWordPlacementCandidate(words, allowReuse, allowSingles, priority, preferMajor, maxBlocks);
-        if (placed) return placed;
-      }
-      const mask = randomMask(maxBlocks);
-      return solveMask(mask, byLen, allowReuse, allowSingles, priority, preferMajor);
-    }
-
     function generateCrosswords() {
-      syncGridSizeOptions(false);
       const words = parseWords(wordInput.value);
       const byLen = groupByLength(words);
       const priority = makePriority(words);
-      const maxBlocks = clampInt(document.getElementById("maxBlocks").value, 0, N * N - 1, N === 7 ? 14 : 7);
+      const maxBlocks = clampInt(document.getElementById("maxBlocks").value, 0, 20, 7);
       const targetCount = clampInt(document.getElementById("targetCount").value, 1, 20, 5);
-      const attempts = clampInt(document.getElementById("attempts").value, 100, 300000, 100000);
+      const attempts = clampInt(document.getElementById("attempts").value, 100, 200000, 100000);
       const allowReuse = document.getElementById("allowReuse").checked;
       const allowSingles = document.getElementById("allowSingles").checked;
       const preferMajor = document.getElementById("preferMajor").checked;
@@ -997,9 +611,9 @@
         const started = performance.now();
         const candidates = [];
         const seenGrids = new Set();
-        const effectiveAttempts = N === 7 ? Math.min(attempts, 25000) : attempts;
-        for (let t = 0; t < effectiveAttempts && candidates.length < targetCount * 10; t++) {
-          const solved = randomCandidate(maxBlocks, byLen, words, allowReuse, allowSingles, priority, preferMajor);
+        for (let t = 0; t < attempts && candidates.length < targetCount * 10; t++) {
+          const mask = randomMask(maxBlocks);
+          const solved = solveMask(mask, byLen, allowReuse, allowSingles, priority, preferMajor);
           if (!solved) continue;
           const key = solved.grid.map(function (row) { return row.join(""); }).join("/");
           if (seenGrids.has(key)) continue;
@@ -1009,13 +623,13 @@
         candidates.sort(function (a, b) { return b.score - a.score; });
         LAST_CANDIDATES = candidates.slice(0, targetCount);
         const elapsed = Math.round(performance.now() - started);
-        const counts = Array.from({ length: N - 1 }, function (_, i) { return i + 2; }).map(function (n) { return n + "文字:" + ((byLen.get(n) || []).length); }).join(" / ");
+        const counts = [2, 3, 4, 5].map(function (n) { return n + "文字:" + ((byLen.get(n) || []).length); }).join(" / ");
         if (LAST_CANDIDATES.length === 0) {
           results.innerHTML = '<div class="card empty"><span class="warning">候補が見つかりませんでした。</span><br><br>ワード数：' + words.length + '語（' + counts + '）<br>対策：黒マス上限を増やす、食育語を追加する、または「1文字の交差部分を許可」をONにしてください。</div>';
-          statusBox.textContent = "生成失敗：" + effectiveAttempts + "回試行 / " + elapsed + "ms / 入力 " + words.length + "語 / " + counts;
+          statusBox.textContent = "生成失敗：" + attempts + "回試行 / " + elapsed + "ms / 入力 " + words.length + "語 / " + counts;
           return;
         }
-        statusBox.textContent = "生成成功：" + LAST_CANDIDATES.length + "件表示 / " + effectiveAttempts + "回試行 / " + elapsed + "ms / 入力 " + words.length + "語 / " + counts + NL + "メジャー語優先：" + (preferMajor ? "ON 強" : "OFF");
+        statusBox.textContent = "生成成功：" + LAST_CANDIDATES.length + "件表示 / " + attempts + "回試行 / " + elapsed + "ms / 入力 " + words.length + "語 / " + counts + NL + "メジャー語優先：" + (preferMajor ? "ON 強" : "OFF");
         LAST_CANDIDATES.forEach(function (cand, idx) { results.appendChild(renderCandidate(cand, idx + 1, idx)); });
       }, 20);
     }
@@ -1063,7 +677,6 @@
         id: "cw_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8),
         savedAt: new Date().toISOString(),
         theme: theme,
-        size: gridSizeOf(cand.grid),
         grid: cand.grid,
         slots: cand.slots,
         score: cand.score,
@@ -1143,16 +756,15 @@
     }
 
     function boardTable(grid, slots, showAnswer) {
-      const nSize = gridSizeOf(grid);
       const numMap = new Map();
       slots.forEach(function (slot) {
         const key = slot.r + "," + slot.c;
         if (!numMap.has(key)) numMap.set(key, slot.number);
       });
       let html = '<table class="crossword" aria-label="crossword">';
-      for (let r = 0; r < nSize; r++) {
+      for (let r = 0; r < N; r++) {
         html += '<tr>';
-        for (let c = 0; c < nSize; c++) {
+        for (let c = 0; c < N; c++) {
           const val = grid[r][c];
           if (val === "#") html += '<td class="black"></td>';
           else {
@@ -1175,13 +787,12 @@
 
     function downloadBoardPng(cand, showAnswer, filename) {
       const title = document.getElementById("themeLabel").value.trim() || "クロスワード";
-      const nSize = gridSizeOf(cand.grid);
       const scale = 3;
-      const cell = nSize >= 7 ? 80 : 96;
+      const cell = 96;
       const margin = 70;
       const titleH = 90;
-      const size = margin * 2 + cell * nSize;
-      const height = titleH + margin + cell * nSize;
+      const size = margin * 2 + cell * N;
+      const height = titleH + margin + cell * N;
       const canvas = document.createElement("canvas");
       canvas.width = size * scale;
       canvas.height = height * scale;
@@ -1203,8 +814,8 @@
 
       const x0 = margin;
       const y0 = titleH;
-      for (let r = 0; r < nSize; r++) {
-        for (let c = 0; c < nSize; c++) {
+      for (let r = 0; r < N; r++) {
+        for (let c = 0; c < N; c++) {
           const x = x0 + c * cell;
           const y = y0 + r * cell;
           const val = cand.grid[r][c];
@@ -1229,7 +840,7 @@
             }
             if (showAnswer) {
               ctx.fillStyle = "#111827";
-              ctx.font = nSize >= 7 ? "bold 36px sans-serif" : "bold 44px sans-serif";
+              ctx.font = "bold 44px sans-serif";
               ctx.textAlign = "center";
               ctx.textBaseline = "middle";
               ctx.fillText(val, x + cell / 2, y + cell / 2 + 4);
@@ -1255,19 +866,18 @@
       lines.push("\\usepackage{enumitem}");
       lines.push("\\begin{document}");
       lines.push("\\section*{カギ文生成用スクリプト}");
-      lines.push("以下の答え一覧をもとに、結婚式・披露宴・プロフィール紹介で使いやすいクロスワードのカギ文を作成してください。");
+      lines.push("以下の答え一覧をもとに、7歳前後の子ども向けのクロスワードのカギ文を作成してください。");
       lines.push("答えそのものをカギ文に含めないでください。全部を同じ文にせず、答えごとに具体的に変えてください。");
       lines.push("テーマは「" + escapeTex(label) + "」です。");
-      lines.push("盤面サイズは" + gridSizeOf(cand.grid) + "×" + gridSizeOf(cand.grid) + "です。");
       lines.push("");
       lines.push("\\subsection*{カギ文作成ルール}");
       lines.push("\\begin{itemize}");
-      lines.push("\\item テーマに合う、温かく、少し笑えて、ゲストが答えやすいヒントにする。");
-      lines.push("\\item 新郎新婦の性格・習慣・思い出・好み・結婚式らしい言葉を、やさしく紹介するヒントにする。");
-      lines.push("\\item 内輪すぎる表現は避け、親族・友人・職場のゲストにも伝わる文にする。");
-      lines.push("\\item 答えが人の特徴を表す場合も、からかいすぎず、愛のある表現にする。");
+      lines.push("\\item テーマに合う、子ども向けのやさしいヒントにする。");
+      lines.push("\\item 魚の名前なら、食べ方、見た目、季節、料理、泳ぎ方などをヒントにする。");
+      lines.push("\item 夏の言葉なら、夏の行事、食べ物、自然、生き物、遊びなどをヒントにする。");
+      lines.push("\item 野菜・くだものの言葉なら、色、形、味、食べ方、畑、木、旬、料理などをヒントにする。");
       lines.push("\\item 答えそのものはカギ文に入れない。");
-      lines.push("\\item ひらがな中心で、短く、披露宴の紙面に載せやすい文にする。");
+      lines.push("\\item ひらがな中心で、短く、子どもが読める文にする。");
       lines.push("\\end{itemize}");
       lines.push("");
       lines.push("\\subsection*{問題盤面}");
