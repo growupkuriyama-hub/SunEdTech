@@ -731,6 +731,14 @@
               <canvas id="scratchCanvas" aria-label="筆算を書くスペース"></canvas>
             </div>
           </div>
+
+          <section class="history-box" aria-label="これまでの記録">
+            <div class="history-head">
+              <h2 class="history-title">これまでの記録</h2>
+              <button class="history-clear-btn" id="clearHistoryBtn" type="button">記録を消す</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+          </section>
         </div>
 
         <div class="summary-view" id="summaryView">
@@ -746,13 +754,6 @@
         </div>
       </div>
 
-      <section class="history-box" aria-label="これまでの記録">
-        <div class="history-head">
-          <h2 class="history-title">これまでの記録</h2>
-          <button class="history-clear-btn" id="clearHistoryBtn" type="button">記録を消す</button>
-        </div>
-        <div class="history-list" id="historyList"></div>
-      </section>
     </section>
 
   </main>
@@ -1202,8 +1203,6 @@
         renderResultMarks();
         goNext(correct ? 1150 : 950);
       }
-
-      function finishQuiz() {     }
 
       function finishQuiz() {
         stopTimer();
