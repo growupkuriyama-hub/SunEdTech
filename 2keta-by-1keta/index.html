@@ -450,6 +450,87 @@
       cursor: crosshair;
     }
 
+    .history-box {
+      margin-top: 12px;
+      background: #fffaf2;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 12px;
+      text-align: left;
+    }
+
+    .history-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .history-title {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 950;
+    }
+
+    .history-clear-btn {
+      background: #f8f3ed;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.82rem;
+      font-weight: 900;
+    }
+
+    .history-list {
+      display: grid;
+      gap: 7px;
+      max-height: 190px;
+      overflow: auto;
+      padding-right: 3px;
+    }
+
+    .history-item {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 8px;
+      align-items: center;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      padding: 8px 10px;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    .history-score {
+      font-weight: 950;
+      color: #a94a17;
+      white-space: nowrap;
+    }
+
+    .history-meta {
+      color: var(--muted);
+      min-width: 0;
+    }
+
+    .history-marks {
+      white-space: nowrap;
+      font-weight: 950;
+      letter-spacing: 0.03em;
+    }
+
+    .history-empty {
+      color: var(--muted);
+      background: white;
+      border: 1px dashed var(--line);
+      border-radius: 15px;
+      padding: 10px;
+      line-height: 1.55;
+      font-size: 0.9rem;
+    }
+
     .summary-view {
       display: none;
       text-align: center;
@@ -558,6 +639,14 @@
         min-width: 0;
         padding: 9px 8px;
       }
+
+      .history-item {
+        grid-template-columns: 1fr;
+      }
+
+      .history-marks {
+        white-space: normal;
+      }
     }
   </style>
 </head>
@@ -624,6 +713,14 @@
           </div>
         </div>
       </div>
+
+      <section class="history-box" aria-label="これまでの記録">
+        <div class="history-head">
+          <h2 class="history-title">これまでの記録</h2>
+          <button class="history-clear-btn" id="clearHistoryBtn" type="button">記録を消す</button>
+        </div>
+        <div class="history-list" id="historyList"></div>
+      </section>
     </section>
 
   </main>
@@ -633,6 +730,8 @@
       "use strict";
 
       const QUESTION_COUNT = 10;
+      const STORAGE_KEY = "twoDigitOneDigitMultiplication.records.v1";
+      const MAX_HISTORY = 30;
 
       const state = {
         decimalMode: false,
@@ -667,10 +766,66 @@
         summaryComment: document.getElementById("summaryComment"),
         sumCorrect: document.getElementById("sumCorrect"),
         sumTime: document.getElementById("sumTime"),
-        againBtn: document.getElementById("againBtn")
+        againBtn: document.getElementById("againBtn"),
+        historyList: document.getElementById("historyList"),
+        clearHistoryBtn: document.getElementById("clearHistoryBtn")
       };
 
       const ctx = els.scratchCanvas.getContext("2d");
+
+      function loadHistory() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return [];
+          const parsed = JSON.parse(raw);
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (_) {
+          return [];
+        }
+      }
+
+      function saveHistoryEntry() {
+        const history = loadHistory();
+        const entry = {
+          date: new Date().toISOString(),
+          decimalMode: state.decimalMode,
+          correct: state.correct,
+          total: QUESTION_COUNT,
+          ms: elapsedMs(),
+          results: state.results.map(value => value === true ? "〇" : value === false ? "×" : "・")
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify([entry, ...history].slice(0, MAX_HISTORY)));
+      }
+
+      function renderHistory() {
+        const history = loadHistory();
+        els.historyList.innerHTML = "";
+
+        if (history.length === 0) {
+          const empty = document.createElement("div");
+          empty.className = "history-empty";
+          empty.textContent = "まだ記録がありません。10問解き終わると、ここに記録が残ります。";
+          els.historyList.appendChild(empty);
+          return;
+        }
+
+        for (const item of history.slice(0, 10)) {
+          const date = new Date(item.date);
+          const modeText = item.decimalMode ? "小数点あり" : "小数点無し";
+          const marks = Array.isArray(item.results) ? item.results.join("") : "";
+          const row = document.createElement("div");
+          row.className = "history-item";
+          row.innerHTML = `<div class="history-score">${item.correct}/${item.total}問</div><div class="history-meta">${modeText} ／ ${formatTime(item.ms)} ／ ${date.toLocaleDateString("ja-JP")} ${date.toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })}</div><div class="history-marks">${marks}</div>`;
+          els.historyList.appendChild(row);
+        }
+      }
+
+      function clearHistory() {
+        const ok = window.confirm("このブラウザに保存した記録を消します。よろしいですか？");
+        if (!ok) return;
+        localStorage.removeItem(STORAGE_KEY);
+        renderHistory();
+      }
 
       function randInt(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -995,12 +1150,14 @@
 
       function finishQuiz() {
         stopTimer();
+        saveHistoryEntry();
         els.timerText.textContent = formatTime(elapsedMs());
         els.quizView.classList.add("hidden");
         els.summaryView.classList.add("show");
         els.sumCorrect.textContent = `${state.correct} / 10`;
         els.sumTime.textContent = formatTime(elapsedMs());
         renderResultMarks();
+        renderHistory();
 
         if (state.correct === 10) {
           els.summaryTitle.textContent = "全問正解！すごい！";
@@ -1034,6 +1191,7 @@
 
       els.checkBtn.addEventListener("click", checkAnswer);
       els.againBtn.addEventListener("click", restartQuiz);
+      els.clearHistoryBtn.addEventListener("click", clearHistory);
       els.integerModeBtn.addEventListener("click", () => setDecimalMode(false));
       els.decimalModeBtn.addEventListener("click", () => setDecimalMode(true));
 
@@ -1058,6 +1216,7 @@
 
       setupScratchPad();
       renderResultMarks();
+      renderHistory();
       restartQuiz();
     })();
   </script>
