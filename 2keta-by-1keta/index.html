@@ -35,6 +35,7 @@
         radial-gradient(circle at bottom right, rgba(128, 182, 232, 0.22), transparent 32rem),
         var(--bg);
       min-height: 100vh;
+      touch-action: manipulation;
     }
 
     button,
@@ -64,15 +65,15 @@
     }
 
     .app {
-      width: min(980px, calc(100% - 28px));
+      width: min(760px, calc(100% - 22px));
       margin: 0 auto;
-      padding: 18px 0 36px;
+      padding: 14px 0 28px;
     }
 
     .top-nav {
       display: flex;
       justify-content: flex-start;
-      margin-bottom: 14px;
+      margin-bottom: 10px;
     }
 
     .back-btn {
@@ -80,184 +81,85 @@
       color: var(--ink);
       border: 1px solid var(--line);
       border-radius: 999px;
-      padding: 10px 16px;
+      padding: 9px 15px;
       font-weight: 900;
       box-shadow: 0 8px 18px rgba(90, 70, 45, 0.10);
+      font-size: 0.95rem;
     }
 
     header {
-      margin-bottom: 18px;
+      margin-bottom: 12px;
     }
 
     .title-block {
       background: rgba(255, 255, 255, 0.78);
       border: 1px solid rgba(239, 227, 212, 0.8);
       border-radius: var(--radius);
-      padding: 18px 20px;
+      padding: 15px 17px;
       box-shadow: var(--shadow);
       backdrop-filter: blur(8px);
     }
 
     h1 {
       margin: 0;
-      font-size: clamp(1.65rem, 4vw, 2.55rem);
+      font-size: clamp(1.45rem, 4vw, 2.15rem);
       letter-spacing: 0.04em;
       line-height: 1.15;
     }
 
     .subtitle {
-      margin: 8px 0 0;
+      margin: 7px 0 0;
       color: var(--muted);
-      line-height: 1.7;
-      font-size: 0.98rem;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: minmax(250px, 320px) 1fr;
-      gap: 18px;
-      align-items: start;
+      line-height: 1.6;
+      font-size: 0.94rem;
     }
 
     .card {
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.92);
       border: 1px solid rgba(239, 227, 212, 0.9);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      padding: 18px;
+      padding: 16px;
     }
 
-    .card h2 {
-      margin: 0 0 12px;
-      font-size: 1.15rem;
-    }
-
-    .settings {
+    .status-row {
       display: grid;
-      gap: 14px;
-    }
-
-    .count-buttons {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr auto;
       gap: 10px;
+      align-items: center;
+      margin-bottom: 12px;
     }
 
-    .count-btn {
-      background: #fff8ef;
-      border: 2px solid var(--line);
-      color: var(--ink);
-      padding: 16px 10px;
-      border-radius: 18px;
+    .progress-pill,
+    .timer-pill {
+      border-radius: 999px;
+      padding: 10px 14px;
       font-weight: 950;
-      text-align: center;
-      font-size: 1.12rem;
+      border: 1px solid var(--line);
+      background: #fff8ef;
+      white-space: nowrap;
     }
 
-    .count-btn.active {
-      background: var(--soft);
-      border-color: var(--main);
-      box-shadow: 0 0 0 4px rgba(255, 159, 104, 0.13);
+    .progress-pill {
+      font-size: 1.05rem;
       color: #a94a17;
     }
 
-    .checkbox-line {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-      background: #fff8ef;
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      color: var(--muted);
-      font-size: 0.94rem;
-      line-height: 1.5;
-    }
-
-    .checkbox-line input {
-      width: 19px;
-      height: 19px;
-      accent-color: var(--main-dark);
-      flex: 0 0 auto;
-    }
-
-    .primary-btn,
-    .secondary-btn,
-    .danger-btn {
-      width: 100%;
-      border-radius: 18px;
-      padding: 13px 14px;
-      font-weight: 950;
-      box-shadow: 0 8px 18px rgba(90, 70, 45, 0.12);
-    }
-
-    .primary-btn {
-      background: linear-gradient(135deg, var(--main), #ffbf7b);
-      color: #3a210f;
-    }
-
-    .secondary-btn {
-      background: #f8f3ed;
+    .timer-pill {
       color: var(--ink);
-      border: 1px solid var(--line);
-    }
-
-    .danger-btn {
-      background: #fff0f0;
-      color: #ad3939;
-      border: 1px solid #ffd2d2;
-    }
-
-    .mini-note {
-      color: var(--muted);
-      font-size: 0.88rem;
-      line-height: 1.65;
-      margin: 0;
-    }
-
-    .practice-card {
-      min-height: 610px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .top-stats {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-    }
-
-    .stat {
-      background: #fff8ef;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 11px 10px;
+      background: #ffffff;
+      min-width: 112px;
       text-align: center;
-    }
-
-    .stat b {
-      display: block;
-      font-size: 1.35rem;
-      line-height: 1;
-      margin-bottom: 4px;
-    }
-
-    .stat span {
-      color: var(--muted);
-      font-size: 0.82rem;
-      font-weight: 700;
     }
 
     .problem-area {
       position: relative;
-      flex: 1;
       display: grid;
       place-items: center;
       background: linear-gradient(180deg, rgba(255, 248, 239, 0.92), rgba(255, 255, 255, 0.9));
       border: 2px dashed #ead9c6;
       border-radius: 30px;
-      padding: 22px;
+      padding: 18px;
       overflow: hidden;
     }
 
@@ -286,48 +188,23 @@
       100% { transform: scale(1); opacity: 0; }
     }
 
-    .problem-inner {
+    .quiz-view,
+    .summary-view {
       position: relative;
       z-index: 1;
-      width: min(100%, 520px);
+      width: min(100%, 560px);
       text-align: center;
-    }
-
-    .progress-line {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      color: var(--muted);
-      font-weight: 800;
-      margin-bottom: 12px;
-    }
-
-    .bar {
-      height: 12px;
-      flex: 1;
-      background: #f0e4d7;
-      border-radius: 999px;
-      overflow: hidden;
-    }
-
-    .bar-fill {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, var(--green), var(--main));
-      border-radius: 999px;
-      transition: width 0.25s ease;
     }
 
     .question {
       display: inline-flex;
       align-items: baseline;
       justify-content: center;
-      gap: 18px;
+      gap: 15px;
       font-weight: 950;
       letter-spacing: 0.04em;
-      margin: 18px 0 10px;
-      font-size: clamp(3.2rem, 9vw, 6.3rem);
+      margin: 6px 0 10px;
+      font-size: clamp(3.4rem, 12vw, 6.2rem);
       line-height: 1;
     }
 
@@ -336,36 +213,13 @@
       font-size: 0.82em;
     }
 
-    .vertical-calc {
-      display: none;
-      width: 210px;
-      margin: 4px auto 18px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size: 3rem;
-      line-height: 1.08;
-      font-weight: 900;
-      text-align: right;
-      color: var(--ink);
-    }
-
-    .vertical-calc.show {
-      display: block;
-    }
-
-    .vertical-calc .line {
-      border-top: 5px solid var(--ink);
-      margin-top: 5px;
-      padding-top: 4px;
-      color: var(--muted);
-    }
-
     .answer-row {
       display: flex;
-      gap: 10px;
+      gap: 9px;
       justify-content: center;
       align-items: stretch;
-      margin: 12px auto 10px;
-      max-width: 420px;
+      margin: 10px auto 8px;
+      max-width: 380px;
     }
 
     #answerInput {
@@ -375,10 +229,10 @@
       color: var(--ink);
       outline: none;
       text-align: center;
-      font-size: 2rem;
+      font-size: 1.8rem;
       font-weight: 900;
-      padding: 12px;
-      border-radius: 22px;
+      padding: 10px;
+      border-radius: 20px;
     }
 
     #answerInput:focus {
@@ -387,22 +241,22 @@
     }
 
     .check-btn {
-      min-width: 120px;
-      border-radius: 22px;
+      min-width: 105px;
+      border-radius: 20px;
       background: var(--ink);
       color: white;
       font-weight: 950;
-      padding: 0 18px;
+      padding: 0 15px;
     }
 
     .feedback {
-      min-height: 54px;
-      font-size: 1.15rem;
+      min-height: 42px;
+      font-size: 1.08rem;
       font-weight: 900;
-      line-height: 1.5;
+      line-height: 1.45;
       display: grid;
       place-items: center;
-      margin-top: 4px;
+      margin-top: 2px;
     }
 
     .feedback.ok {
@@ -416,49 +270,108 @@
     .keypad {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      max-width: 330px;
-      margin: 8px auto 0;
+      gap: 6px;
+      max-width: 255px;
+      margin: 6px auto 12px;
     }
 
     .keypad button {
       background: white;
       border: 1px solid var(--line);
-      border-radius: 17px;
-      padding: 12px 6px;
-      font-size: 1.25rem;
+      border-radius: 14px;
+      padding: 8px 5px;
+      font-size: 1.08rem;
       font-weight: 950;
       color: var(--ink);
-      box-shadow: 0 5px 12px rgba(90, 70, 45, 0.08);
+      box-shadow: 0 4px 10px rgba(90, 70, 45, 0.08);
+      min-height: 42px;
     }
 
     .keypad .wide {
       grid-column: span 2;
       background: #fff8ef;
-      font-size: 1rem;
+      font-size: 1.15rem;
     }
 
-    .summary {
-      display: none;
-      width: min(100%, 560px);
+    .scratch-box {
+      background: rgba(255, 255, 255, 0.86);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 10px;
+      margin: 0 auto;
+      max-width: 560px;
       text-align: left;
     }
 
-    .summary.show {
+    .scratch-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 0.86rem;
+      font-weight: 800;
+    }
+
+    .clear-scratch-btn {
+      background: #f8f3ed;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-weight: 900;
+      font-size: 0.84rem;
+    }
+
+    .scratch-wrap {
+      position: relative;
+      width: 100%;
+      height: clamp(150px, 28vh, 245px);
+      border-radius: 18px;
+      overflow: hidden;
+      background:
+        linear-gradient(#f3e7d8 1px, transparent 1px),
+        linear-gradient(90deg, #f3e7d8 1px, transparent 1px),
+        #fffefb;
+      background-size: 28px 28px;
+      border: 2px solid #ead9c6;
+      touch-action: none;
+    }
+
+    #scratchCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: none;
+      cursor: crosshair;
+    }
+
+    .summary-view {
+      display: none;
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .summary-view.show {
       display: block;
     }
 
-    .summary h2 {
+    .quiz-view.hidden {
+      display: none;
+    }
+
+    .summary-view h2 {
       font-size: clamp(1.7rem, 4vw, 2.3rem);
       margin: 0 0 10px;
-      text-align: center;
     }
 
     .summary-score {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 10px;
-      margin: 16px 0;
+      margin: 16px auto;
+      max-width: 360px;
     }
 
     .big-stat {
@@ -474,107 +387,50 @@
       font-size: 1.8rem;
     }
 
-    .mistakes {
-      margin-top: 16px;
-      background: #fff8ef;
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      padding: 14px;
-    }
-
-    .mistakes h3 {
-      margin: 0 0 10px;
-      font-size: 1rem;
-    }
-
-    .mistake-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .mistake-chip {
-      background: white;
-      border: 1px solid #f0d9c3;
-      border-radius: 999px;
-      padding: 7px 10px;
-      font-weight: 850;
-    }
-
     .summary-actions {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
       gap: 10px;
-      margin-top: 16px;
+      max-width: 280px;
+      margin: 16px auto 0;
     }
 
-    .history-list {
-      display: grid;
-      gap: 8px;
-      max-height: 220px;
-      overflow: auto;
-      padding-right: 4px;
-    }
-
-    .history-item {
-      background: #fff8ef;
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 10px;
-      line-height: 1.55;
-      font-size: 0.92rem;
-    }
-
-    .history-item b {
-      font-size: 1rem;
-    }
-
-    .empty {
-      color: var(--muted);
-      background: #fff8ef;
-      border: 1px dashed var(--line);
-      border-radius: 16px;
-      padding: 12px;
-      line-height: 1.6;
+    .primary-btn {
+      width: 100%;
+      border-radius: 18px;
+      padding: 13px 14px;
+      font-weight: 950;
+      box-shadow: 0 8px 18px rgba(90, 70, 45, 0.12);
+      background: linear-gradient(135deg, var(--main), #ffbf7b);
+      color: #3a210f;
     }
 
     .footer-note {
-      margin-top: 16px;
+      margin-top: 12px;
       text-align: center;
       color: var(--muted);
-      font-size: 0.84rem;
+      font-size: 0.82rem;
       line-height: 1.7;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    @media (max-width: 840px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
-
-      .practice-card {
-        min-height: auto;
-      }
     }
 
     @media (max-width: 520px) {
       .app {
-        width: min(100% - 18px, 980px);
-        padding-top: 12px;
+        width: min(100% - 14px, 760px);
+        padding-top: 10px;
       }
 
       .card,
       .title-block {
         border-radius: 22px;
-        padding: 14px;
+        padding: 13px;
       }
 
-      .top-stats,
-      .summary-score {
-        grid-template-columns: repeat(2, 1fr);
+      .status-row {
+        grid-template-columns: 1fr;
+      }
+
+      .timer-pill {
+        justify-self: start;
       }
 
       .answer-row {
@@ -582,15 +438,11 @@
       }
 
       .check-btn {
-        min-height: 54px;
+        min-height: 50px;
       }
 
       .question {
         gap: 10px;
-      }
-
-      .summary-actions {
-        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -604,113 +456,69 @@
     <header>
       <section class="title-block">
         <h1>2けた×1けた<br />かけ算トレーニング</h1>
-        <p class="subtitle">2けたの数に1けたの数をかける練習です。5問か10問を選んで、すぐに始められます。</p>
+        <p class="subtitle">10問だけ集中して練習します。下の白いスペースには、指やタッチペンで筆算を書けます。</p>
       </section>
     </header>
 
-    <div class="grid">
-      <aside class="card settings-card">
-        <h2>れんしゅう設定</h2>
-        <div class="settings">
-          <div>
-            <h2 style="margin-bottom:10px; font-size:1rem;">問題数</h2>
-            <div class="count-buttons" role="group" aria-label="問題数">
-              <button class="count-btn active" data-count="5" type="button">5問</button>
-              <button class="count-btn" data-count="10" type="button">10問</button>
-            </div>
+    <section class="card">
+      <div class="status-row">
+        <div class="progress-pill" id="progressText">1 / 10問</div>
+        <div class="timer-pill">タイム <span id="timerText">00:00</span></div>
+      </div>
+
+      <div class="problem-area" id="problemArea">
+        <div class="confetti"></div>
+
+        <div class="quiz-view" id="quizView">
+          <div class="question">
+            <span id="leftNumber">34</span><span class="mark">×</span><span id="rightNumber">7</span>
           </div>
 
-          <label class="checkbox-line">
-            <input type="checkbox" id="verticalMode" checked />
-            筆算の形も表示する
-          </label>
-
-          <button class="primary-btn" id="startBtn" type="button">スタート</button>
-          <button class="secondary-btn" id="restartBtn" type="button">もう一度</button>
-          <button class="danger-btn" id="clearHistoryBtn" type="button">記録を消す</button>
-          <p class="mini-note">まちがえた問題と最近の記録は、このブラウザの中だけに保存されます。</p>
-        </div>
-      </aside>
-
-      <section class="card practice-card" aria-live="polite">
-        <div class="top-stats">
-          <div class="stat"><b id="statSolved">0</b><span>解いた数</span></div>
-          <div class="stat"><b id="statCorrect">0</b><span>正解</span></div>
-          <div class="stat"><b id="statAccuracy">0%</b><span>正答率</span></div>
-          <div class="stat"><b id="statTime">00:00</b><span>時間</span></div>
-        </div>
-
-        <div class="problem-area" id="problemArea">
-          <div class="confetti"></div>
-
-          <div class="problem-inner" id="welcomeView">
-            <h2>問題数を選んで<br />スタートしてください</h2>
-            <p class="subtitle">テンキーでも、キーボードでも入力できます。Enterで答え合わせ、Backspaceで一文字消せます。</p>
+          <div class="answer-row">
+            <input id="answerInput" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="答え" aria-label="答えを入力" />
+            <button class="check-btn" id="checkBtn" type="button">答える</button>
           </div>
 
-          <div class="problem-inner hidden" id="quizView">
-            <div class="progress-line">
-              <span id="progressText">1 / 5</span>
-              <div class="bar"><div class="bar-fill" id="barFill"></div></div>
-            </div>
+          <div class="feedback" id="feedback">答えを入力してね。</div>
 
-            <div class="question">
-              <span id="leftNumber">34</span><span class="mark">×</span><span id="rightNumber">7</span>
-            </div>
-
-            <div class="vertical-calc show" id="verticalCalc" aria-label="筆算表示">
-              <div id="verticalA">34</div>
-              <div>× <span id="verticalB">7</span></div>
-              <div class="line">?</div>
-            </div>
-
-            <div class="answer-row">
-              <input id="answerInput" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="答え" aria-label="答えを入力" />
-              <button class="check-btn" id="checkBtn" type="button">答える</button>
-            </div>
-
-            <div class="feedback" id="feedback">がんばろう！</div>
-
-            <div class="keypad" aria-label="数字キー">
-              <button type="button" data-key="1">1</button>
-              <button type="button" data-key="2">2</button>
-              <button type="button" data-key="3">3</button>
-              <button type="button" data-key="4">4</button>
-              <button type="button" data-key="5">5</button>
-              <button type="button" data-key="6">6</button>
-              <button type="button" data-key="7">7</button>
-              <button type="button" data-key="8">8</button>
-              <button type="button" data-key="9">9</button>
-              <button type="button" class="wide" data-key="back">けす</button>
-              <button type="button" data-key="0">0</button>
-            </div>
+          <div class="keypad" aria-label="数字キー">
+            <button type="button" data-key="1">1</button>
+            <button type="button" data-key="2">2</button>
+            <button type="button" data-key="3">3</button>
+            <button type="button" data-key="4">4</button>
+            <button type="button" data-key="5">5</button>
+            <button type="button" data-key="6">6</button>
+            <button type="button" data-key="7">7</button>
+            <button type="button" data-key="8">8</button>
+            <button type="button" data-key="9">9</button>
+            <button type="button" class="wide" data-key="back">×</button>
+            <button type="button" data-key="0">0</button>
           </div>
 
-          <div class="summary" id="summaryView">
-            <h2 id="summaryTitle">結果</h2>
-            <p class="subtitle" id="summaryComment">よくがんばりました。</p>
-            <div class="summary-score">
-              <div class="big-stat"><b id="sumCorrect">0</b><span>正解</span></div>
-              <div class="big-stat"><b id="sumTotal">0</b><span>問題数</span></div>
-              <div class="big-stat"><b id="sumTime">00:00</b><span>時間</span></div>
+          <div class="scratch-box">
+            <div class="scratch-head">
+              <span>筆算スペース</span>
+              <button class="clear-scratch-btn" id="clearScratchBtn" type="button">ここを消す</button>
             </div>
-            <div class="mistakes" id="mistakesBox">
-              <h3>まちがえた問題</h3>
-              <div class="mistake-list" id="mistakeList"></div>
-            </div>
-            <div class="summary-actions">
-              <button class="primary-btn" id="againBtn" type="button">もう一度</button>
-              <button class="secondary-btn" id="reviewBtn" type="button">まちがえた問題を復習</button>
+            <div class="scratch-wrap">
+              <canvas id="scratchCanvas" aria-label="筆算を書くスペース"></canvas>
             </div>
           </div>
         </div>
 
-        <section class="card" style="box-shadow:none; background:#fffaf2;">
-          <h2>最近の記録</h2>
-          <div class="history-list" id="historyList"></div>
-        </section>
-      </section>
-    </div>
+        <div class="summary-view" id="summaryView">
+          <h2 id="summaryTitle">結果</h2>
+          <p class="subtitle" id="summaryComment">よくがんばりました。</p>
+          <div class="summary-score">
+            <div class="big-stat"><b id="sumCorrect">0</b><span>正解</span></div>
+            <div class="big-stat"><b id="sumTime">00:00</b><span>タイム</span></div>
+          </div>
+          <div class="summary-actions">
+            <button class="primary-btn" id="againBtn" type="button">もう一度</button>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <p class="footer-note">HTML/CSS/JavaScriptだけで動く、静的サイト用の練習アプリです。</p>
   </main>
@@ -719,87 +527,44 @@
     (() => {
       "use strict";
 
-      const STORAGE_KEY = "twoDigitOneDigitMultiplicationApp.simple.v1";
-      const MAX_MISTAKE_POOL = 80;
-      const MAX_HISTORY = 20;
+      const QUESTION_COUNT = 10;
 
       const state = {
-        questionCount: 5,
         questions: [],
         index: 0,
         correct: 0,
         answered: false,
         startedAt: null,
         timerId: null,
-        currentMistakes: []
+        drawing: false,
+        lastPoint: null
       };
 
       const els = {
-        countButtons: Array.from(document.querySelectorAll(".count-btn")),
-        verticalMode: document.getElementById("verticalMode"),
-        startBtn: document.getElementById("startBtn"),
-        restartBtn: document.getElementById("restartBtn"),
-        clearHistoryBtn: document.getElementById("clearHistoryBtn"),
-        welcomeView: document.getElementById("welcomeView"),
+        progressText: document.getElementById("progressText"),
+        timerText: document.getElementById("timerText"),
+        problemArea: document.getElementById("problemArea"),
         quizView: document.getElementById("quizView"),
         summaryView: document.getElementById("summaryView"),
-        problemArea: document.getElementById("problemArea"),
-        statSolved: document.getElementById("statSolved"),
-        statCorrect: document.getElementById("statCorrect"),
-        statAccuracy: document.getElementById("statAccuracy"),
-        statTime: document.getElementById("statTime"),
-        progressText: document.getElementById("progressText"),
-        barFill: document.getElementById("barFill"),
         leftNumber: document.getElementById("leftNumber"),
         rightNumber: document.getElementById("rightNumber"),
-        verticalCalc: document.getElementById("verticalCalc"),
-        verticalA: document.getElementById("verticalA"),
-        verticalB: document.getElementById("verticalB"),
         answerInput: document.getElementById("answerInput"),
         checkBtn: document.getElementById("checkBtn"),
         feedback: document.getElementById("feedback"),
         keypad: document.querySelector(".keypad"),
+        scratchCanvas: document.getElementById("scratchCanvas"),
+        clearScratchBtn: document.getElementById("clearScratchBtn"),
         summaryTitle: document.getElementById("summaryTitle"),
         summaryComment: document.getElementById("summaryComment"),
         sumCorrect: document.getElementById("sumCorrect"),
-        sumTotal: document.getElementById("sumTotal"),
         sumTime: document.getElementById("sumTime"),
-        mistakesBox: document.getElementById("mistakesBox"),
-        mistakeList: document.getElementById("mistakeList"),
-        againBtn: document.getElementById("againBtn"),
-        reviewBtn: document.getElementById("reviewBtn"),
-        historyList: document.getElementById("historyList")
+        againBtn: document.getElementById("againBtn")
       };
 
-      function loadData() {
-        try {
-          const raw = localStorage.getItem(STORAGE_KEY);
-          if (!raw) return { history: [], mistakes: [] };
-          const parsed = JSON.parse(raw);
-          return {
-            history: Array.isArray(parsed.history) ? parsed.history : [],
-            mistakes: Array.isArray(parsed.mistakes) ? parsed.mistakes : []
-          };
-        } catch (_) {
-          return { history: [], mistakes: [] };
-        }
-      }
-
-      function saveData(data) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-      }
+      const ctx = els.scratchCanvas.getContext("2d");
 
       function randInt(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
-      }
-
-      function shuffle(array) {
-        const copied = array.slice();
-        for (let i = copied.length - 1; i > 0; i--) {
-          const j = randInt(0, i);
-          [copied[i], copied[j]] = [copied[j], copied[i]];
-        }
-        return copied;
       }
 
       function makeProblem() {
@@ -808,24 +573,11 @@
         return { a, b, answer: a * b };
       }
 
-      function buildQuestions(count, useMistakesOnly = false) {
-        if (useMistakesOnly) {
-          const data = loadData();
-          const pool = shuffle(data.mistakes || []);
-          if (pool.length > 0) {
-            const picked = [];
-            while (picked.length < count) {
-              const source = pool[picked.length % pool.length];
-              picked.push({ a: source.a, b: source.b, answer: source.a * source.b });
-            }
-            return picked;
-          }
-        }
-
+      function buildQuestions() {
         const questions = [];
         const seen = new Set();
         let guard = 0;
-        while (questions.length < count && guard < count * 40) {
+        while (questions.length < QUESTION_COUNT && guard < 500) {
           guard++;
           const p = makeProblem();
           const key = `${p.a}x${p.b}`;
@@ -833,19 +585,8 @@
           seen.add(key);
           questions.push(p);
         }
-        while (questions.length < count) questions.push(makeProblem());
+        while (questions.length < QUESTION_COUNT) questions.push(makeProblem());
         return questions;
-      }
-
-      function setQuestionCount(count) {
-        state.questionCount = count;
-        els.countButtons.forEach(btn => btn.classList.toggle("active", Number(btn.dataset.count) === count));
-      }
-
-      function showView(view) {
-        els.welcomeView.classList.toggle("hidden", view !== "welcome");
-        els.quizView.classList.toggle("hidden", view !== "quiz");
-        els.summaryView.classList.toggle("show", view === "summary");
       }
 
       function formatTime(ms) {
@@ -860,18 +601,11 @@
         return Date.now() - state.startedAt;
       }
 
-      function updateStats() {
-        const solved = Math.min(state.index + (state.answered ? 1 : 0), state.questions.length);
-        const accuracy = solved === 0 ? 0 : Math.round((state.correct / solved) * 100);
-        els.statSolved.textContent = String(solved);
-        els.statCorrect.textContent = String(state.correct);
-        els.statAccuracy.textContent = `${accuracy}%`;
-        els.statTime.textContent = formatTime(elapsedMs());
-      }
-
       function startTimer() {
         stopTimer();
-        state.timerId = window.setInterval(updateStats, 500);
+        state.timerId = window.setInterval(() => {
+          els.timerText.textContent = formatTime(elapsedMs());
+        }, 500);
       }
 
       function stopTimer() {
@@ -879,6 +613,75 @@
           window.clearInterval(state.timerId);
           state.timerId = null;
         }
+      }
+
+      function resizeCanvas() {
+        const canvas = els.scratchCanvas;
+        const rect = canvas.getBoundingClientRect();
+        const ratio = window.devicePixelRatio || 1;
+        const old = document.createElement("canvas");
+        old.width = canvas.width;
+        old.height = canvas.height;
+        old.getContext("2d").drawImage(canvas, 0, 0);
+
+        canvas.width = Math.max(1, Math.floor(rect.width * ratio));
+        canvas.height = Math.max(1, Math.floor(rect.height * ratio));
+        ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = "#2f2a24";
+
+        if (old.width && old.height) {
+          ctx.drawImage(old, 0, 0, old.width / ratio, old.height / ratio);
+        }
+      }
+
+      function clearScratch() {
+        const canvas = els.scratchCanvas;
+        const rect = canvas.getBoundingClientRect();
+        ctx.clearRect(0, 0, rect.width, rect.height);
+      }
+
+      function getCanvasPoint(event) {
+        const rect = els.scratchCanvas.getBoundingClientRect();
+        return {
+          x: event.clientX - rect.left,
+          y: event.clientY - rect.top
+        };
+      }
+
+      function startDrawing(event) {
+        event.preventDefault();
+        state.drawing = true;
+        state.lastPoint = getCanvasPoint(event);
+      }
+
+      function draw(event) {
+        if (!state.drawing || !state.lastPoint) return;
+        event.preventDefault();
+        const point = getCanvasPoint(event);
+        ctx.beginPath();
+        ctx.moveTo(state.lastPoint.x, state.lastPoint.y);
+        ctx.lineTo(point.x, point.y);
+        ctx.stroke();
+        state.lastPoint = point;
+      }
+
+      function stopDrawing() {
+        state.drawing = false;
+        state.lastPoint = null;
+      }
+
+      function setupScratchPad() {
+        resizeCanvas();
+        window.addEventListener("resize", resizeCanvas);
+        els.scratchCanvas.addEventListener("pointerdown", startDrawing);
+        els.scratchCanvas.addEventListener("pointermove", draw);
+        els.scratchCanvas.addEventListener("pointerup", stopDrawing);
+        els.scratchCanvas.addEventListener("pointercancel", stopDrawing);
+        els.scratchCanvas.addEventListener("pointerleave", stopDrawing);
+        els.clearScratchBtn.addEventListener("click", clearScratch);
       }
 
       function renderProblem() {
@@ -889,33 +692,14 @@
         els.problemArea.classList.remove("correct");
         els.leftNumber.textContent = String(current.a);
         els.rightNumber.textContent = String(current.b);
-        els.verticalA.textContent = String(current.a);
-        els.verticalB.textContent = String(current.b);
-        els.verticalCalc.classList.toggle("show", els.verticalMode.checked);
         els.answerInput.value = "";
         els.answerInput.disabled = false;
         els.checkBtn.disabled = false;
         els.feedback.className = "feedback";
         els.feedback.textContent = "答えを入力してね。";
-
-        const total = state.questions.length;
-        els.progressText.textContent = `${state.index + 1} / ${total}`;
-        els.barFill.style.width = `${Math.round((state.index / total) * 100)}%`;
-        updateStats();
+        els.progressText.textContent = `${state.index + 1} / ${QUESTION_COUNT}問`;
+        clearScratch();
         window.setTimeout(() => els.answerInput.focus(), 0);
-      }
-
-      function startQuiz(useMistakesOnly = false) {
-        state.questions = buildQuestions(state.questionCount, useMistakesOnly);
-        state.index = 0;
-        state.correct = 0;
-        state.answered = false;
-        state.currentMistakes = [];
-        state.startedAt = Date.now();
-
-        showView("quiz");
-        startTimer();
-        renderProblem();
       }
 
       function normalizeNumber(value) {
@@ -923,98 +707,6 @@
           .replace(/[０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0))
           .replace(/[^0-9]/g, "");
         return digits === "" ? null : Number(digits);
-      }
-
-      function recordMistake(problem, userAnswer) {
-        state.currentMistakes.push({ a: problem.a, b: problem.b, answer: problem.answer, userAnswer });
-      }
-
-      function updateMistakePool() {
-        const data = loadData();
-        const map = new Map();
-
-        for (const item of data.mistakes || []) {
-          const key = `${item.a}x${item.b}`;
-          map.set(key, { a: item.a, b: item.b, count: Number(item.count || 1), last: item.last || Date.now() });
-        }
-
-        for (const item of state.currentMistakes) {
-          const key = `${item.a}x${item.b}`;
-          const old = map.get(key);
-          map.set(key, {
-            a: item.a,
-            b: item.b,
-            count: old ? old.count + 1 : 1,
-            last: Date.now()
-          });
-        }
-
-        data.mistakes = Array.from(map.values())
-          .sort((x, y) => (y.count - x.count) || (y.last - x.last))
-          .slice(0, MAX_MISTAKE_POOL);
-
-        saveData(data);
-      }
-
-      function saveHistory() {
-        const data = loadData();
-        const total = state.questions.length;
-        const accuracy = total === 0 ? 0 : Math.round((state.correct / total) * 100);
-        const entry = {
-          date: new Date().toISOString(),
-          total,
-          correct: state.correct,
-          accuracy,
-          ms: elapsedMs(),
-          mistakes: state.currentMistakes.length
-        };
-        data.history = [entry].concat(data.history || []).slice(0, MAX_HISTORY);
-        saveData(data);
-      }
-
-      function finishQuiz() {
-        stopTimer();
-        els.barFill.style.width = "100%";
-        updateMistakePool();
-        saveHistory();
-        renderSummary();
-        renderHistory();
-        showView("summary");
-      }
-
-      function renderSummary() {
-        const total = state.questions.length;
-        const accuracy = total === 0 ? 0 : Math.round((state.correct / total) * 100);
-        els.sumCorrect.textContent = String(state.correct);
-        els.sumTotal.textContent = String(total);
-        els.sumTime.textContent = formatTime(elapsedMs());
-
-        if (accuracy === 100) {
-          els.summaryTitle.textContent = "全問正解！すごい！";
-          els.summaryComment.textContent = "完璧です。次は10問にも挑戦してみよう。";
-        } else if (accuracy >= 80) {
-          els.summaryTitle.textContent = "かなりいい感じ！";
-          els.summaryComment.textContent = "計算の形はかなり身についています。まちがえた問題だけ復習すると強くなります。";
-        } else if (accuracy >= 60) {
-          els.summaryTitle.textContent = "あと少しで安定！";
-          els.summaryComment.textContent = "十の位と一の位を分けて、ゆっくり確認してみよう。";
-        } else {
-          els.summaryTitle.textContent = "ここから伸びる！";
-          els.summaryComment.textContent = "まずは5問で、ゆっくり正確に解くところから始めよう。";
-        }
-
-        els.mistakeList.innerHTML = "";
-        if (state.currentMistakes.length === 0) {
-          els.mistakesBox.style.display = "none";
-        } else {
-          els.mistakesBox.style.display = "block";
-          for (const item of state.currentMistakes) {
-            const chip = document.createElement("span");
-            chip.className = "mistake-chip";
-            chip.textContent = `${item.a}×${item.b}=${item.answer}`;
-            els.mistakeList.appendChild(chip);
-          }
-        }
       }
 
       function checkAnswer() {
@@ -1040,15 +732,12 @@
           els.feedback.textContent = "正解！いいね！";
           els.problemArea.classList.add("correct");
         } else {
-          recordMistake(current, userAnswer);
           els.feedback.className = "feedback ng";
           els.feedback.textContent = `おしい！ 正解は ${current.answer} です。`;
         }
 
-        updateStats();
-
         window.setTimeout(() => {
-          if (state.index + 1 >= state.questions.length) {
+          if (state.index + 1 >= QUESTION_COUNT) {
             finishQuiz();
           } else {
             state.index++;
@@ -1057,32 +746,41 @@
         }, 900);
       }
 
-      function renderHistory() {
-        const data = loadData();
-        els.historyList.innerHTML = "";
-        if (!data.history || data.history.length === 0) {
-          const empty = document.createElement("div");
-          empty.className = "empty";
-          empty.textContent = "まだ記録がありません。1回練習するとここに残ります。";
-          els.historyList.appendChild(empty);
-          return;
-        }
+      function finishQuiz() {
+        stopTimer();
+        els.timerText.textContent = formatTime(elapsedMs());
+        els.quizView.classList.add("hidden");
+        els.summaryView.classList.add("show");
+        els.progressText.textContent = `10 / 10問 おわり`;
+        els.sumCorrect.textContent = `${state.correct} / 10`;
+        els.sumTime.textContent = formatTime(elapsedMs());
 
-        for (const item of data.history.slice(0, 8)) {
-          const date = new Date(item.date);
-          const div = document.createElement("div");
-          div.className = "history-item";
-          div.innerHTML = `<b>${item.correct}/${item.total}問 正解（${item.accuracy}%）</b><br>${date.toLocaleDateString("ja-JP")} ${date.toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })} ／ ${formatTime(item.ms)}`;
-          els.historyList.appendChild(div);
+        if (state.correct === 10) {
+          els.summaryTitle.textContent = "全問正解！すごい！";
+          els.summaryComment.textContent = "10問ぜんぶ正解です。とてもよくできました。";
+        } else if (state.correct >= 8) {
+          els.summaryTitle.textContent = "かなりいい感じ！";
+          els.summaryComment.textContent = "もう少しで満点です。まちがえたところを確認してみよう。";
+        } else if (state.correct >= 6) {
+          els.summaryTitle.textContent = "あと少しで安定！";
+          els.summaryComment.textContent = "十の位と一の位を分けて、ゆっくり筆算してみよう。";
+        } else {
+          els.summaryTitle.textContent = "ここから伸びる！";
+          els.summaryComment.textContent = "筆算スペースを使って、あせらず1問ずつ確認しよう。";
         }
       }
 
-      function clearHistory() {
-        const ok = window.confirm("このブラウザに保存した記録を消します。よろしいですか？");
-        if (!ok) return;
-        localStorage.removeItem(STORAGE_KEY);
-        renderHistory();
-        alert("記録を消しました。");
+      function restartQuiz() {
+        state.questions = buildQuestions();
+        state.index = 0;
+        state.correct = 0;
+        state.answered = false;
+        state.startedAt = Date.now();
+        els.timerText.textContent = "00:00";
+        els.summaryView.classList.remove("show");
+        els.quizView.classList.remove("hidden");
+        startTimer();
+        renderProblem();
       }
 
       function appendDigit(key) {
@@ -1095,16 +793,8 @@
         els.answerInput.focus();
       }
 
-      els.countButtons.forEach(btn => {
-        btn.addEventListener("click", () => setQuestionCount(Number(btn.dataset.count)));
-      });
-
-      els.startBtn.addEventListener("click", () => startQuiz(false));
-      els.restartBtn.addEventListener("click", () => startQuiz(false));
-      els.clearHistoryBtn.addEventListener("click", clearHistory);
       els.checkBtn.addEventListener("click", checkAnswer);
-      els.againBtn.addEventListener("click", () => startQuiz(false));
-      els.reviewBtn.addEventListener("click", () => startQuiz(true));
+      els.againBtn.addEventListener("click", restartQuiz);
 
       els.keypad.addEventListener("click", event => {
         const btn = event.target.closest("button[data-key]");
@@ -1134,12 +824,8 @@
         }
       });
 
-      els.verticalMode.addEventListener("change", () => {
-        els.verticalCalc.classList.toggle("show", els.verticalMode.checked);
-      });
-
-      renderHistory();
-      updateStats();
+      setupScratchPad();
+      restartQuiz();
     })();
   </script>
 </body>
