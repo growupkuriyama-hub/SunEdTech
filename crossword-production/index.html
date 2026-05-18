@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>5×5・7×7 結婚式クロスワード生成プロトタイプ</title>
+  <title>5×5・6×6・7×7 記念日クロスワード生成プロトタイプ</title>
   <style>
     :root {
       --bg: #f7fafc;
@@ -70,6 +70,7 @@
     .ghost { background: #ecfeff; color: #0f766e; border: 1px solid #99f6e4; }
     .summer { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
     .vegetable { background: #ecfdf5; color: #166534; border: 1px solid #bbf7d0; }
+    .half-adult { background: #fdf2f8; color: #be185d; border: 1px solid #fbcfe8; }
     .export-img { background: #0f766e; color: white; border-radius: 12px; padding: 10px 14px; font-size: 14px; }
     .export-answer { background: #7c3aed; color: white; border-radius: 12px; padding: 10px 14px; font-size: 14px; }
     .export-tex { background: #111827; color: white; border-radius: 12px; padding: 10px 14px; font-size: 14px; }
@@ -181,21 +182,22 @@
 </head>
 <body>
   <header>
-    <h1>5×5・7×7 結婚式クロスワード生成プロトタイプ</h1>
-    <p class="lead">入力したワードだけを使って、5×5または7×7のクロスワード候補を作ります。結婚式・プロフィール・余興向けの言葉を初期セットにし、盤面画像はPNG出力、カギ文はTeXで出力できます。</p>
+    <h1>5×5・6×6・7×7 記念日クロスワード生成プロトタイプ</h1>
+    <p class="lead">入力したワードだけを使って、5×5・6×6・7×7のクロスワード候補を作ります。結婚式・1/2成人式・プロフィール記念品向けの言葉を切り替えられ、盤面画像はPNG出力、カギ文はTeXで出力できます。</p>
   </header>
 
   <main>
     <section class="card control-card">
       <label for="wordInput">ワード入力欄</label>
       <textarea id="wordInput"></textarea>
-      <div class="hint">1行に1語、またはコンマ区切りで入力できます。上にある語ほどメジャー語として強く優先します。盤面サイズに合わせて、5×5では2〜5文字、7×7では2〜7文字の語だけを使います。</div>
+      <div class="hint">1行に1語、またはコンマ区切りで入力できます。上にある語ほどメジャー語として強く優先します。盤面サイズに合わせて、5×5では2〜5文字、6×6では2〜6文字、7×7では2〜7文字の語だけを使います。</div>
 
       <div class="row">
         <div class="field">
           <label for="gridSize">盤面サイズ</label>
           <select id="gridSize">
             <option value="5">5×5</option>
+            <option value="6">6×6</option>
             <option value="7" selected>7×7</option>
           </select>
         </div>
@@ -231,6 +233,7 @@
       <div class="buttons">
         <button class="primary" id="generateBtn">生成する</button>
         <button class="secondary" id="sampleBtn">結婚式ワードに戻す</button>
+        <button class="half-adult" id="halfAdultBtn">1/2成人式用</button>
         <button class="summer" id="summerBtn">夏ワード</button>
         <button class="vegetable" id="vegetableBtn">野菜・くだもの</button>
       </div>
@@ -239,7 +242,7 @@
     </section>
 
     <section id="results" class="result-area">
-      <div class="card empty">ここにクロスワード候補が表示されます。<br>出ないときは、黒マス上限を増やす、食育語を追加する、または「1文字の交差部分を許可」をONにしてください。</div>
+      <div class="card empty">ここにクロスワード候補が表示されます。<br>出ないときは、黒マス上限を増やす、ワードを追加する、または「1文字の交差部分を許可」をONにしてください。</div>
     </section>
   </main>
 
@@ -471,6 +474,240 @@
       "あんしんかん"
 ].join(NL);
 
+
+    const HALF_ADULT_WORDS = [
+      "はると",
+      "はるとくん",
+      "じゅっさい",
+      "十さい",
+      "しょうがくせい",
+      "よねんせい",
+      "おいわい",
+      "きねんび",
+      "たんじょうび",
+      "うまれたひ",
+      "あかちゃん",
+      "なきむし",
+      "ねがお",
+      "だっこ",
+      "はいはい",
+      "よちよち",
+      "はじめて",
+      "なまえ",
+      "えがお",
+      "なみだ",
+      "おもいで",
+      "しゃしん",
+      "あるばむ",
+      "たからもの",
+      "かぞく",
+      "おとうさん",
+      "おかあさん",
+      "ぱぱ",
+      "まま",
+      "いもうと",
+      "おにいちゃん",
+      "おばあちゃん",
+      "おじいちゃん",
+      "ありがとう",
+      "かんしゃ",
+      "だいすき",
+      "たいせつ",
+      "せいちょう",
+      "おとな",
+      "こども",
+      "みらい",
+      "しょうらい",
+      "ゆめ",
+      "もくひょう",
+      "がんばる",
+      "どりょく",
+      "ちょうせん",
+      "まけずぎらい",
+      "やさしい",
+      "おもいやり",
+      "ともだち",
+      "なかよし",
+      "ゆうじょう",
+      "きずな",
+      "しんらい",
+      "あんしん",
+      "げんき",
+      "すなお",
+      "まじめ",
+      "おちゃめ",
+      "てれや",
+      "むじゃき",
+      "せわやき",
+      "あまえんぼう",
+      "さっかー",
+      "さっかーくらぶ",
+      "しあい",
+      "ごーる",
+      "しゅーと",
+      "どりぶる",
+      "きっく",
+      "ぼーる",
+      "れんしゅう",
+      "すぱいく",
+      "ゆにふぉーむ",
+      "せんぱつ",
+      "きーぱー",
+      "みぎあし",
+      "ひだりあし",
+      "こーち",
+      "やきゅう",
+      "ばっと",
+      "ぐろーぶ",
+      "きゃっちぼーる",
+      "ほーむらん",
+      "ばすけ",
+      "しゅーとれん",
+      "どっじぼーる",
+      "すいえい",
+      "くろーる",
+      "ばたあし",
+      "たいそう",
+      "なわとび",
+      "てつぼう",
+      "さかあがり",
+      "かけっこ",
+      "りれー",
+      "うんどうかい",
+      "だんす",
+      "ぴあの",
+      "そろばん",
+      "からて",
+      "すぽーつ",
+      "まいくら",
+      "げーむ",
+      "れご",
+      "ぶろっく",
+      "ぷられーる",
+      "ぽけもん",
+      "こうさく",
+      "いらすと",
+      "おえかき",
+      "ぷらもでる",
+      "けんちくし",
+      "いえづくり",
+      "まちづくり",
+      "しょうぼうし",
+      "うちゅう",
+      "せんしゅ",
+      "けいさつかん",
+      "さんすう",
+      "けいさん",
+      "とけい",
+      "ずけい",
+      "こくご",
+      "かんじ",
+      "おんどく",
+      "どくしょ",
+      "ほん",
+      "しゅくだい",
+      "てすと",
+      "百てん",
+      "はなまる",
+      "できた",
+      "せいこう",
+      "しっぱい",
+      "からあげ",
+      "かれー",
+      "はんばーぐ",
+      "らーめん",
+      "ぎょうざ",
+      "おにぎり",
+      "おべんとう",
+      "おやつ",
+      "ちょこ",
+      "あいす",
+      "ぷりん",
+      "みかん",
+      "ばなな",
+      "きゅうしょく",
+      "すきなもの",
+      "にがて",
+      "あさねぼう",
+      "はやおき",
+      "ただいま",
+      "おかえり",
+      "おはよう",
+      "おやすみ",
+      "ごめんね",
+      "だいじょうぶ",
+      "こうえん",
+      "こうえん",
+      "すべりだい",
+      "ぶらんこ",
+      "すなば",
+      "どろんこ",
+      "じてんしゃ",
+      "じてんしゃろ",
+      "さんぽみち",
+      "かわぞい",
+      "すきなばしょ",
+      "おじいちゃんち",
+      "おばあちゃんち",
+      "ほいくえん",
+      "ようちえん",
+      "しょうがっこう",
+      "こうてい",
+      "きょうしつ",
+      "としょしつ",
+      "たいいくかん",
+      "つうがくろ",
+      "あさのかい",
+      "かえりのかい",
+      "ひるやすみ",
+      "ほうかご",
+      "じゅく",
+      "ならいごと",
+      "えんそく",
+      "どうぶつえん",
+      "すいぞくかん",
+      "ゆうえんち",
+      "おんせん",
+      "りょこう",
+      "おでかけ",
+      "うみ",
+      "やま",
+      "きゃんぷ",
+      "はなび",
+      "まつり",
+      "くりすます",
+      "おしょうがつ",
+      "しちごさん",
+      "にゅうがく",
+      "らんどせる",
+      "ふでばこ",
+      "えんぴつ",
+      "けしごむ",
+      "のーと",
+      "じょうぎ",
+      "うわばき",
+      "たいそうぎ",
+      "ぼうし",
+      "なふだ",
+      "せなか",
+      "てのひら",
+      "ぬくもり",
+      "みまもり",
+      "おうえん",
+      "しあわせ",
+      "わくわく",
+      "どきどき",
+      "きらきら",
+      "にこにこ",
+      "すくすく",
+      "のびのび",
+      "はるとらしさ",
+      "十年分",
+      "かぞくのじかん",
+      "まいにち",
+      "これから"
+    ].join(NL);
+
     const VEGETABLE_WORDS = [
       "やさい", "とまと", "なす", "きゅうり", "ぴーまん", "かぼちゃ", "にんじん", "だいこん", "かぶ", "ねぎ",
       "たまねぎ", "れたす", "きゃべつ", "はくさい", "こまつな", "もやし", "ごぼう", "れんこん", "いも", "まめ",
@@ -503,7 +740,7 @@
 
     gridSizeSelect.addEventListener("change", function () {
       syncGridSizeOptions(true);
-      statusBox.textContent = gridSizeSelect.value + "×" + gridSizeSelect.value + "モードに切り替えました。7×7では黒マス上限24〜36くらいが出やすいです。";
+      statusBox.textContent = gridSizeSelect.value + "×" + gridSizeSelect.value + "モードに切り替えました。6×6では黒マス上限16〜24、7×7では24〜36くらいが出やすいです。";
     });
 
     document.getElementById("sampleBtn").addEventListener("click", function () {
@@ -511,6 +748,16 @@
       document.getElementById("themeLabel").value = "結婚式・ふたりのことば";
       statusBox.textContent = "結婚式ワードの初期リストに戻しました。";
     });
+
+    document.getElementById("halfAdultBtn").addEventListener("click", function () {
+      wordInput.value = HALF_ADULT_WORDS;
+      document.getElementById("themeLabel").value = "はるとくん10歳記念・1/2成人式";
+      gridSizeSelect.value = "7";
+      syncGridSizeOptions(true);
+      maxBlocksInput.value = "30";
+      statusBox.textContent = "1/2成人式用ワードをロードしました。架空の男の子『はるとくん』を想定し、スポーツ・思い出の場所・家族エピソード・将来の夢を入れています。";
+    });
+
     document.getElementById("summerBtn").addEventListener("click", function () {
       wordInput.value = SUMMER_WORDS;
       document.getElementById("themeLabel").value = "夏のことば";
@@ -563,12 +810,13 @@
 
     function syncGridSizeOptions(changedByUser) {
       const selected = parseInt(gridSizeSelect.value, 10);
-      N = (selected === 7) ? 7 : 5;
+      N = ([5, 6, 7].indexOf(selected) >= 0) ? selected : 5;
       const maxAllowed = N * N - 1;
       maxBlocksInput.max = String(maxAllowed);
       const current = parseInt(maxBlocksInput.value, 10);
       if (changedByUser) {
-        if (N === 7 && (Number.isNaN(current) || current <= 14)) maxBlocksInput.value = "24";
+        if (N === 7 && (Number.isNaN(current) || current <= 18)) maxBlocksInput.value = "24";
+        if (N === 6 && (Number.isNaN(current) || current <= 10 || current > 30)) maxBlocksInput.value = "20";
         if (N === 5 && (Number.isNaN(current) || current > 20)) maxBlocksInput.value = "7";
       }
     }
@@ -919,7 +1167,7 @@
       placeWordOnGrid(grid, first, firstR, firstC, firstDir);
       used.add(first);
 
-      const placementTries = N === 7 ? 180 : 90;
+      const placementTries = N === 7 ? 180 : (N === 6 ? 130 : 90);
       let noProgress = 0;
       for (let step = 0; step < placementTries && noProgress < 45; step++) {
         const placement = findRandomPlacement(grid, ordered, used, allowReuse, priority, preferMajor);
@@ -933,7 +1181,7 @@
       if (blockCount > maxBlocks) return null;
       const cand = candidateFromCompletedGrid(grid, allowSingles, priority, preferMajor);
       if (!cand) return null;
-      if (cand.wordsUsed.length < (N === 7 ? 6 : 4)) return null;
+      if (cand.wordsUsed.length < (N === 7 ? 6 : (N === 6 ? 5 : 4))) return null;
       return cand;
     }
 
@@ -970,7 +1218,7 @@
     }
 
     function randomCandidate(maxBlocks, byLen, words, allowReuse, allowSingles, priority, preferMajor) {
-      if (N === 7 && Math.random() < 0.85) {
+      if (N >= 6 && Math.random() < (N === 7 ? 0.85 : 0.65)) {
         const placed = buildWordPlacementCandidate(words, allowReuse, allowSingles, priority, preferMajor, maxBlocks);
         if (placed) return placed;
       }
@@ -983,7 +1231,7 @@
       const words = parseWords(wordInput.value);
       const byLen = groupByLength(words);
       const priority = makePriority(words);
-      const maxBlocks = clampInt(document.getElementById("maxBlocks").value, 0, N * N - 1, N === 7 ? 14 : 7);
+      const maxBlocks = clampInt(document.getElementById("maxBlocks").value, 0, N * N - 1, N === 7 ? 24 : (N === 6 ? 20 : 7));
       const targetCount = clampInt(document.getElementById("targetCount").value, 1, 20, 5);
       const attempts = clampInt(document.getElementById("attempts").value, 100, 300000, 100000);
       const allowReuse = document.getElementById("allowReuse").checked;
@@ -997,7 +1245,7 @@
         const started = performance.now();
         const candidates = [];
         const seenGrids = new Set();
-        const effectiveAttempts = N === 7 ? Math.min(attempts, 25000) : attempts;
+        const effectiveAttempts = N === 7 ? Math.min(attempts, 25000) : (N === 6 ? Math.min(attempts, 50000) : attempts);
         for (let t = 0; t < effectiveAttempts && candidates.length < targetCount * 10; t++) {
           const solved = randomCandidate(maxBlocks, byLen, words, allowReuse, allowSingles, priority, preferMajor);
           if (!solved) continue;
@@ -1011,7 +1259,7 @@
         const elapsed = Math.round(performance.now() - started);
         const counts = Array.from({ length: N - 1 }, function (_, i) { return i + 2; }).map(function (n) { return n + "文字:" + ((byLen.get(n) || []).length); }).join(" / ");
         if (LAST_CANDIDATES.length === 0) {
-          results.innerHTML = '<div class="card empty"><span class="warning">候補が見つかりませんでした。</span><br><br>ワード数：' + words.length + '語（' + counts + '）<br>対策：黒マス上限を増やす、食育語を追加する、または「1文字の交差部分を許可」をONにしてください。</div>';
+          results.innerHTML = '<div class="card empty"><span class="warning">候補が見つかりませんでした。</span><br><br>ワード数：' + words.length + '語（' + counts + '）<br>対策：黒マス上限を増やす、ワードを追加する、または「1文字の交差部分を許可」をONにしてください。</div>';
           statusBox.textContent = "生成失敗：" + effectiveAttempts + "回試行 / " + elapsed + "ms / 入力 " + words.length + "語 / " + counts;
           return;
         }
@@ -1177,7 +1425,7 @@
       const title = document.getElementById("themeLabel").value.trim() || "クロスワード";
       const nSize = gridSizeOf(cand.grid);
       const scale = 3;
-      const cell = nSize >= 7 ? 80 : 96;
+      const cell = nSize >= 7 ? 80 : (nSize === 6 ? 88 : 96);
       const margin = 70;
       const titleH = 90;
       const size = margin * 2 + cell * nSize;
@@ -1245,6 +1493,13 @@
       document.body.removeChild(link);
     }
 
+
+    function currentClueThemeMode(label) {
+      const text = String(label || "");
+      if (text.includes("1/2") || text.includes("成人式") || text.includes("10歳") || text.includes("十歳") || text.includes("はると")) return "halfAdult";
+      return "wedding";
+    }
+
     function buildClueTex(cand) {
       const label = document.getElementById("themeLabel").value.trim() || "クロスワード";
       const across = cand.slots.filter(function (s) { return s.dir === "across"; });
@@ -1254,21 +1509,35 @@
       lines.push("\\usepackage[margin=20mm]{geometry}");
       lines.push("\\usepackage{enumitem}");
       lines.push("\\begin{document}");
-      lines.push("\\section*{カギ文生成用スクリプト}");
-      lines.push("以下の答え一覧をもとに、結婚式・披露宴・プロフィール紹介で使いやすいクロスワードのカギ文を作成してください。");
+      const mode = currentClueThemeMode(label);
+      lines.push("\section*{カギ文生成用スクリプト}");
+      if (mode === "halfAdult") {
+        lines.push("以下の答え一覧をもとに、1/2成人式・10歳記念・家族向けプロフィール紹介で使いやすいクロスワードのカギ文を作成してください。");
+      } else {
+        lines.push("以下の答え一覧をもとに、結婚式・披露宴・プロフィール紹介で使いやすいクロスワードのカギ文を作成してください。");
+      }
       lines.push("答えそのものをカギ文に含めないでください。全部を同じ文にせず、答えごとに具体的に変えてください。");
       lines.push("テーマは「" + escapeTex(label) + "」です。");
       lines.push("盤面サイズは" + gridSizeOf(cand.grid) + "×" + gridSizeOf(cand.grid) + "です。");
       lines.push("");
-      lines.push("\\subsection*{カギ文作成ルール}");
-      lines.push("\\begin{itemize}");
-      lines.push("\\item テーマに合う、温かく、少し笑えて、ゲストが答えやすいヒントにする。");
-      lines.push("\\item 新郎新婦の性格・習慣・思い出・好み・結婚式らしい言葉を、やさしく紹介するヒントにする。");
-      lines.push("\\item 内輪すぎる表現は避け、親族・友人・職場のゲストにも伝わる文にする。");
-      lines.push("\\item 答えが人の特徴を表す場合も、からかいすぎず、愛のある表現にする。");
-      lines.push("\\item 答えそのものはカギ文に入れない。");
-      lines.push("\\item ひらがな中心で、短く、披露宴の紙面に載せやすい文にする。");
-      lines.push("\\end{itemize}");
+      lines.push("\subsection*{カギ文作成ルール}");
+      lines.push("\begin{itemize}");
+      if (mode === "halfAdult") {
+        lines.push("\item 10歳の子の成長、好きなスポーツ、思い出の場所、家族とのエピソード、将来の夢が伝わるヒントにする。");
+        lines.push("\item 主役の子をからかわず、親が読んで少し泣ける、本人が読んで照れながら喜ぶ温かい文にする。");
+        lines.push("\item 学校・習い事・遊び・好きな食べ物・小さい頃の思い出を、具体的だが個人情報を出しすぎない形で扱う。");
+        lines.push("\item 親族・先生・友だちにも伝わる、やさしい言葉にする。");
+        lines.push("\item 答えそのものはカギ文に入れない。");
+        lines.push("\item ひらがな中心で、短く、記念冊子や発表用紙面に載せやすい文にする。");
+      } else {
+        lines.push("\item テーマに合う、温かく、少し笑えて、ゲストが答えやすいヒントにする。");
+        lines.push("\item 新郎新婦の性格・習慣・思い出・好み・結婚式らしい言葉を、やさしく紹介するヒントにする。");
+        lines.push("\item 内輪すぎる表現は避け、親族・友人・職場のゲストにも伝わる文にする。");
+        lines.push("\item 答えが人の特徴を表す場合も、からかいすぎず、愛のある表現にする。");
+        lines.push("\item 答えそのものはカギ文に入れない。");
+        lines.push("\item ひらがな中心で、短く、披露宴の紙面に載せやすい文にする。");
+      }
+      lines.push("\end{itemize}");
       lines.push("");
       lines.push("\\subsection*{問題盤面}");
       lines.push("\\begin{verbatim}");
