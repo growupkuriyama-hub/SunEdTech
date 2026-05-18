@@ -197,13 +197,13 @@
           <label for="gridSize">盤面サイズ</label>
           <select id="gridSize">
             <option value="5">5×5</option>
-            <option value="6">6×6</option>
-            <option value="7" selected>7×7</option>
+            <option value="6" selected>6×6</option>
+            <option value="7">7×7</option>
           </select>
         </div>
         <div class="field">
           <label for="maxBlocks">黒マス上限</label>
-          <input id="maxBlocks" type="number" min="0" max="48" value="24" />
+          <input id="maxBlocks" type="number" min="0" max="48" value="14" />
         </div>
       </div>
 
@@ -227,12 +227,11 @@
         <label class="checkline"><input id="allowSingles" type="checkbox" checked /><span>1文字の交差部分を許可する（語彙が少ないときの実務用ゆるめモード）</span></label>
         <label class="checkline"><input id="allowReuse" type="checkbox" /><span>同じワードの再利用を許可する</span></label>
         <label class="checkline"><input id="preferDense" type="checkbox" checked /><span>黒マスが少ない候補を優先する</span></label>
-        <label class="checkline"><input id="preferMajor" type="checkbox" checked /><span>入力欄の上のワードをかなり強く優先する</span></label>
+        <label class="checkline"><input id="preferMajor" type="checkbox"/><span>入力欄の上のワードをかなり強く優先する</span></label>
       </div>
 
       <div class="buttons">
         <button class="primary" id="generateBtn">生成する</button>
-        <button class="secondary" id="sampleBtn">結婚式ワードに戻す</button>
         <button class="half-adult" id="halfAdultBtn">1/2成人式用</button>
         <button class="summer" id="summerBtn">夏ワード</button>
         <button class="vegetable" id="vegetableBtn">野菜・くだもの</button>
@@ -740,13 +739,7 @@
 
     gridSizeSelect.addEventListener("change", function () {
       syncGridSizeOptions(true);
-      statusBox.textContent = gridSizeSelect.value + "×" + gridSizeSelect.value + "モードに切り替えました。6×6では黒マス上限16〜24、7×7では24〜36くらいが出やすいです。";
-    });
-
-    document.getElementById("sampleBtn").addEventListener("click", function () {
-      wordInput.value = DEFAULT_WORDS;
-      document.getElementById("themeLabel").value = "結婚式・ふたりのことば";
-      statusBox.textContent = "結婚式ワードの初期リストに戻しました。";
+      statusBox.textContent = gridSizeSelect.value + "×" + gridSizeSelect.value + "モードに切り替えました。6×6では黒マス上限14〜20、7×7では24〜36くらいが出やすいです。";
     });
 
     document.getElementById("halfAdultBtn").addEventListener("click", function () {
@@ -816,7 +809,7 @@
       const current = parseInt(maxBlocksInput.value, 10);
       if (changedByUser) {
         if (N === 7 && (Number.isNaN(current) || current <= 18)) maxBlocksInput.value = "24";
-        if (N === 6 && (Number.isNaN(current) || current <= 10 || current > 30)) maxBlocksInput.value = "20";
+        if (N === 6 && (Number.isNaN(current) || current <= 10 || current > 30)) maxBlocksInput.value = "14";
         if (N === 5 && (Number.isNaN(current) || current > 20)) maxBlocksInput.value = "7";
       }
     }
@@ -1231,7 +1224,7 @@
       const words = parseWords(wordInput.value);
       const byLen = groupByLength(words);
       const priority = makePriority(words);
-      const maxBlocks = clampInt(document.getElementById("maxBlocks").value, 0, N * N - 1, N === 7 ? 24 : (N === 6 ? 20 : 7));
+      const maxBlocks = clampInt(document.getElementById("maxBlocks").value, 0, N * N - 1, N === 7 ? 24 : (N === 6 ? 14 : 7));
       const targetCount = clampInt(document.getElementById("targetCount").value, 1, 20, 5);
       const attempts = clampInt(document.getElementById("attempts").value, 100, 300000, 100000);
       const allowReuse = document.getElementById("allowReuse").checked;
