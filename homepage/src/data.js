@@ -129,4 +129,17 @@ export const APP_LIST = [
     bgColor: "#FFF9F2",
     icon: "🔢",
   },
+  {
+    id: "two-digit-times-one-digit",
+    paid: false,
+    name: "Two-Digit × One-Digit Multiplication Practice",
+    nameJa: "2けた×1けた かけ算トレーニング",
+    description: "2けたの数に1けたの数をかける練習アプリ。5問・10問を選んですぐ練習でき、筆算表示・記録機能つきです。",
+    target: "小3～小4 ／ 2けた×1けたのかけ算",
+    tags: ["算数", "かけ算", "筆算", "小学生"],
+    url: "https://2keta-by-1keta.pages.dev/",
+    color: "#F97316",
+    bgColor: "#FFF7ED",
+    icon: "✖️",
+  },
 ];
