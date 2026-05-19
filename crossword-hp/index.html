@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>食育・教材クロスワード制作｜サン教育開発システム</title>
-  <meta name="description" content="サン教育開発システムは、食育・小学生向け教材・地域イベント向けのクロスワードパズルを制作します。問題・解答・印刷用データまで対応。東京都練馬区。" />
+  <title>食育・教材・販促クロスワード制作｜サン教育開発システム</title>
+  <meta name="description" content="サン教育開発システムは、食育・小学生向け教材・地域イベント・店舗販促向けのクロスワードパズルを制作します。問題・解答・印刷用データまで対応。東京都練馬区。" />
   <style>
     :root {
       --bg: #fffdf9;
@@ -94,6 +94,7 @@
       text-decoration: none;
       font-weight: 900;
       transition: color .16s ease, transform .16s ease;
+      white-space: nowrap;
     }
 
     .nav-links a:hover {
@@ -109,7 +110,7 @@
       box-shadow: 0 6px 0 rgba(0,0,0,0.05);
     }
 
-    @media (max-width: 760px) {
+    @media (max-width: 860px) {
       .topbar { top: 6px; margin: 6px; border-radius: 16px; }
       .nav-links { display: none; }
       .brand { font-size: 14px; }
@@ -236,6 +237,7 @@
     .hero-card,
     .info-card,
     .sample-gallery-card,
+    .proposal-card,
     .price-card,
     .panel {
       border: 2px solid var(--line);
@@ -393,6 +395,110 @@
       border: 1px solid var(--line);
       box-shadow: 0 10px 24px rgba(180,160,140,.12);
       background: white;
+    }
+
+    .proposal-section {
+      background:
+        radial-gradient(circle at 12% 16%, rgba(248, 155, 113, 0.10), transparent 32%),
+        radial-gradient(circle at 92% 18%, rgba(163, 201, 168, 0.14), transparent 30%);
+    }
+
+    .proposal-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .proposal-grid { grid-template-columns: 1fr; }
+    }
+
+    .proposal-card {
+      padding: 18px;
+      background: rgba(255, 255, 255, .94);
+      overflow: hidden;
+    }
+
+    .proposal-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-strong);
+      border-color: rgba(248,155,113,.42);
+    }
+
+    .proposal-card h3 {
+      margin: 6px 6px 10px;
+      font-size: 20px;
+      line-height: 1.55;
+    }
+
+    .proposal-card p {
+      margin: 12px 6px 14px;
+      color: var(--muted);
+      line-height: 1.85;
+      font-weight: 650;
+      font-size: 14px;
+    }
+
+    .proposal-image-link {
+      display: block;
+      text-decoration: none;
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: white;
+      box-shadow: 0 10px 24px rgba(180,160,140,.12);
+    }
+
+    .proposal-image {
+      display: block;
+      width: 100%;
+      height: auto;
+      transition: transform .24s ease;
+    }
+
+    .proposal-image-link:hover .proposal-image {
+      transform: scale(1.015);
+    }
+
+    .proposal-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 16px 6px 4px;
+    }
+
+    .proposal-actions a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 11px 16px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 900;
+      font-size: 13px;
+      border: 1px solid var(--line);
+      background: #fffefa;
+      color: var(--ink);
+      transition: transform .16s ease, border-color .16s ease, color .16s ease;
+    }
+
+    .proposal-actions a:hover {
+      transform: translateY(-1px);
+      border-color: var(--warm-orange);
+      color: var(--warm-orange-deep);
+    }
+
+    .proposal-note {
+      margin-top: 22px;
+      padding: 18px 22px;
+      border-radius: 24px;
+      background: rgba(255,255,255,.86);
+      border: 1px dashed var(--line);
+      color: var(--muted);
+      line-height: 1.85;
+      font-weight: 650;
+      text-align: center;
     }
 
     .split {
@@ -590,6 +696,7 @@
       .hero-actions .btn { width: 100%; }
       .flow-item { grid-template-columns: 48px 1fr; padding: 16px; }
       .flow-item::before { width: 40px; height: 40px; }
+      .proposal-actions a { width: 100%; }
     }
   </style>
 </head>
@@ -603,6 +710,7 @@
       <nav class="nav-links" aria-label="メニュー">
         <a href="#service">できること</a>
         <a href="#samples">サンプル</a>
+        <a href="#proposal-samples">提案例</a>
         <a href="#price">料金</a>
         <a href="#flow">流れ</a>
         <a class="nav-cta" href="mailto:sundedtech@zohomail.jp?cc=growup.kuriyama@gmail.com,erinax@live.jp">相談する</a>
@@ -613,17 +721,17 @@
   <header class="hero">
     <div class="container hero-grid">
       <div>
-        <div class="eyebrow">食育・教材・地域イベント向け</div>
+        <div class="eyebrow">食育・教材・地域イベント・店舗販促向け</div>
         <h1>子ども向け<br>クロスワードを<br>制作します。</h1>
         <p class="hero-copy">
-          食育、魚、野菜、くだもの、夏、栄養、季節行事、地域イベントなどのテーマに合わせて、
-          小学生向けのクロスワードパズルを作成します。問題・解答・印刷用データまで、教材として使いやすい形で納品します。
+          食育、魚、野菜、くだもの、夏、栄養、季節行事、地域イベント、店舗販促などのテーマに合わせて、
+          小学生向けのクロスワードパズルを作成します。問題・解答・印刷用データまで、教材や配布物として使いやすい形で納品します。
         </p>
         <div class="hero-actions">
           <a class="btn btn-primary" href="mailto:sundedtech@zohomail.jp?cc=growup.kuriyama@gmail.com,erinax@live.jp">制作を相談する</a>
           <a class="btn btn-secondary" href="#samples">サンプルを見る</a>
         </div>
-        <p class="note">練馬区の教育事業者が、子どもに伝わる言葉・見やすい教材形式を意識して制作します。</p>
+        <p class="note">練馬区の教育事業者が、子どもに伝わる言葉・見やすい教材形式・お店や施設の魅力が伝わる構成を意識して制作します。</p>
       </div>
 
       <div class="hero-card" aria-label="制作案内">
@@ -635,6 +743,7 @@
         <ul>
           <li>5×5、7×7 など小さめ盤面に対応</li>
           <li>魚・野菜・くだもの・夏などのテーマ指定可</li>
+          <li>店舗・施設・イベント内容に合わせた提案例も作成可</li>
           <li>ひらがな中心の低学年向けにも対応</li>
           <li>問題ページ・解答ページを分けて納品可</li>
         </ul>
@@ -694,6 +803,55 @@
     </div>
   </section>
 
+  <section id="proposal-samples" class="section proposal-section">
+    <div class="container">
+      <div class="section-head">
+        <h2>お店・施設に合わせたご提案例</h2>
+        <p>
+          クロスワード単体だけでなく、用途・ターゲット・活用場面まで整理した
+          「販促用・教育用の提案サンプル」として見せることもできます。
+        </p>
+      </div>
+
+      <div class="proposal-grid">
+        <article class="proposal-card">
+          <h3>和菓子店向けクロスワード<br>販促用サンプル</h3>
+          <a class="proposal-image-link" href="teian-sample1.jpg" target="_blank" rel="noopener">
+            <img src="teian-sample1.jpg" alt="和菓子店向けクロスワード販促用提案サンプル" class="proposal-image" />
+          </a>
+          <p>
+            老舗和菓子店を想定し、どら焼き・千歳・和素材・季節感などを題材にした販促用サンプルです。
+            店頭配布、ノベルティ、SNS・Web連動などの活用イメージも含めています。
+          </p>
+          <div class="proposal-actions">
+            <a href="teian-sample1.jpg" target="_blank" rel="noopener">大きく見る</a>
+            <a href="teian-sample1.jpg" download>画像をダウンロード</a>
+          </div>
+        </article>
+
+        <article class="proposal-card">
+          <h3>海洋環境教育向けクロスワード<br>体験型学習コンテンツサンプル</h3>
+          <a class="proposal-image-link" href="teian-sample2.jpg" target="_blank" rel="noopener">
+            <img src="teian-sample2.jpg" alt="海洋環境教育向けクロスワード体験型学習コンテンツ提案サンプル" class="proposal-image" />
+          </a>
+          <p>
+            水族館・海洋教育施設を想定し、海の生き物、環境問題、SDGs、観察・探究学習を組み合わせた提案例です。
+            展示理解、教育普及、学校団体向け教材などへの展開を想定しています。
+          </p>
+          <div class="proposal-actions">
+            <a href="teian-sample2.jpg" target="_blank" rel="noopener">大きく見る</a>
+            <a href="teian-sample2.jpg" download>画像をダウンロード</a>
+          </div>
+        </article>
+      </div>
+
+      <div class="proposal-note">
+        業種や施設の特徴に合わせて、テーマ・言葉選び・カギ文・活用場面を調整できます。
+        「お店の商品を入れたい」「展示内容に合わせたい」「親子イベント用にしたい」など、ざっくりしたご相談でも大丈夫です。
+      </div>
+    </div>
+  </section>
+
   <section class="section">
     <div class="container split">
       <div class="panel">
@@ -707,6 +865,7 @@
         <ul class="list">
           <li>5×5、7×7など小さめ盤面の教材クロスワード</li>
           <li>食育、魚、野菜、くだもの、夏、栄養、季節、理科、地域イベントなどのテーマ指定</li>
+          <li>店舗・施設・展示・商品に合わせた販促用クロスワード</li>
           <li>小学校低学年向けのひらがな中心カギ文</li>
           <li>問題用・解答用の2種類出力</li>
           <li>黒マス少なめ、見やすさ重視などの条件調整</li>
@@ -760,7 +919,7 @@
           <span class="badge">イベント向け</span>
           <h3>複数枚・特注制作</h3>
           <div class="price">49,800円〜 <small>税込目安</small></div>
-          <p>食育イベント、地域配布、教材セットなどに対応します。</p>
+          <p>食育イベント、地域配布、教材セット、店舗販促などに対応します。</p>
           <ul>
             <li>複数テーマ</li>
             <li>ロゴ・表記調整相談可</li>
@@ -793,6 +952,8 @@
         <ul class="list">
           <li>食育イベントの配布プリント</li>
           <li>スーパー・魚屋・地域イベントの子ども向け企画</li>
+          <li>和菓子店・飲食店・食品メーカーの店頭配布や販促物</li>
+          <li>水族館・博物館・展示施設の教育普及コンテンツ</li>
           <li>学校・学童・PTA広報のミニ教材</li>
           <li>塾や教室の季節イベント教材</li>
           <li>子ども食堂・地域活動の学習プリント</li>
@@ -804,6 +965,8 @@
           <li>魚の名前だけで作りたい</li>
           <li>野菜・くだもの・栄養・旬の食材を入れたい</li>
           <li>夏の言葉や季節テーマで作りたい</li>
+          <li>自社の商品名や地域の言葉を入れたい</li>
+          <li>展示内容やイベントテーマに合わせたい</li>
           <li>低学年でも読めるひらがな中心にしたい</li>
           <li>問題と解答を別々にほしい</li>
         </ul>
@@ -817,8 +980,9 @@
         <div>
           <h2>テーマが決まっていなくても相談できます。</h2>
           <p>
-            「食育イベントで使いたい」「小学生向けに魚のクロスワードを作りたい」など、
-            ざっくりした段階でも大丈夫です。用途に合わせて、盤面サイズや語彙を提案します。
+            「食育イベントで使いたい」「小学生向けに魚のクロスワードを作りたい」
+            「お店の商品を親子向けに楽しく紹介したい」など、ざっくりした段階でも大丈夫です。
+            用途に合わせて、盤面サイズや語彙を提案します。
           </p>
         </div>
         <div class="contact-card">
@@ -835,7 +999,7 @@
     <div class="container footer-grid">
       <div>
         <strong>サン教育開発システム</strong><br>
-        食育・教材クロスワード制作<br>
+        食育・教材・販促クロスワード制作<br>
         東京都練馬区4-8-3
       </div>
       <div>
