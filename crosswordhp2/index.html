@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>オリジナルクロスワード制作｜結婚式・1/2成人式の記念パズル</title>
+  <meta name="description" content="結婚式や1/2成人式に、思い出・名前・エピソードを入れた世界にひとつのオリジナルクロスワードパズルを制作します。受付演出、席次表、親子イベント、記念品に。" />
+  <meta property="og:title" content="オリジナルクロスワード制作｜結婚式・1/2成人式" />
+  <meta property="og:description" content="ふたりのことば、家族の思い出、子どもの成長をクロスワードに。印刷用PDF・画像データで納品します。" />
+  <meta property="og:type" content="website" />
+  <style>
+    :root {
+      --ink: #2c211b;
+      --muted: #75675f;
+      --paper: #fffaf3;
+      --paper2: #fff4e8;
+      --rose: #e9a7a5;
+      --rose2: #f8d9d1;
+      --blue: #8fb9ce;
+      --green: #8faf79;
+      --gold: #c99c54;
+      --line: rgba(44,33,27,.14);
+      --shadow: 0 18px 50px rgba(80, 52, 32, .12);
+      --radius: 26px;
+      --max: 1120px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% 0%, rgba(248,217,209,.7), transparent 30%),
+        radial-gradient(circle at 88% 12%, rgba(143,185,206,.22), transparent 28%),
+        linear-gradient(180deg, #fffdf9 0%, var(--paper) 46%, #fff 100%);
+      font-family: "Hiragino Sans", "Yu Gothic", "YuGothic", "Noto Sans JP", system-ui, sans-serif;
+      line-height: 1.8;
+    }
+
+    a { color: inherit; }
+    img { max-width: 100%; display: block; }
+
+    .wrap { width: min(var(--max), calc(100% - 32px)); margin: 0 auto; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(14px);
+      background: rgba(255,250,243,.82);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav {
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      letter-spacing: .04em;
+    }
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--rose2), #fff2bf);
+      box-shadow: inset 0 0 0 1px rgba(44,33,27,.08);
+      font-size: 20px;
+    }
+    .navlinks {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .navlinks a { text-decoration: none; }
+    .navlinks a:hover { color: var(--ink); }
+    .insta-nav {
+      padding: 8px 12px;
+      border-radius: 999px;
+      color: #fff !important;
+      background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);
+      font-weight: 900;
+      box-shadow: 0 8px 20px rgba(253,29,29,.18);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(44,33,27,.1);
+      text-decoration: none;
+      font-weight: 800;
+      background: #fff;
+      box-shadow: 0 10px 28px rgba(80,52,32,.10);
+      transition: transform .18s ease, box-shadow .18s ease;
+      white-space: nowrap;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 14px 34px rgba(80,52,32,.14); }
+    .btn.primary { color: #fff; background: linear-gradient(135deg, #d98684, #d0a04e); border: none; }
+    .btn.blue { color: #fff; background: linear-gradient(135deg, #6fa5bf, #7eaa6d); border: none; }
+    .btn.instagram { color: #fff; background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045); border: none; }
+
+    .hero {
+      padding: 74px 0 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.02fr .98fr;
+      gap: 38px;
+      align-items: center;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.76);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    h1 {
+      margin: 18px 0 18px;
+      font-size: clamp(36px, 5.2vw, 68px);
+      line-height: 1.12;
+      letter-spacing: .02em;
+    }
+    .lead {
+      margin: 0 0 26px;
+      font-size: clamp(16px, 2vw, 20px);
+      color: #5f5048;
+    }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    .note { margin-top: 14px; color: var(--muted); font-size: 13px; }
+
+    .hero-card {
+      position: relative;
+      padding: 16px;
+      border-radius: 32px;
+      background: rgba(255,255,255,.74);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+    .hero-card img {
+      border-radius: 24px;
+      border: 1px solid rgba(44,33,27,.1);
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+    }
+    .floating-label {
+      position: absolute;
+      left: 26px;
+      bottom: 28px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.9);
+      box-shadow: 0 12px 28px rgba(80,52,32,.12);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    section { padding: 68px 0; }
+    .section-head { text-align: center; margin: 0 auto 32px; max-width: 760px; }
+    .section-head h2 { margin: 0 0 10px; font-size: clamp(28px, 4vw, 44px); line-height: 1.25; }
+    .section-head p { margin: 0; color: var(--muted); }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+    .card {
+      padding: 24px;
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.78);
+      border: 1px solid var(--line);
+      box-shadow: 0 12px 36px rgba(80,52,32,.08);
+    }
+    .card .icon { font-size: 34px; margin-bottom: 6px; }
+    .card h3 { margin: 0 0 8px; font-size: 20px; }
+    .card p { margin: 0; color: var(--muted); font-size: 15px; }
+
+    .samples {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+    .sample {
+      overflow: hidden;
+      border-radius: 32px;
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+    .sample img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      background: #fff;
+    }
+    .sample-body { padding: 22px; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      color: #7b4b48;
+      background: var(--rose2);
+      margin-bottom: 10px;
+    }
+    .pill.blue { color: #416b7d; background: rgba(143,185,206,.25); }
+    .sample h3 { margin: 0 0 8px; font-size: 24px; }
+    .sample p { margin: 0; color: var(--muted); }
+
+    .plans {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+    .plan {
+      position: relative;
+      padding: 26px;
+      border-radius: 30px;
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: 0 14px 36px rgba(80,52,32,.08);
+    }
+    .plan.featured {
+      border: 2px solid rgba(217,134,132,.55);
+      transform: translateY(-8px);
+      box-shadow: 0 20px 56px rgba(217,134,132,.18);
+    }
+    .badge {
+      position: absolute;
+      top: -14px;
+      right: 22px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--ink);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .plan h3 { margin: 0 0 8px; font-size: 22px; }
+    .price { font-size: 36px; font-weight: 900; letter-spacing: -.03em; margin: 8px 0 2px; }
+    .tax { color: var(--muted); font-size: 13px; }
+    .plan ul { padding-left: 1.2em; margin: 18px 0 0; color: #5f5048; }
+    .plan li { margin: 8px 0; }
+
+    .option-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    .option {
+      padding: 16px;
+      border-radius: 20px;
+      border: 1px dashed rgba(44,33,27,.18);
+      background: rgba(255,255,255,.7);
+    }
+    .option strong { display: block; font-size: 15px; }
+    .option span { color: var(--muted); font-size: 13px; }
+
+    .flow {
+      counter-reset: step;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+    .step {
+      position: relative;
+      padding: 22px;
+      border-radius: 24px;
+      background: rgba(255,255,255,.76);
+      border: 1px solid var(--line);
+    }
+    .step::before {
+      counter-increment: step;
+      content: counter(step);
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--ink);
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+    .step h3 { margin: 0 0 6px; font-size: 17px; }
+    .step p { margin: 0; color: var(--muted); font-size: 14px; }
+
+    .faq {
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      gap: 12px;
+    }
+    details {
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.78);
+      padding: 16px 18px;
+    }
+    summary { cursor: pointer; font-weight: 800; }
+    details p { margin: 10px 0 0; color: var(--muted); }
+
+    .cta {
+      padding: 42px;
+      border-radius: 36px;
+      background:
+        linear-gradient(135deg, rgba(248,217,209,.84), rgba(255,242,191,.72)),
+        #fff;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: center;
+    }
+    .cta h2 { margin: 0 0 8px; font-size: clamp(28px, 4vw, 42px); }
+    .cta p { margin: 0; color: #5f5048; }
+
+    footer {
+      padding: 44px 0 56px;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+      background: rgba(255,255,255,.54);
+      font-size: 14px;
+    }
+    .footer-grid { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+
+    .soft-bg { background: rgba(255,244,232,.52); }
+
+    @media (max-width: 900px) {
+      .hero-grid, .samples, .plans, .cards, .flow { grid-template-columns: 1fr; }
+      .plan.featured { transform: none; }
+      .option-grid { grid-template-columns: repeat(2, 1fr); }
+      .cta { grid-template-columns: 1fr; padding: 28px; }
+      .navlinks { display: none; }
+      section { padding: 52px 0; }
+    }
+
+    @media (max-width: 520px) {
+      .option-grid { grid-template-columns: 1fr; }
+      .hero { padding-top: 46px; }
+      .hero-actions .btn { width: 100%; }
+      .brand span { font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap nav">
+      <a class="brand" href="#top" aria-label="トップへ戻る">
+        <span class="brand-mark">□</span>
+        <span>オリジナルクロスワード制作</span>
+      </a>
+      <nav class="navlinks" aria-label="ページ内メニュー">
+        <a href="#samples">サンプル</a>
+        <a href="#plans">料金</a>
+        <a href="#flow">流れ</a>
+        <a href="#faq">よくある質問</a>
+        <a class="insta-nav" href="https://www.instagram.com/sundedtech/" target="_blank" rel="noopener">Instagram</a>
+        <a class="btn primary" href="mailto:growup.kuriyama@gmail.com?subject=%E3%82%AF%E3%83%AD%E3%82%B9%E3%83%AF%E3%83%BC%E3%83%89%E5%88%B6%E4%BD%9C%E3%81%AE%E7%9B%B8%E8%AB%87">相談する</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <span class="eyebrow">結婚式・1/2成人式・家族の記念日に</span>
+          <h1>思い出を、<br />世界にひとつの<br />クロスワードに。</h1>
+          <p class="lead">ふたりのなれそめ、家族のエピソード、10歳までの成長の記録。大切な言葉をパズルにして、受付・披露宴・親子イベント・記念品で楽しめるデザインデータとしてお届けします。</p>
+          <div class="hero-actions">
+            <a class="btn primary" href="mailto:growup.kuriyama@gmail.com?subject=%E3%82%AF%E3%83%AD%E3%82%B9%E3%83%AF%E3%83%BC%E3%83%89%E5%88%B6%E4%BD%9C%E3%81%AE%E7%9B%B8%E8%AB%87&body=%E3%80%90%E7%94%A8%E9%80%94%E3%80%91%E7%B5%90%E5%A9%9A%E5%BC%8F%EF%BC%8F1%2F2%E6%88%90%E4%BA%BA%E5%BC%8F%EF%BC%8F%E3%81%9D%E3%81%AE%E4%BB%96%0A%E3%80%90%E5%B8%8C%E6%9C%9B%E7%B4%8D%E6%9C%9F%E3%80%91%0A%E3%80%90%E5%B8%8C%E6%9C%9B%E3%83%97%E3%83%A9%E3%83%B3%E3%80%91%0A%E3%80%90%E5%85%A5%E3%82%8C%E3%81%9F%E3%81%84%E8%A8%80%E8%91%89%E3%83%BB%E3%82%A8%E3%83%94%E3%82%BD%E3%83%BC%E3%83%89%E3%80%91%0A">無料で相談する</a>
+            <a class="btn instagram" href="https://www.instagram.com/sundedtech/" target="_blank" rel="noopener">Instagramを見る</a>
+            <a class="btn" href="#samples">サンプルを見る</a>
+          </div>
+          <p class="note">納品目安：通常7〜10日。お急ぎ制作はご相談ください。</p>
+        </div>
+        <div class="hero-card">
+          <img src="sample-wedding.jpg" alt="結婚式用クロスワードパズルのサンプル" />
+          <div class="floating-label">受付演出・席次表・余興にも</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="soft-bg" id="features">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>ただのクイズではなく、思い出を会話に変えるパズルです</h2>
+          <p>ゲストや家族が「これ知ってる！」「そんな話があったんだ」と話しながら楽しめるように、答えの言葉とカギ文をていねいに設計します。</p>
+        </div>
+        <div class="cards">
+          <article class="card">
+            <div class="icon">💐</div>
+            <h3>エピソード入り</h3>
+            <p>名前、場所、趣味、口ぐせ、思い出の食べ物などを自然に入れて、当日だけの特別感を出します。</p>
+          </article>
+          <article class="card">
+            <div class="icon">✍️</div>
+            <h3>子どもにも読める文</h3>
+            <p>1/2成人式向けは、10歳の本人や家族が読んで楽しい、やさしいカギ文に調整します。</p>
+          </article>
+          <article class="card">
+            <div class="icon">🖨️</div>
+            <h3>そのまま印刷OK</h3>
+            <p>A4印刷用PDFと画像データを納品。ご家庭のプリンタやコンビニ印刷、式場への共有にも使えます。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="samples">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>制作サンプル</h2>
+          <p>下の2点は見本です。実際の制作では、いただいたエピソードをもとに言葉・カギ文・見た目を調整します。</p>
+        </div>
+        <div class="samples">
+          <article class="sample">
+            <img src="sample-wedding.jpg" alt="Wedding Crossword ふたりのことばパズルのサンプル" />
+            <div class="sample-body">
+              <span class="pill">結婚式用</span>
+              <h3>Wedding Crossword</h3>
+              <p>ふたりの名前、出会い、好きなもの、これから大切にしたい言葉を入れた、やわらかい雰囲気のパズル。受付・披露宴中の待ち時間・二次会におすすめです。</p>
+            </div>
+          </article>
+          <article class="sample">
+            <img src="sample-half-adult.jpg" alt="1/2成人式用クロスワードパズルのサンプル" />
+            <div class="sample-body">
+              <span class="pill blue">1/2成人式用</span>
+              <h3>10さい記念クロスワード</h3>
+              <p>成長、得意なこと、家族の思い出、これからの応援メッセージを入れた記念パズル。家庭・学校・写真アルバム用にも使えます。</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="soft-bg" id="plans">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>料金プラン</h2>
+          <p>まずは受注しやすく、かつ制作時間が赤字になりにくい価格帯にしています。公開後の反応を見て調整できます。</p>
+        </div>
+        <div class="plans">
+          <article class="plan">
+            <h3>ライト</h3>
+            <p>シンプルに1枚ほしい方向け</p>
+            <div class="price">¥12,800</div>
+            <div class="tax">税込・PDF/画像納品</div>
+            <ul>
+              <li>6×6または7×7程度</li>
+              <li>カギ文 8〜12問</li>
+              <li>印刷用PDF 1点</li>
+              <li>修正1回まで</li>
+            </ul>
+          </article>
+          <article class="plan featured">
+            <div class="badge">おすすめ</div>
+            <h3>スタンダード</h3>
+            <p>記念品としてきちんと作りたい方向け</p>
+            <div class="price">¥24,800</div>
+            <div class="tax">税込・PDF/画像納品</div>
+            <ul>
+              <li>7×7〜9×9程度</li>
+              <li>エピソード反映のカギ文</li>
+              <li>デザイン付き印刷用PDF</li>
+              <li>解答用紙・答え入り版</li>
+              <li>修正2回まで</li>
+            </ul>
+          </article>
+          <article class="plan">
+            <h3>プレミアム</h3>
+            <p>式場・配布物・家族イベントまで整えたい方向け</p>
+            <div class="price">¥39,800</div>
+            <div class="tax">税込・PDF/画像納品</div>
+            <ul>
+              <li>大型パズルまたは複数案制作</li>
+              <li>雰囲気違いのデザイン2案</li>
+              <li>司会・配布用の説明文つき</li>
+              <li>修正3回まで</li>
+            </ul>
+          </article>
+        </div>
+
+        <div style="height:24px"></div>
+        <div class="option-grid" aria-label="追加オプション">
+          <div class="option"><strong>お急ぎ制作</strong><span>+¥8,000〜 / 3営業日目安</span></div>
+          <div class="option"><strong>商用・法人利用</strong><span>+¥15,000〜 / イベント配布向け</span></div>
+          <div class="option"><strong>追加デザイン</strong><span>+¥7,000〜 / 色違い・用途違い</span></div>
+          <div class="option"><strong>印刷代行相談</strong><span>部数・用紙に応じて別途</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="flow">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>制作の流れ</h2>
+          <p>文章がまとまっていなくても大丈夫です。箇条書きの思い出から、パズルにしやすい言葉を一緒に選びます。</p>
+        </div>
+        <div class="flow">
+          <article class="step">
+            <h3>ご相談</h3>
+            <p>用途、希望日、入れたい言葉、雰囲気をお聞きします。</p>
+          </article>
+          <article class="step">
+            <h3>素材共有</h3>
+            <p>名前、エピソード、写真や好みの色などを送っていただきます。</p>
+          </article>
+          <article class="step">
+            <h3>制作・確認</h3>
+            <p>パズル、カギ文、デザインを作成し、確認用データをお送りします。</p>
+          </article>
+          <article class="step">
+            <h3>納品</h3>
+            <p>印刷用PDF、画像データ、答え入り版を納品します。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="soft-bg" id="faq">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>よくある質問</h2>
+        </div>
+        <div class="faq">
+          <details>
+            <summary>まだ入れたい言葉が決まっていません。相談できますか？</summary>
+            <p>はい。思い出や人柄を箇条書きで送っていただければ、パズルに向いている言葉をこちらで整理します。</p>
+          </details>
+          <details>
+            <summary>結婚式のゲスト全員が解ける内容にできますか？</summary>
+            <p>できます。内輪すぎる言葉だけにせず、カギ文で意味が伝わるように調整します。新郎新婦を知るきっかけになるパズルを目指します。</p>
+          </details>
+          <details>
+            <summary>写真や似顔絵を入れられますか？</summary>
+            <p>写真の配置はご相談可能です。イラスト風のデザインについては、雰囲気や用途に合わせて個別にご提案します。</p>
+          </details>
+          <details>
+            <summary>キャンセルや修正はどうなりますか？</summary>
+            <p>制作開始前のキャンセルは無料です。制作開始後は進行状況に応じて料金が発生します。各プランの修正回数内で、誤字や表現調整に対応します。</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <div class="cta">
+          <div>
+            <h2>まずは「こんな感じで作れる？」からどうぞ</h2>
+            <p>結婚式、1/2成人式、誕生日、退職祝い、地域イベントなど、用途に合わせてご相談いただけます。制作例や雰囲気はInstagramでもご覧いただけます。</p>
+          </div>
+          <div style="display:flex; gap:12px; flex-wrap:wrap; justify-content:flex-end;">
+            <a class="btn instagram" href="https://www.instagram.com/sundedtech/" target="_blank" rel="noopener">Instagramを見る</a>
+            <a class="btn primary" href="mailto:growup.kuriyama@gmail.com?subject=%E3%82%AF%E3%83%AD%E3%82%B9%E3%83%AF%E3%83%BC%E3%83%89%E5%88%B6%E4%BD%9C%E3%81%AE%E7%9B%B8%E8%AB%87">メールで相談する</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-grid">
+      <div>
+        <strong>オリジナルクロスワード制作</strong><br />
+        サン教育開発システム / 学習塾グロウアップ<br />
+        代表　栗山 貴之
+      </div>
+      <div>
+        お問い合わせ：<a href="mailto:growup.kuriyama@gmail.com">growup.kuriyama@gmail.com</a><br />
+        Instagram：<a href="https://www.instagram.com/sundedtech/" target="_blank" rel="noopener">@sundedtech</a><br />
+        © <span id="year"></span> Sun Education Development System
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
