@@ -193,6 +193,60 @@ body {
 .q-prompt { font-size: 13px; font-weight: 800; color: #a084bd; margin: 10px 0 4px; }
 .q-word { font-size: 36px; font-weight: 900; color: var(--text-dark); margin: 12px 0; line-height: 1.2; word-break: break-all; }
 
+.speak-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 18px;
+  border-radius: 999px;
+  border: var(--border-width) solid var(--text-dark);
+  background: #fff7ed;
+  color: var(--text-dark);
+  font-size: 14px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 4px 0 var(--text-dark);
+  font-family: 'Nunito', 'M PLUS Rounded 1c', sans-serif;
+  transition: all 0.1s;
+  margin: 0 0 6px;
+}
+.speak-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--text-dark); }
+.speak-btn:active { transform: translateY(4px); box-shadow: none; }
+.speak-btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; box-shadow: 0 4px 0 var(--text-dark); }
+
+.word-cell-en-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+.mini-speak-btn {
+  flex: 0 0 auto;
+  border: 2px solid var(--text-dark);
+  background: #fff7ed;
+  color: var(--text-dark);
+  border-radius: 999px;
+  padding: 3px 7px;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 2px 0 var(--text-dark);
+  font-family: 'Nunito', 'M PLUS Rounded 1c', sans-serif;
+  line-height: 1.2;
+  transition: all 0.1s;
+}
+.mini-speak-btn:hover { transform: translateY(-1px); box-shadow: 0 3px 0 var(--text-dark); }
+.mini-speak-btn:active { transform: translateY(2px); box-shadow: none; }
+.miss-word-main {
+  flex: 1 1 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
 .choices-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
 .choice-btn {
   padding: 15px 10px;
@@ -370,6 +424,7 @@ body {
         <span class="combo-badge" id="combo-badge" style="display:none;">コンボ x0</span>
         <div class="q-prompt" id="q-prompt"></div>
         <div class="q-word" id="q-word"></div>
+        <button class="speak-btn" id="speak-current-btn" type="button" onclick="speakCurrentWord()">🔊 発音を聞く</button>
         <div id="choices-area"></div>
         <div class="feedback-area" id="feedback"></div>
         <button class="next-btn" id="next-btn" style="display:none;" onclick="nextQ()">つぎの問題へ 🚀</button>
@@ -412,6 +467,60 @@ body {
 // ========== 状態変数 ==========
 let grade = 'pre2', mode = 'en2ja', totalCount = 5;
 let pool = [], queue = [], qIdx = 0, correct = 0, missed = [], hearts = 3, combo = 0, maxCombo = 0, answered = false;
+
+
+// ========== 発音機能（ブラウザ標準 Web Speech API）==========
+let englishVoiceCache = null;
+function escapeHtml(s){
+  return String(s ?? '').replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
+}
+function escapeAttr(s){ return escapeHtml(s); }
+function loadVoices(){
+  if(!('speechSynthesis' in window)) return [];
+  return window.speechSynthesis.getVoices ? window.speechSynthesis.getVoices() : [];
+}
+function getEnglishVoice(){
+  const voices = loadVoices();
+  if(!voices.length) return null;
+  if(englishVoiceCache && voices.includes(englishVoiceCache)) return englishVoiceCache;
+  englishVoiceCache =
+    voices.find(v => /^en-US/i.test(v.lang) && /google|microsoft|samantha|alex|english/i.test(v.name)) ||
+    voices.find(v => /^en-US/i.test(v.lang)) ||
+    voices.find(v => /^en-GB/i.test(v.lang)) ||
+    voices.find(v => /^en/i.test(v.lang)) ||
+    null;
+  return englishVoiceCache;
+}
+function speakText(text){
+  const word = String(text || '').trim();
+  if(!word) return;
+  if(!('speechSynthesis' in window)){
+    alert('このブラウザでは音声読み上げに対応していません。Chrome / Edge / Safari などでお試しください。');
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(word);
+  utter.lang = 'en-US';
+  utter.rate = 0.82;
+  utter.pitch = 1.0;
+  const voice = getEnglishVoice();
+  if(voice) utter.voice = voice;
+  window.speechSynthesis.speak(utter);
+}
+function speakCurrentWord(){
+  const w = queue[qIdx];
+  if(!w) return;
+  speakText(w.en);
+}
+function speakFromButton(btn){
+  if(!btn) return;
+  speakText(btn.getAttribute('data-speak') || '');
+}
+if('speechSynthesis' in window){
+  window.speechSynthesis.onvoiceschanged = () => { englishVoiceCache = null; getEnglishVoice(); };
+  // 一部ブラウザでは初回の声一覧取得が遅れるため、軽く読み込んでおく。
+  loadVoices();
+}
 
 // ========== UI状態更新 ==========
 function setGrade(g){
@@ -596,6 +705,9 @@ function showQ(){
   const isEn=(mode==='en2ja');
   document.getElementById('q-prompt').textContent=isEn?'この英語の日本語訳は？':'この日本語の英語は？';
   document.getElementById('q-word').textContent=isEn?w.en:w.ja;
+  const speakBtn=document.getElementById('speak-current-btn');
+  speakBtn.textContent='🔊 発音を聞く';
+  speakBtn.style.display=isEn?'inline-flex':'none';
   const allPool=getPool();
   const others=shuffle(allPool.filter(x=>x.en!==w.en)).slice(0,3);
   const choices=shuffle([w,...others]);
@@ -634,6 +746,9 @@ function checkChoice(btn,correctEn){
   saveSRS(srsData);
   renderLives();
   updateCombo();
+  const speakBtn=document.getElementById('speak-current-btn');
+  speakBtn.textContent=mode==='en2ja'?'🔊 もう一度聞く':'🔊 正解の発音を聞く';
+  speakBtn.style.display='inline-flex';
   document.getElementById('next-btn').style.display='block';
   if(hearts<=0)setTimeout(()=>showResult(),800);
 }
@@ -692,7 +807,10 @@ function showResult(){
     retryBtn.style.display='';
     missSection.style.display='';
     document.getElementById('miss-list').innerHTML=
-      missed.map(w=>`<div class="miss-item"><span class="miss-en">${w.en}</span><span class="miss-ja">${w.ja}</span></div>`).join('');
+      missed.map(w=>`<div class="miss-item">
+        <div class="miss-word-main"><span class="miss-en">${escapeHtml(w.en)}</span><span class="miss-ja">${escapeHtml(w.ja)}</span></div>
+        <button class="mini-speak-btn" type="button" data-speak="${escapeAttr(w.en)}" onclick="speakFromButton(this)">🔊</button>
+      </div>`).join('');
   } else {
     retryBtn.style.display='none';
     missSection.style.display='none';
@@ -736,8 +854,11 @@ function showWordList(g){
         else if(d.wrong>0){bg='background:#fff7ed;';badge='<span style="font-size:10px;color:#c2410c;">✗ 要注意</span>';}
       }
       return `<div class="word-cell" style="${bg}">
-        <div class="word-cell-en">${w.en}</div>
-        <div class="word-cell-ja">${w.ja}</div>
+        <div class="word-cell-en-row">
+          <div class="word-cell-en">${escapeHtml(w.en)}</div>
+          <button class="mini-speak-btn" type="button" data-speak="${escapeAttr(w.en)}" onclick="speakFromButton(this)">🔊</button>
+        </div>
+        <div class="word-cell-ja">${escapeHtml(w.ja)}</div>
         ${badge}
       </div>`;
     }).join('');
