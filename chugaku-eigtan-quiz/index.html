@@ -5255,7 +5255,7 @@ function updateWordCounts(){
 const SRS_KEY = 'srs_data';
 
 // SRSデータ読み込み
-// 構造: { "mother": { correct: 3, wrong: 1 }, ... }
+// 構造: { "mother": { seen: 2, correct: 1, wrong: 1, lastSeen: 1710000000000 }, ... }
 function loadSRS(){
   try { return JSON.parse(localStorage.getItem(SRS_KEY)) || {}; }
   catch(e){ return {}; }
@@ -5266,15 +5266,31 @@ function saveSRS(data){
   localStorage.setItem(SRS_KEY, JSON.stringify(data));
 }
 
-// 単語の重み計算（間違いが多いほど重みが大きい→出やすい）
-// 正解回数が多いほど重みが小さい（最小値1を保証）
-function getWeight(word, srsData){
+// 旧バージョンの学習データには seen がないため、correct+wrong を既出回数として扱う。
+function getSeenCount(word, srsData){
   const d = srsData[word.en];
-  if(!d) return 10; // 初出: 中程度の重み
+  if(!d) return 0;
+  return d.seen || ((d.correct || 0) + (d.wrong || 0));
+}
+
+function isUnseenWord(word, srsData){
+  return getSeenCount(word, srsData) === 0;
+}
+
+// 既出語どうしの復習用重み。
+// 間違えた語は出やすく、正解済み・何度も出た語はかなり出にくくする。
+function getWeight(word, srsData){
+  const d = srsData[word.en] || {};
+  const seen = getSeenCount(word, srsData);
   const c = d.correct || 0;
   const w = d.wrong || 0;
-  // 間違い +3pt、正解 -2pt、最小1
-  return Math.max(1, 10 + w * 3 - c * 2);
+
+  // 念のため未出題語が混ざった場合は超高優先。
+  if(seen === 0) return 1000;
+
+  // wrong は強く上げる。correct と seen は下げる。
+  // 例: 1回正解済みならかなり低め、間違いがある語は復習枠に残りやすい。
+  return Math.max(2, 35 + w * 28 - c * 14 - seen * 4);
 }
 
 // 重み付きランダム抽出（重複なし）
@@ -5296,6 +5312,19 @@ function weightedSample(pool, n, srsData){
   return result;
 }
 
+// 未出題語を最優先で選ぶ。
+// 未出題語が十分にある間は、正解済み語は基本的に出さない。
+// 未出題語が足りないときだけ、間違い語 > 既出語 > 正解済み語の順で復習枠を埋める。
+function smartSample(pool, n, srsData){
+  const unseen = shuffle(pool.filter(w => isUnseenWord(w, srsData)));
+  const reviewed = pool.filter(w => !isUnseenWord(w, srsData));
+  const result = unseen.slice(0, n);
+  if(result.length < n){
+    result.push(...weightedSample(reviewed, n - result.length, srsData));
+  }
+  return result;
+}
+
 // ========== プール作成 ==========
 function getPool(){
   if(grade===0) return [...ALL_FULL];
@@ -5307,8 +5336,8 @@ function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random
 function startQuiz(){
   const srsData = loadSRS();
   pool = getPool();
-  // SRS重み付き抽出
-  queue = weightedSample(pool, Math.min(totalCount, pool.length), srsData);
+  // 未出題語を最優先するスマート抽出
+  queue = smartSample(pool, Math.min(totalCount, pool.length), srsData);
   qIdx=0;correct=0;missed=[];hearts=3;combo=0;maxCombo=0;answered=false;
   document.getElementById('setup-screen').style.display='none';
   document.getElementById('result-screen').style.display='none';
@@ -5372,7 +5401,9 @@ function checkChoice(btn,correctEn){
 
   // SRS記録を更新
   const srsData = loadSRS();
-  if(!srsData[w.en]) srsData[w.en] = {correct:0, wrong:0};
+  if(!srsData[w.en]) srsData[w.en] = {seen:0, correct:0, wrong:0};
+  srsData[w.en].seen = (srsData[w.en].seen || 0) + 1;
+  srsData[w.en].lastSeen = Date.now();
   if(isOk){
     srsData[w.en].correct++;
     correct++;combo++;if(combo>maxCombo)maxCombo=combo;
@@ -5440,7 +5471,8 @@ function showResult(){
   const weakStr = weakWords.length > 0
     ? ' | 要注意: '+weakWords.map(w=>w.en).join('・')
     : '';
-  document.getElementById('r-detail').textContent += weakStr;
+  const unseenCount = poolAll.filter(w => isUnseenWord(w, srsData)).length;
+  document.getElementById('r-detail').textContent += ' | 未出題: '+unseenCount+'語' + weakStr;
   // 間違い一覧
   const retryBtn=document.getElementById('retry-miss-btn');
   const missSection=document.getElementById('miss-section');
