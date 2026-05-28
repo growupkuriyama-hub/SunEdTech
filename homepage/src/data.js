@@ -33,7 +33,7 @@ export const APP_LIST = [
     description: "小学校〜中3レベルの約1,550語をレベル別・ランダムに4択で出題。苦手単語の復習機能つき。",
     target: "小学校～中3 ／ 英検5級～3級前後",
     tags: ["英語", "英単語", "語彙"],
-    url: "https://sun-ed-tech-u14y.vercel.app/",
+    url: "https://chugaku-eigtan-quiz.pages.dev",
     color: "#F59E0B",
     bgColor: "#FFFBEB",
     icon: "📚",
