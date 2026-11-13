@@ -31,8 +31,9 @@ After that, edits pushed to this directory will deploy automatically. The site d
 
 ## Notes
 
-- No checkout is configured. The Resources page clearly indicates that the first study pack is not yet for sale.
-- When a selling platform is configured, link the verified product checkout only after the PDF is complete and tested.
+- First practice pack is linked to Payhip: https://payhip.com/b/4Bnzc. The product needs an independent seller-side checkout / download smoke test before promotion.
+- Online free sample: `resources/free-redox-sample/` with five questions and revealable answers; browser print supports Save as PDF.
+- Only the seller can verify the Payhip buyer download path and payout verification; the `Buy Now` link itself is not proof of successful delivery.
 - Once the production domain is known, add canonical URLs, Open Graph images and an accurate sitemap.
 - Published text is AI-assisted; the owner should review and approve content before promoting it.
 - Do not put passwords, payment credentials, student information or private research in this public repository.
